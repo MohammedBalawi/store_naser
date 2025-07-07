@@ -1,0 +1,131 @@
+{
+  "status": true,
+  "code": 200,
+  "message": "تمت العملية بنجاح!",
+  "product": {
+    "id": 1,
+    "logo_image": "https://babble.shiftictapps.com/uploads/1729529235_251412625.jpeg",
+    "name": "مريلة بيبي",
+    "rate": 3,
+    "is_rated": 1,
+    "in_favorite": 1,
+    "description": "<p>مريلة ابيض سادة</p>",
+    "price": 4,
+    "discount_ratio": 0,
+    "selling_price": 4,
+    "available_quantity": 10,
+    "sku": "9700113473",
+    "main_category": {
+      "id": 5,
+      "name": "بيبي",
+      "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+    },
+    "sub_category": {
+      "id": 6,
+      "name": "حديث ولاده وأم",
+      "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+    },
+    "images": [
+      "https://babble.shiftictapps.com/uploads/1728841557_642739220.jpeg"
+    ],
+    "colors_images": [
+      {
+        "image": "https://babble.shiftictapps.com/uploads/1728841557_827531604.jpeg",
+        "color_id": 2,
+        "color": {
+          "id": 2,
+          "name": "أبيض",
+          "hex": "#FFFFFF"
+        }
+      }
+    ],
+    "rates": [
+      {
+        "id": 1,
+        "rate": 3,
+        "title": "test",
+        "comment": "test test test test",
+        "image": "https://babble.shiftictapps.com/uploads/blank.png",
+        "created_at": "منذ يوم",
+        "user": {
+          "id": 1,
+          "name": "mohamed"
+        }
+      }
+    ]
+  },
+  "related_products": [
+    {
+      "id": 2,
+      "name": "بطانيه مخمل",
+      "mainCategory": {
+        "id": 5,
+        "name": "بيبي",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "حديث ولاده وأم",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 1,
+      "available_quantity": 0,
+      "sku": "8690202262977",
+      "rate": 3,
+      "rates_count": 1,
+      "price": 60,
+      "selling_price": 60,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729532711_210755213.jpg",
+      "created_at": "منذ 6 أيام"
+    },
+    {
+      "id": 3,
+      "name": "بطانيه مخمل",
+      "mainCategory": {
+        "id": 5,
+        "name": "بيبي",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "حديث ولاده وأم",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 0,
+      "available_quantity": 0,
+      "sku": "8690202262937",
+      "rate": 0,
+      "rates_count": 0,
+      "price": 35,
+      "selling_price": 35,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729617955_139760790.jpeg",
+      "created_at": "منذ 5 أيام"
+    },
+    {
+      "id": 4,
+      "name": "تبان داخلي ابيض",
+      "mainCategory": {
+        "id": 5,
+        "name": "بيبي",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "حديث ولاده وأم",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 1,
+      "available_quantity": 0,
+      "sku": "970011889",
+      "rate": 0,
+      "rates_count": 0,
+      "price": 10,
+      "selling_price": 10,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729621265_290784884.webp",
+      "created_at": "منذ 5 أيام"
+    }
+  ]
+}

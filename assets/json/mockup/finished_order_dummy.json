@@ -1,0 +1,55 @@
+{
+  "status": "success",
+  "data": {
+    "number": "B.12345",
+    "step": "Sent",
+    "date_time": "2022-12-28",
+    "info": {
+      "shipping_method": " فلسطين , قطاع غزة، الجلاء",
+      "payment": {
+        "title": "mohamed",
+        "number": "3947 **** **** ****"
+      },
+      "submit_way": "فيديكس، 3 أيام، 15 دولارًا",
+      "discount": "10%، رمز ترويجي شخصي",
+      "currency": "€",
+      "price": 155.0
+    },
+    "products": [
+      {
+        "id": "1",
+        "title": "بلوفر",
+        "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/best_assessments%2Fimg1.png?alt=media&token=fea7aca3-9649-4679-8cb1-f407f232759d",
+        "sub_title": "Mango",
+        "color": "رمادي",
+        "size": "Large",
+        "units": 2,
+        "currency": "€",
+        "price": 55.0
+      },
+      {
+        "id": "2",
+        "title": "بلوفر",
+        "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/best_assessments%2Fimg2.png?alt=media&token=33386546-b0a3-4fd1-a320-0847af85c194",
+        "sub_title": "Mango",
+        "color": "أحمر",
+        "size": "Large",
+        "units": 1,
+        "currency": "€",
+        "price": 50.0
+      },
+      {
+        "id": "3",
+        "title": "بلوفر",
+        "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/best_assessments%2Fimg1.png?alt=media&token=fea7aca3-9649-4679-8cb1-f407f232759d",
+        "sub_title": "Mango",
+        "color": "أخضر",
+        "size": "Large",
+        "units": 1,
+        "currency": "€",
+        "price": 50.0
+      }
+    ]
+  }
+}
+

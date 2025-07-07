@@ -1,0 +1,13 @@
+{
+  "status": true,
+  "code": 200,
+  "message": "تمت العملية بنجاح!",
+  "notifications": [
+    {
+      "id": 1,
+      "title": "رسالة SMS",
+      "message": "your activation code:  : 7028",
+      "send_at": "منذ أسبوع"
+    }
+  ]
+}

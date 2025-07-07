@@ -1,0 +1,104 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "title": "حجاب",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg1.png?alt=media&token=5785f189-472a-4a17-a1ce-52fb53860cfb"
+    },
+    {
+      "id": "2",
+      "title": "أحذية",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg2.png?alt=media&token=0f8b0983-3d72-48b8-b313-f2763549222e"
+    },
+    {
+      "id": "3",
+      "title": "أطفال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg3.png?alt=media&token=82a7a6f6-bfca-4943-a126-86550680d43b"
+    },
+    {
+      "id": "4",
+      "title": "رجال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg4.png?alt=media&token=e28a6d54-5d23-4775-9ca4-f016a98a060b"
+    },
+    {
+      "id": "5",
+      "title": "نساء",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg5.png?alt=media&token=5e6c9c5b-3755-4662-bc79-f01c6ad78c95"
+    },
+    {
+      "id": "1",
+      "title": "حجاب",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg1.png?alt=media&token=5785f189-472a-4a17-a1ce-52fb53860cfb"
+    },
+    {
+      "id": "2",
+      "title": "أحذية",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg2.png?alt=media&token=0f8b0983-3d72-48b8-b313-f2763549222e"
+    },
+    {
+      "id": "3",
+      "title": "أطفال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg3.png?alt=media&token=82a7a6f6-bfca-4943-a126-86550680d43b"
+    },
+    {
+      "id": "4",
+      "title": "رجال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg4.png?alt=media&token=e28a6d54-5d23-4775-9ca4-f016a98a060b"
+    },
+    {
+      "id": "5",
+      "title": "نساء",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg5.png?alt=media&token=5e6c9c5b-3755-4662-bc79-f01c6ad78c95"
+    },
+    {
+      "id": "1",
+      "title": "حجاب",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg1.png?alt=media&token=5785f189-472a-4a17-a1ce-52fb53860cfb"
+    },
+    {
+      "id": "2",
+      "title": "أحذية",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg2.png?alt=media&token=0f8b0983-3d72-48b8-b313-f2763549222e"
+    },
+    {
+      "id": "3",
+      "title": "أطفال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg3.png?alt=media&token=82a7a6f6-bfca-4943-a126-86550680d43b"
+    },
+    {
+      "id": "4",
+      "title": "رجال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg4.png?alt=media&token=e28a6d54-5d23-4775-9ca4-f016a98a060b"
+    },
+    {
+      "id": "5",
+      "title": "نساء",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg5.png?alt=media&token=5e6c9c5b-3755-4662-bc79-f01c6ad78c95"
+    },
+    {
+      "id": "1",
+      "title": "حجاب",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg1.png?alt=media&token=5785f189-472a-4a17-a1ce-52fb53860cfb"
+    },
+    {
+      "id": "2",
+      "title": "أحذية",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg2.png?alt=media&token=0f8b0983-3d72-48b8-b313-f2763549222e"
+    },
+    {
+      "id": "3",
+      "title": "أطفال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg3.png?alt=media&token=82a7a6f6-bfca-4943-a126-86550680d43b"
+    },
+    {
+      "id": "4",
+      "title": "رجال",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg4.png?alt=media&token=e28a6d54-5d23-4775-9ca4-f016a98a060b"
+    },
+    {
+      "id": "5",
+      "title": "نساء",
+      "image": "https://firebasestorage.googleapis.com/v0/b/bubble-images.appspot.com/o/categories%2Fimg5.png?alt=media&token=5e6c9c5b-3755-4662-bc79-f01c6ad78c95"
+    }
+  ]
+}

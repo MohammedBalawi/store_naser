@@ -1,0 +1,46 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.4'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code with build_runner
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Create .env file based on ENV_TYPE secret
+        run: |
+          if [ "${{ secrets.ENV_TYPE }}" = "prod" ]; then
+            echo 'debug=false' > .env
+            echo 'apiUrl="https://api.ooqood.com"' >> .env
+          else
+            echo 'debug=true' > .env
+            echo 'apiUrl="https://flutter-triad.actit.ps/"' >> .env
+          fi
+
+      - name: Build APK (release)
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+

@@ -1,0 +1,130 @@
+{
+  "status": true,
+  "code": 200,
+  "message": "Process Done Successfully!",
+  "mainCategory": [
+    {
+      "id": 1,
+      "name": "MEN",
+      "icon": "https://babble.shiftictapps.com/uploads/1728837343_352273895.jpeg"
+    },
+    {
+      "id": 3,
+      "name": "WOMEN",
+      "icon": "https://babble.shiftictapps.com/uploads/1728838861_209971211.jpg"
+    },
+    {
+      "id": 4,
+      "name": "KIDS",
+      "icon": "https://babble.shiftictapps.com/uploads/1728839043_202475669.jpg"
+    },
+    {
+      "id": 5,
+      "name": "BABY",
+      "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+    }
+  ],
+  "banners": [],
+  "featuredBanners": [],
+  "featuredProducts": [],
+  "topSellerProducts": [],
+  "lastProducts": [
+    {
+      "id": 4,
+      "name": "White inner pants",
+      "mainCategory": {
+        "id": 5,
+        "name": "BABY",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "NEW BORN AND MOTHER",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 0,
+      "available_quantity": 0,
+      "sku": "970011889",
+      "rate": 0,
+      "rates_count": 0,
+      "price": 10,
+      "selling_price": 10,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729621265_290784884.webp",
+      "created_at": "4 days ago"
+    },
+    {
+      "id": 3,
+      "name": "Velvet Blanket",
+      "mainCategory": {
+        "id": 5,
+        "name": "BABY",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "NEW BORN AND MOTHER",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 0,
+      "available_quantity": 0,
+      "sku": "8690202262937",
+      "rate": 0,
+      "rates_count": 0,
+      "price": 35,
+      "selling_price": 35,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729617955_139760790.jpeg",
+      "created_at": "4 days ago"
+    },
+    {
+      "id": 2,
+      "name": "velvet blanket",
+      "mainCategory": {
+        "id": 5,
+        "name": "BABY",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "NEW BORN AND MOTHER",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 0,
+      "available_quantity": 0,
+      "sku": "8690202262977",
+      "rate": 0,
+      "rates_count": 0,
+      "price": 60,
+      "selling_price": 60,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729532711_210755213.jpg",
+      "created_at": "5 days ago"
+    },
+    {
+      "id": 1,
+      "name": "baby bib",
+      "mainCategory": {
+        "id": 5,
+        "name": "BABY",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839056_320623507.jpg"
+      },
+      "category": {
+        "id": 6,
+        "name": "NEW BORN AND MOTHER",
+        "icon": "https://babble.shiftictapps.com/uploads/1728839464_456980575.jpg"
+      },
+      "in_favorite": 0,
+      "available_quantity": 0,
+      "sku": "9700113473",
+      "rate": 0,
+      "rates_count": 0,
+      "price": 4,
+      "selling_price": 4,
+      "discount_ratio": 0,
+      "logo_image": "https://babble.shiftictapps.com/uploads/1729529235_251412625.jpeg",
+      "created_at": "1 week ago"
+    }
+  ],
+  "topRatedProducts": []
+}
