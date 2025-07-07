@@ -9,6 +9,8 @@ class ManagerStrings {
 
   static String get notificationsName => tr('notificationsName');
 
+  static String get sentence => tr('sentence');
+
   static String get notificationsBody => tr('notificationsBody');
 
   static String get sendNotification => tr('sendNotification');

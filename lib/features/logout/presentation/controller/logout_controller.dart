@@ -23,24 +23,30 @@ class LogoutController extends GetxController {
 
     (await useCase.execute()).fold(
           (l) {
+        // لو فشل
         Get.back();
         changeIsLoading(value: false);
         Get.snackbar(ManagerStrings.error, ManagerStrings.logoutFailed);
       },
           (r) async {
         try {
+          // 1) امسح الـ SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.clear();
 
+          // 2) امسح Hive Session
           await HiveSessionService().clearSessionFromHive();
 
+          // 3) روح على صفحة تسجيل الدخول
           Get.offAllNamed(Routes.login);
+
+          // 4) سجل إشعار
           await addNotification(
             title: 'تسجيل الخروج',
             description: 'تم تسجيل الخروج بنجاح',
           );
 
-
+          // 5) أظهر رسالة
           Get.snackbar(ManagerStrings.ok, ManagerStrings.logoutSuccess);
         } catch (e) {
           Get.snackbar('خطأ', 'فشل في تسجيل الخروج: $e');
@@ -50,6 +56,7 @@ class LogoutController extends GetxController {
       },
     );
   }
+
 
   @override
   void onInit() {

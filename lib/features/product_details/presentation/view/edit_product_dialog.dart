@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/fonse/color_picker_widget.dart';
 import '../../../../core/service/notifications_service.dart';
 import '../../../../core/widgets/text_field.dart';
 import '../../../categories/domain/model/category_model.dart';
@@ -39,6 +40,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
   final colorController = TextEditingController();
   final sizeController = TextEditingController();
   final durationController = TextEditingController();
+  final sentenceController = TextEditingController();
 
 
   String selectedUnit = 'ثانية';
@@ -70,6 +72,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
     colorController.text = product['color'] ?? '';
     sizeController.text = product['size'] ?? '';
     oldImageUrl = product['image'];
+    sentenceController.text = product['sentence'].toString();
     if (product['price_expiry'] != null) {
       try {
         final expiry = product['price_expiry'] is String
@@ -174,6 +177,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
       'color': colorController.text.trim(),
       'size': sizeController.text.trim(),
       'price_expiry': newExpiryDate,
+      'sentence' : int.tryParse(sentenceController.text.trim()) ?? 0
     };
 
     try {
@@ -261,13 +265,48 @@ class _EditProductDialogState extends State<EditProductDialog> {
                 ],
               ),
                SizedBox(height: ManagerHeight.h12),
-              textField(hintText: ManagerStrings.discount, controller: discountRatioController, textInputType: TextInputType.number),
+              Row(
+                children: [
+                  Expanded(
+                    child:
+                    textField(hintText: ManagerStrings.discount, controller: discountRatioController, textInputType: TextInputType.number),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: textField(
+                      hintText: ManagerStrings.sentence,
+                      controller: sentenceController,
+                      textInputType: TextInputType.number,
+                    ),
+
+                  ),
+                ],
+              ),
                SizedBox(height:ManagerHeight.h12),
               textField(hintText: ManagerStrings.quantity, controller: availableController, textInputType: TextInputType.number),
                SizedBox(height: ManagerHeight.h12),
               textField(hintText: ManagerStrings.code, controller: skuController),
                SizedBox(height: ManagerHeight.h12),
-              textField(hintText: ManagerStrings.color, controller: colorController, textInputType: TextInputType.number),
+              Row(
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: textField(
+                      controller: colorController,
+                      hintText: ManagerStrings.color  ,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    flex: 3,
+                    child: ColorPickerWidget(
+                      onColorsChanged: (selectedNames) {
+                        colorController.text = selectedNames.join(" , ");
+                      },
+                    ),
+                  ),
+                ],
+              ),
                SizedBox(height: ManagerHeight.h12),
               textField(hintText: ManagerStrings.size, controller: sizeController, textInputType: TextInputType.number),
                SizedBox(height: ManagerHeight.h12),

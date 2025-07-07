@@ -87,21 +87,83 @@ Widget cartItem({
                 SizedBox(height: ManagerHeight.h6),
                 Row(
                   children: [
-                    Text("${ManagerStrings.color} ",
+                    Text(
+                      "${ManagerStrings.color} ",
                       style: getRegularTextStyle(
                         fontSize: ManagerFontSize.s14,
                         color: ManagerColors.grey,
                       ),
                     ),
-                    Text(
-                      model.color ?? '',
-                      style: getRegularTextStyle(
-                        fontSize: ManagerFontSize.s14,
-                        color: ManagerColors.black,
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: (model.color ?? '')
+                              .split(',')
+                              .map((c) => c.trim())
+                              .map((c) {
+                            final colorMap = {
+                              "أحمر": Colors.red,
+                              "أزرق": Colors.blue,
+                              "أخضر": Colors.green,
+                              "أصفر": Colors.yellow,
+                              "أسود": Colors.black,
+                              "أبيض": Colors.white,
+                              "برتقالي": Colors.orange,
+                              "رمادي": Colors.grey,
+                              "وردي": Colors.pink,
+                              "بنفسجي": Colors.purple,
+                              "نيلي": Colors.indigo,
+                              "بنفسجي غامق" : Colors.deepPurple ,
+                              "أزرق فاتح" : Colors.lightBlue,
+                              "سماوي" :  Colors.cyan,
+                              "تركواز" : Colors.teal,
+                              "أخضر فاتح" : Colors.lightGreen,
+                              "ليموني" : Colors.lime,
+                              "عنبر" : Colors.amber,
+                              "برتقالي غامق" : Colors.deepOrange,
+                              "بني" :Colors.brown ,
+                              "بني فاتح" :Colors.brown.shade200 ,
+
+                              "رمادي مزرق" : Colors.blueGrey ,
+
+                            };
+                            if (colorMap.containsKey(c)) {
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: colorMap[c],
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  c,
+                                  style: getRegularTextStyle(
+                                    fontSize: 12,
+                                    color: ManagerColors.black,
+                                  ),
+                                ),
+                              );
+                            }
+                          }).toList(),
+                        ),
                       ),
                     ),
                     SizedBox(width: ManagerWidth.w16),
-                    Text("${ManagerStrings.size} ",
+                    Text(
+                      "${ManagerStrings.size} ",
                       style: getRegularTextStyle(
                         fontSize: ManagerFontSize.s14,
                         color: ManagerColors.grey,
@@ -116,6 +178,7 @@ Widget cartItem({
                     ),
                   ],
                 ),
+
                 SizedBox(height: ManagerHeight.h10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

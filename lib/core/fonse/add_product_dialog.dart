@@ -14,6 +14,7 @@ import '../../features/categories/domain/model/category_model.dart';
 import '../../features/contact_us/presentation/view/contact_us_view.dart';
 import '../../features/home/presentation/controller/home_controller.dart';
 import '../service/notifications_service.dart';
+import 'color_picker_widget.dart';
 
 class AddProductDialog extends StatefulWidget {
   const AddProductDialog({super.key});
@@ -26,6 +27,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
   final nameController = TextEditingController();
   final priceController = TextEditingController();
   final sellingPriceController = TextEditingController();
+  final sentenceController = TextEditingController();
   final colorController = TextEditingController();
   final sizeController = TextEditingController();
   final skuController = TextEditingController();
@@ -131,9 +133,46 @@ class _AddProductDialogState extends State<AddProductDialog> {
               const SizedBox(height: 12),
               textField(hintText: ManagerStrings.quantity, controller: availableController, textInputType: TextInputType.number),
               const SizedBox(height: 12),
-              textField(hintText: ManagerStrings.discount, controller: discountController, textInputType: TextInputType.number),
+              Row(
+                children: [
+                  Expanded(
+                    child:
+                    textField(hintText: ManagerStrings.discount, controller: discountController, textInputType: TextInputType.number),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: textField(
+                      hintText: ManagerStrings.sentence,
+                      controller: sentenceController,
+                      textInputType: TextInputType.number,
+                    ),
+
+                  ),
+                ],
+              ),
               const SizedBox(height: 12),
-              textField(hintText: ManagerStrings.color, controller: colorController),
+              Row(
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: textField(
+                      controller: colorController,
+                        hintText: ManagerStrings.color  ,
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    flex: 3,
+                    child: ColorPickerWidget(
+                      onColorsChanged: (selectedNames) {
+                        colorController.text = selectedNames.join(" , ");
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+
               const SizedBox(height: 12),
               textField(hintText: ManagerStrings.size, controller: sizeController),
               const SizedBox(height: 12),
@@ -334,6 +373,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
         'category_id': selectedCategory!.id,
         'created_at': DateTime.now().toIso8601String(),
         'type': selectedCategory!.name,
+        'sentence'  : sentenceController.text.trim()
       });
 
       Get.back();
@@ -363,6 +403,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
     availableController.dispose();
     discountController.dispose();
     daysController.dispose();
+    sentenceController.dispose();
     super.dispose();
   }
 }

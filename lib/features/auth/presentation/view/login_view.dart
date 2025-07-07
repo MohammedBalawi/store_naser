@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_font_size.dart';
@@ -200,8 +201,11 @@ class _LoginViewState extends State<LoginView> {
                     Align(
                       alignment: Alignment.center,
                       child: TextButton(
-                        onPressed: () {
-                          Get.toNamed(Routes.main);
+                        onPressed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.clear(); // نمسح أي حساب سابق
+                          await prefs.setBool('is_guest', true); // نسجل كضيف
+                          Get.offAllNamed(Routes.main); // ندخل على الصفحة الرئيسية
                         },
                         child: Text(
                           ManagerStrings.loginGuest,
@@ -212,6 +216,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ),

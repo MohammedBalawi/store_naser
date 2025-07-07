@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app_mobile/core/model/product_model.dart';
 import '../../../../core/model/product_category_model.dart';
@@ -40,6 +41,16 @@ class HomeController extends GetxController {
     super.onInit();
     initHome();
   }
+  Rxn<Map<String, dynamic>> currentUser = Rxn<Map<String, dynamic>>();
+
+
+  Future<void> clearUserData() async {
+    currentUser.value = null;
+    await Supabase.instance.client.auth.signOut();
+
+
+  }
+
 
   Future<void> initHome() async {
     isLoading = true;

@@ -47,11 +47,14 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   late String size;
   late int sellingPrice;
   late int discountRatio;
+  late int sentence;
   late String priceExpiry;
 
   int commentsCount = 0;
   bool showAllComments = false;
   bool isWholesaler = false;
+  List<Color> selectedColors = [];
+
 
   Future<void> loadData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -70,7 +73,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     sellingPrice = prefs.getInt('product_selling_price') ?? 0;
     discountRatio = prefs.getInt('product_discount_Ratio') ?? 0;
     isWholesaler = await Get.find<HomeController>().checkIfWholesale();
-
+    sentence = prefs.getInt('product_sentence') ?? 0;
 
     setState(() {
       isLoading = false;
@@ -101,7 +104,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     final response = await supabase
         .from('products')
         .select(
-        'name, image, price, price_expiry, rate, selling_price, price_expiry, available_quantity, sku, type, discount_ratio, color, size')
+        'name, image, price, price_expiry, rate, selling_price, price_expiry, available_quantity, sku, type, discount_ratio, color, size, sentence')
         .eq('id', id)
         .maybeSingle();
 
@@ -126,6 +129,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
         color = response['color'] ?? '';
         size = response['size'] ?? '';
         sellingPrice = (response['selling_price'] ?? 0).toInt();
+        sentence = (response['sentence'] ?? 0).toInt();
 
       });
 
@@ -178,6 +182,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+
     if (isLoading) {
       return const Scaffold(
         body: Center(
@@ -238,6 +243,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                           'color': color,
                           'size': size,
                           'price_expiry': priceExpiry,
+                          'sentence': sentence,
                         },
                         onUpdate: fetchProductDataFromSupabase,
                       ),
@@ -310,12 +316,12 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
             children: [
               if (isWholesaler)
                 Text(
-                  '$discountRatio',
-                  style: getBoldTextStyle(
-                    fontSize: ManagerFontSize.s20,
-                    color: ManagerColors.red,
-                  ),
-                )
+                      '$discountRatio',
+                      style: getBoldTextStyle(
+                        fontSize: ManagerFontSize.s20,
+                        color: ManagerColors.red,
+                      ),
+                    )
               else if ((sellingPrice) > 0) ...[
                 Text(
                   '$price',
@@ -343,6 +349,28 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               ],
               SizedBox(width: ManagerWidth.w4),
               SvgPicture.asset(ManagerImages.shekelIcon),
+              SizedBox(width: 60,),
+              if (isWholesaler)
+              Row(
+                children: [
+                  Text(
+                    '$sentence',
+                    style: getBoldTextStyle(
+                      fontSize: ManagerFontSize.s20,
+                      color: ManagerColors.greenShade,
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  Text(
+                    ManagerStrings.sentence,
+                    style: getBoldTextStyle(
+                      fontSize: ManagerFontSize.s16,
+                      color: ManagerColors.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+
             ],
           ),
           SizedBox(height: ManagerHeight.h10),
@@ -374,25 +402,97 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
           SizedBox(height: ManagerHeight.h10),
           Row(
             children: [
-              Text(' ${ManagerStrings.color}: ',
+              Text('${ManagerStrings.color}: ',
                   style: getBoldTextStyle(
                       fontSize: ManagerFontSize.s20,
                       color: ManagerColors.greenAccent)),
-              Text('$color',
-                  style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s13,
-                      color: ManagerColors.primaryColor)),
-              SizedBox(width: ManagerWidth.w10,),
-              Text(' ${ManagerStrings.size}: ',
-                  style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s20,
-                      color: ManagerColors.greenAccent)),
-              Text(size,
-                  style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s13,
-                      color: ManagerColors.primaryColor)),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: color
+                        .split(',')
+                        .map((c) => c.trim())
+                        .map((c) {
+                      final colorMap = {
+                        "أحمر": Colors.red,
+                        "أزرق": Colors.blue,
+                        "أخضر": Colors.green,
+                        "أصفر": Colors.yellow,
+                        "أسود": Colors.black,
+                        "أبيض": Colors.white,
+                        "برتقالي": Colors.orange,
+                        "رمادي": Colors.grey,
+                        "وردي": Colors.pink,
+                        "بنفسجي": Colors.purple,
+                        "نيلي": Colors.indigo,
+                        "بنفسجي غامق" : Colors.deepPurple ,
+                        "أزرق فاتح" : Colors.lightBlue,
+                        "سماوي" :  Colors.cyan,
+                        "تركواز" : Colors.teal,
+                        "أخضر فاتح" : Colors.lightGreen,
+                        "ليموني" : Colors.lime,
+                        "عنبر" : Colors.amber,
+                        "برتقالي غامق" : Colors.deepOrange,
+                        "بني" :Colors.brown ,
+                        "بني فاتح" :Colors.brown.shade200 ,
+
+                        "رمادي مزرق" : Colors.blueGrey ,
+
+                      };
+                      if (colorMap.containsKey(c)) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.black),
+                          ),
+                          child: CircleAvatar(
+                            radius: 12,
+                            backgroundColor: colorMap[c],
+                          ),
+                        );
+                      } else {
+                        // لو كلمة غير معروفة، رجعها نص فقط
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(c,
+                              style: getRegularTextStyle(
+                                fontSize: 12,
+                                color: ManagerColors.black,
+                              )),
+                        );
+                      }
+                    })
+                        .toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                '${ManagerStrings.size}: ',
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s20,
+                  color: ManagerColors.greenAccent,
+                ),
+              ),
+              Text(
+                size,
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s13,
+                  color: ManagerColors.primaryColor,
+                ),
+              ),
             ],
           ),
+
+
+
           SizedBox(height: ManagerHeight.h15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
