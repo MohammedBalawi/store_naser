@@ -2,9 +2,11 @@ import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_icons.dart';
+import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 Widget lastSearchItem({
   required String title,
@@ -26,7 +28,7 @@ Widget lastSearchItem({
             children: [
               Icon(
                 ManagerIcons.clock,
-                color: ManagerColors.grey,
+                color: ManagerColors.color,
               ),
               SizedBox(
                 width: ManagerWidth.w10,
@@ -42,11 +44,8 @@ Widget lastSearchItem({
           ),
           GestureDetector(
             onTap: onDeleteTap,
-            child: Icon(
-              ManagerIcons.close,
-              color: ManagerColors.black,
+            child: SvgPicture.asset(ManagerImages.solar_arrow),
             ),
-          )
         ],
       ),
     ),

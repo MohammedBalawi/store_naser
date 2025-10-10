@@ -27,7 +27,7 @@ PreferredSizeWidget homeAppBar({
     ),
     leading: IconButton(
       onPressed: () {
-        Get.find<MainController>().openDrawer();
+        // Get.find<MainController>().openDrawer();
       },
       icon: SvgPicture.asset(ManagerImages.drawerIcon),
       iconSize: ManagerIconSize.s28,

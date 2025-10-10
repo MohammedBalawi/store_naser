@@ -1134,6 +1134,13 @@ class CategoriesController extends GetxController {
     isLoading = value;
     update();
   }
+  void navigateToProducts({required String id, required String name}) {
+    final cacheData = CacheData();
+    cacheData.setCategoryId(id);
+    cacheData.setCategoryName(name);
+    Get.toNamed(Routes.categoryProducts);
+  }
+
 
   void updateMainCategoryIndex({
     required int index,
@@ -1172,21 +1179,6 @@ class CategoriesController extends GetxController {
     );
   }
 
-  void navigateToProducts({
-    required String id,
-    required String name,
-  }) {
-    CacheData cacheData = CacheData();
-    cacheData.getCategoryId(
-
-    );
-    cacheData.getCategoryName(
-
-    );
-    Get.toNamed(
-      Routes.categoryProducts,
-    );
-  }
 
   @override
   void onInit() {

@@ -1,19 +1,24 @@
+import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:flutter/material.dart';
-import 'package:app_mobile/core/resources/manager_styles.dart';
-import 'package:app_mobile/core/widgets/main_app_bar.dart';
-import 'package:app_mobile/core/widgets/text_field.dart';
-import 'package:app_mobile/features/categories/domain/di/categories_di.dart';
-import 'package:app_mobile/features/categories/presentation/controller/category_products_controller.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
+
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_font_size.dart';
 import '../../../../core/resources/manager_height.dart';
 import '../../../../core/resources/manager_icons.dart';
 import '../../../../core/resources/manager_radius.dart';
 import '../../../../core/resources/manager_strings.dart';
+import '../../../../core/resources/manager_styles.dart';
 import '../../../../core/resources/manager_width.dart';
+import '../../../../core/widgets/main_app_bar.dart';
 import '../../../../core/widgets/product_item.dart';
-
+import '../../../../core/widgets/text_field.dart';
+import '../controller/category_products_controller.dart';
+import '../widget/category_tile.dart';
+import '../widget/sort_option_tile.dart';
 class CategoryProductsView extends StatefulWidget {
   const CategoryProductsView({super.key});
 
@@ -22,72 +27,68 @@ class CategoryProductsView extends StatefulWidget {
 }
 
 class _CategoryProductsViewState extends State<CategoryProductsView> {
+  final items = [
+    (ManagerImages.skin, 'العناية بالشفاه'),
+    (ManagerImages.skin, 'العناية بالعيون'),
+    (ManagerImages.skin, 'ترطيب الوجه'),
+    (ManagerImages.skin, 'جميع المنتجات'),
+  ];
+
+
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<CategoryProductsController>(
-      builder: (controller) {
+      builder: (c) {
         return Scaffold(
-          appBar: mainAppBar(
-            title: ManagerStrings.products,
-          ),
           backgroundColor: ManagerColors.background,
+          appBar: mainAppBar(
+            title: c.categoryName.isEmpty ? ManagerStrings.products : c.categoryName,
+            actions: [
+              IconButton(
+                icon: SvgPicture.asset(ManagerImages.filter),
+                onPressed: () => openFilterSheet(context, c),
+                tooltip: 'فلتر',
+              ),
+            ],
+          ),
+
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.all(
-                  ManagerHeight.h16,
-                ),
-                child: Text(
-                  controller.categoryName,
-                  style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s24,
-                      color: ManagerColors.black),
-                ),
+              _SubTabsBar(
+                tabs: c.subTabs,
+                selectedIndex: c.selectedSubTab,
+                onSelect: c.selectSubTab,
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: ManagerWidth.w16,
-                  right: ManagerWidth.w16,
-                ),
-                child: textField(
-                  hintText: ManagerStrings.search,
-                  controller: controller.searchController,
-                  onChange: (value) {
-                    controller.changeSearch(value);
-                  },
-                  suffixIcon: Icon(
-                    ManagerIcons.search,
+
+              // ===== سطر ماركات أفقي بكروت داكنة والصورة طالعة فوق =====
+              if (c.brands.isNotEmpty)
+                SizedBox(
+                  height: 138,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (_, i) => CategoryTile(
+                      iconAsset: items[i].$1,
+                      title: items[i].$2,
+                      onTap: () {},
+                    ),
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    itemCount: items.length,
                   ),
-                  radius: ManagerRadius.r16,
                 ),
-              ),
-              SizedBox(
-                height: ManagerHeight.h20,
-              ),
+
+              // ===== شريط بحث بسيط =====
+
+
+              // ===== الشبكة / حالة عدم وجود منتجات =====
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(
-                    ManagerHeight.h8,
-                  ),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: controller.filteredProducts().length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // Adjust the number of items per row
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                      childAspectRatio:
-                          0.6, // Adjust the height/width ratio of the items
-                    ),
-                    itemBuilder: (context, index) {
-                      final product = controller.filteredProducts()[index];
-                      return productItem(
-                        model: product,
-                      );
-                    },
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
+                  child: c.isLoading
+                      ? const Center(child: CircularProgressIndicator(strokeWidth: 2.5))
+                      : _ProductsGridOrEmpty(controller: c),
                 ),
               ),
             ],
@@ -97,9 +98,382 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
     );
   }
 
+  void openFilterSheet(BuildContext context, CategoryProductsController c) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (_) {
+        var localSort = c.sort;
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // الهيدر (مطابق للصورة)
+                SizedBox(
+                  height: 48,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // العنوان في الوسط
+                      Text(
+                        'الفلاتر',
+                        style: getBoldTextStyle(
+                          fontSize: ManagerFontSize.s16,
+                          color: ManagerColors.black,
+                        ),
+                      ),
+                      // مسح يسار
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () => setState(() => c.setSort(null)),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(44, 44),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: Text(
+                            'مسح',
+                            style: getRegularTextStyle(
+                              color: ManagerColors.color,
+                              fontSize: ManagerFontSize.s12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // إغلاق يمين
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close_rounded, size: 24),
+                          splashRadius: 22,
+                          color: ManagerColors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+                Divider(height: 1,color: ManagerColors.gray_divedr,),
+
+                const SizedBox(height: 8),
+
+                // خيارات الفرز (Radio على اليمين تمامًا)
+                SortOptionTile(
+                  title: 'الأكثر شعبية',
+                  groupValue: c.sort,
+                  value: ProductSort.popular,
+                  onChanged: (v) => setState(() => localSort = v),
+                ),
+                SortOptionTile(
+                  title: 'الجديد أولاً',
+                  groupValue: c.sort,
+                  value: ProductSort.newest,
+                  onChanged: (v) => setState(() => localSort = v),
+                ),
+                SortOptionTile(
+                  title: 'العروض أولاً',
+                  groupValue: c.sort,
+                  value: ProductSort.offersFirst,
+                  onChanged: (v) => setState(() => localSort = v),
+                ),
+                SortOptionTile(
+                  title: 'السعر الأعلى إلى الأدنى',
+                  groupValue: c.sort,
+                  value: ProductSort.priceHighLow,
+                  onChanged: (v) => setState(() => localSort = v),
+                ),
+                SortOptionTile(
+                  title: 'السعر الأدنى إلى الأعلى',
+                  groupValue: c.sort,
+                  value: ProductSort.priceLowHigh,
+                  onChanged: (v) => setState(() => localSort = v),
+                ),
+
+                const SizedBox(height: 16),
+
+                // زر التطبيق (بنفسجي كبير بعرض كامل)
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ManagerColors.color,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'تطبيق',
+                      style: getBoldTextStyle(
+                        fontSize: ManagerFontSize.s16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+}
+class _SubTabsBar extends StatelessWidget {
+  const _SubTabsBar({
+    required this.tabs,
+    required this.selectedIndex,
+    required this.onSelect,
+  });
+
+  final List<String> tabs;
+  final int selectedIndex;
+  final ValueChanged<int> onSelect;
+
   @override
-  void dispose() {
-    disposeCategoryProducts();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 46,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        scrollDirection: Axis.horizontal,
+        itemCount: tabs.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 20),
+        itemBuilder: (_, i) {
+          final selected = i == selectedIndex;
+          return InkWell(
+            onTap: () => onSelect(i),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  tabs[i],
+                  style: getBoldTextStyle(
+                    fontSize: 14,
+                    color: selected ? ManagerColors.color : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: 2.2,
+                  width: selected ? 78 : 0,
+                  color: selected ? ManagerColors.color : Colors.transparent,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
+
+/// شريط الماركات الأفقي — بدون Overflow
+// شريط الماركات — خالٍ من الـ overflow
+class _BrandsStrip extends StatelessWidget {
+  const _BrandsStrip({
+    required this.brands,
+    required this.selectedId,
+    required this.onTap,
+    this.itemWidth = 110,
+    this.cardHeight = 56,
+    this.popAmount = 12,
+    this.logoHeight = 18,
+    this.gap = 10,
+    this.radius = 16,
+  });
+
+  final List<BrandChipModel> brands;
+  final String? selectedId;
+  final ValueChanged<String> onTap;
+
+  final double itemWidth;
+  final double cardHeight;
+  final double popAmount;
+  final double logoHeight;
+  final double gap;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    // الارتفاع الكلي للحاوية: طلوع الصورة + الكرت + مسافة + الشعار
+    final listHeight = popAmount + cardHeight + gap + logoHeight;
+
+    return SizedBox(
+      height: listHeight, // مهم جداً
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        scrollDirection: Axis.horizontal,
+        itemCount: brands.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, i) {
+          final b = brands[i];
+          final selected = b.id == selectedId;
+
+          return SizedBox(
+            width: itemWidth,
+            height: listHeight,
+            child: _BrandTile(
+              productImage: b.productImage,
+              brandName: b.name,
+              brandLogo: b.logo,
+              selected: selected,
+              onTap: () => onTap(b.id),
+              radius: radius,
+              cardHeight: cardHeight,
+              popAmount: popAmount,
+              logoHeight: logoHeight,
+              gap: gap,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _BrandTile extends StatelessWidget {
+  const _BrandTile({
+    required this.productImage,
+    required this.brandName,
+    this.brandLogo,
+    required this.onTap,
+    required this.selected,
+    this.radius = 16,
+    this.cardHeight = 56,
+    this.popAmount = 12,
+    this.logoHeight = 44,
+    this.gap = 10,
+  });
+
+  final String productImage; // استخدم asset أو network حسب مصدرك
+  final String? brandLogo;
+  final String brandName;
+  final VoidCallback onTap;
+  final bool selected;
+
+  final double radius;
+  final double cardHeight;
+  final double popAmount;
+  final double logoHeight;
+  final double gap;
+
+  @override
+  Widget build(BuildContext context) {
+    // نفس الارتفاع الكلي للحاوية
+    final totalHeight = popAmount + cardHeight + gap + logoHeight;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(radius),
+      child: SizedBox(
+        height: totalHeight,
+        child: Container(
+          child:
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // الكرت الداكن
+              Positioned(
+                top: popAmount,
+                left: 0,
+                right: 0,
+                height: cardHeight,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3A424A),
+                    borderRadius: BorderRadius.circular(radius),
+                    boxShadow: selected
+                        ? [BoxShadow(color: const Color(0xFF7B61FF).withOpacity(.25), blurRadius: 8)]
+                        : const [],
+                  ),
+                ),
+              ),
+
+              // صورة المنتج طالعة لفوق
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: cardHeight, // تكفي، لأن الحاوية نفسها فيها مساحة الطلوع
+                child: Center(
+                  // لو من الأصول:
+                  // Image.asset(productImage, height: cardHeight, fit: BoxFit.contain),
+                  // ولو من الشبكة:
+                  child: Image.asset(productImage, height: 44,width: 26.95,),
+                ),
+              ),
+
+              Positioned(
+                bottom: 10,
+                left: 0,
+                right: 0,
+                height: logoHeight,
+                child:
+                Center(
+                  child: brandLogo != null && brandLogo!.isNotEmpty
+                  // Image.asset(brandLogo!, height: logoHeight, fit: BoxFit.contain)
+                      ? Image.asset(brandLogo!, height: logoHeight, fit: BoxFit.contain)
+                      : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      brandName,
+                      style: getBoldTextStyle(fontSize: 12, color: Colors.black87)
+                          .copyWith(height: 1.0), // يمنع تمدد الارتفاع
+                      maxLines: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductsGridOrEmpty extends StatelessWidget {
+  const _ProductsGridOrEmpty({required this.controller});
+  final CategoryProductsController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = controller.filteredProducts();
+    if (items.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(ManagerImages.product, ),
+            const SizedBox(height: 8),
+            Text('لا يوجد منتجات متاحة', style: getBoldTextStyle(fontSize: 14, color: Colors.black54)),
+          ],
+        ),
+      );
+    }
+    return GridView.builder(
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: .60,
+      ),
+      itemBuilder: (context, index) => productItem(model: items[index]),
+    );
+  }
+}
+

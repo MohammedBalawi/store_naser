@@ -15,7 +15,11 @@ class ManagerStrings {
 
   static String get sendNotification => tr('sendNotification');
 
+  static String get popularSearches => tr('popularSearches');
+
   static String get minute => tr('minute');
+
+  static String get popular_brands => tr('popular_brands');
 
   static String get day => tr('day');
 
@@ -240,6 +244,8 @@ class ManagerStrings {
 
   static String get home => tr('home');
 
+  static String get reels => tr('reels');
+
   static String get notifications => tr('notifications');
 
   static String get emptyNotifications => tr('emptyNotifications');
@@ -263,6 +269,8 @@ class ManagerStrings {
   static String get homeTitle => tr('homeTitle');
 
   static String get favorite => tr('favorite');
+
+  static String get mY_BAG => tr('mY_BAG');
 
   static String get viewAll => tr('viewAll');
 

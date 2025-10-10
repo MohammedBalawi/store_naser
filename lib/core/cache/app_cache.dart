@@ -1,7 +1,4 @@
 import 'package:app_mobile/features/product_details/domain/model/product_rate_model.dart';
-import '../../features/addressess/domain/model/address_area_id_model.dart';
-import '../../features/addressess/domain/model/address_gov_id_model.dart';
-import '../../features/addressess/domain/model/address_model.dart';
 
 /// A class defined for cache data that's used and when close app deleted
 class CacheData {
@@ -25,18 +22,6 @@ class CacheData {
 
 
 
-  static AddressModel addressModel = AddressModel(
-    isDefault: true,
-    id: 0,
-    type: '',
-    street: '',
-    postalCode: '',
-    lat: '',
-    lang: '',
-    mobile: '',
-    areaId: AddressAreaIdModel(id: 0, name: ""),
-    govId: AddressGovIdModel(id: 0, name: ""),
-  );
 
   static ProductRateModel productRateModel = ProductRateModel(
     id: 0,
@@ -91,6 +76,9 @@ class CacheData {
   String getCategoryId() => categoryId;
   String getCategoryName() => categoryName;
 
+  String setCategoryId(String value) => categoryId = value;
+  String setCategoryName(String value) => categoryName = value;
+
   void setOrderId(String value) => orderId = value;
   String getOrderId() => orderId;
 
@@ -104,11 +92,7 @@ class CacheData {
   String getPhone() => phone;
 
 
-  void setAddressModel({required AddressModel model}) {
-    addressModel = model;
-  }
 
-  AddressModel getAddressModel() => addressModel;
 
   void setProductRate({required ProductRateModel model}) {
     productRateModel = model;

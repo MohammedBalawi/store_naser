@@ -8,9 +8,11 @@ import '../resources/manager_radius.dart';
 import '../resources/manager_width.dart';
 
 Widget textField(
-    {required String hintText,
+    {
+      required String hintText,
     bool? obSecure,
     bool? isInt,
+        bool isSearch = false,
     required TextEditingController controller,
     validator,
     Widget? suffixIcon,
@@ -42,10 +44,10 @@ Widget textField(
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(
-          radius ?? ManagerRadius.r6,
+          radius ?? ManagerRadius.r4,
         ),
         borderSide: const BorderSide(
-          color: ManagerColors.grey,
+          color: ManagerColors.gray_light,
         ),
       ),
       focusedBorder: OutlineInputBorder(
@@ -53,7 +55,7 @@ Widget textField(
           radius ?? ManagerRadius.r10,
         ),
         borderSide: const BorderSide(
-          color: ManagerColors.grey,
+          color: ManagerColors.color,
         ),
       ),
       errorBorder: OutlineInputBorder(
@@ -61,7 +63,7 @@ Widget textField(
           radius ?? ManagerRadius.r6,
         ),
         borderSide: const BorderSide(
-          color: ManagerColors.grey,
+          color: ManagerColors.color,
         ),
       ),
       focusedErrorBorder: OutlineInputBorder(
@@ -69,7 +71,7 @@ Widget textField(
           radius ?? ManagerRadius.r6,
         ),
         borderSide: const BorderSide(
-          color: ManagerColors.grey,
+          color: ManagerColors.color,
         ),
       ),
       filled: true,
@@ -79,7 +81,7 @@ Widget textField(
       hintText: hintText,
       hintStyle: getRegularTextStyle(
         fontSize: ManagerFontSize.s16,
-        color: ManagerColors.grey,
+        color:isSearch? ManagerColors.black: ManagerColors.grey,
       ),
     ),
   );

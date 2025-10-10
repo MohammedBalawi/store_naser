@@ -14,10 +14,6 @@ import 'package:retrofit/retrofit.dart';
 import '../../constants/env/env_constants.dart';
 import '../../constants/request_constants/request_constants.dart';
 import '../../constants/request_constants/request_constants_endpoints.dart';
-import '../../features/addressess/data/response/add_address_response.dart';
-import '../../features/addressess/data/response/addresses_response.dart';
-import '../../features/addressess/data/response/delete_address_response.dart';
-import '../../features/addressess/data/response/edit_address_response.dart';
 import '../../features/auth/data/response/login_response.dart';
 import '../../features/auth/data/response/logout_response.dart';
 import '../../features/auth/data/response/register_response.dart';
@@ -108,43 +104,13 @@ abstract class AppService {
     @Field(RequestConstants.id) id,
   );
 
-  @GET(RequestConstantsEndpoints.addresses)
-  Future<AddressesResponse> addresses();
 
   @GET(RequestConstantsEndpoints.terms)
   Future<TermsResponse> terms();
 
-  @POST(RequestConstantsEndpoints.addAddress)
-  Future<AddAddressResponse> addAddress(
-    @Field(RequestConstants.title) String type,
-    @Field(RequestConstants.areaId) String city,
-    @Field(RequestConstants.govId) String state,
-    @Field(RequestConstants.street) String street,
-    @Field(RequestConstants.zipCode) String postalCode,
-    @Field(RequestConstants.isDefault) int useDefault,
-    @Field(RequestConstants.mobile) String mobile,
-    @Field(RequestConstants.lat) String lat,
-    @Field(RequestConstants.lang) String lang,
-  );
 
-  @POST(RequestConstantsEndpoints.editAddress)
-  Future<EditAddressResponse> editAddress(
-    @Field(RequestConstants.id) int id,
-    @Field(RequestConstants.title) String type,
-    @Field(RequestConstants.areaId) String city,
-    @Field(RequestConstants.govId) String state,
-    @Field(RequestConstants.street) String street,
-    @Field(RequestConstants.zipCode) String postalCode,
-    @Field(RequestConstants.isDefault) int useDefault,
-    @Field(RequestConstants.mobile) String mobile,
-    @Field(RequestConstants.lat) String lat,
-    @Field(RequestConstants.lang) String lang,
-  );
 
-  @POST(RequestConstantsEndpoints.deleteAddress)
-  Future<DeleteAddressResponse> deleteAddress(
-    @Field(RequestConstants.id) int id,
-  );
+
 
   @POST(RequestConstantsEndpoints.acceptTerms)
   Future<AcceptTermsResponse> acceptTerms();

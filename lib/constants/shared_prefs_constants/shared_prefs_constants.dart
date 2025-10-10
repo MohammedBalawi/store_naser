@@ -22,4 +22,6 @@ class SharedPrefsConstants {
   static const String twoFactorAuth = "twoFactorAuth";
   static const String cart = "cart";
   static const String searches = "searches";
+
+  static const String countryCode = "countryCode";
 }

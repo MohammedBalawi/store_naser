@@ -1,183 +1,189 @@
+// lib/features/addressess/presentation/view/addresses_view.dart
 import 'package:flutter/material.dart';
-import 'package:app_mobile/core/resources/manager_styles.dart';
-import 'package:app_mobile/core/widgets/main_app_bar.dart';
-import 'package:app_mobile/features/addressess/domain/di/addresses_di.dart';
-import 'package:app_mobile/features/addressess/presentation/controller/addresses_controller.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/resources/manager_colors.dart';
-import '../../../../core/resources/manager_font_size.dart';
-import '../../../../core/resources/manager_height.dart';
-import '../../../../core/resources/manager_icons.dart';
-import '../../../../core/resources/manager_radius.dart';
-import '../../../../core/resources/manager_strings.dart';
-import '../../../../core/resources/manager_width.dart';
-import '../../domain/model/address_model.dart';
-import '../controller/edit_address_controller.dart';
-import 'edit_address_view.dart';
 
-class AddressesView extends StatefulWidget {
+import '../../../../core/resources/manager_colors.dart';
+import '../../../../core/resources/manager_images.dart';
+import '../../../../core/resources/manager_styles.dart';
+import '../../domain/model/address.dart';
+import '../controller/addresses_controller.dart';
+import '../controller/add_address_controller.dart';
+import '../widget/address_card.dart';
+import '../widget/confirm_dialog.dart';
+import 'add_address_view.dart';
+
+class AddressesView extends GetView<AddressesController> {
   const AddressesView({super.key});
 
-  @override
-  State<AddressesView> createState() => _AddressesViewState();
-}
-
-class _AddressesViewState extends State<AddressesView> {
-  final SupabaseClient supabase = Supabase.instance.client;
-  final AddressesController controller = Get.find<AddressesController>();
-
-  Future<void> fetchAddresses() async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) return;
-
-    final response = await Supabase.instance.client
-        .from('addresses')
-        .select()
-        .eq('user_id', user.id);
-
-    controller.addresses.assignAll(
-      response.map((json) => AddressModel.fromJson(json)).toList(),
+  Future<void> _gotoAdd() async {
+    // الانتقال لصفحة إضافة عنوان مع Bindings نظيفة
+    final result = await Get.to<Address?>(
+          () =>  AddAddressView(),
+      binding: BindingsBuilder(
+            () => Get.lazyPut<AddAddressController>(() => AddAddressController()),
+      ),
     );
 
-    setState(() {});
-  }
-
-
-
-
-
-  @override
-  void initState() {
-    super.initState();
-    fetchAddresses();
-    if (!Get.isRegistered<AddressesController>()) {
-      Get.put(AddressesController());
-  }
+    if (result != null) {
+      controller.add(result);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: mainAppBar(
-        title: ManagerStrings.address,
-      ),
-      backgroundColor: ManagerColors.background,
-      body: ListView(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(
-              ManagerHeight.h16,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  ManagerStrings.address,
-                  style: getBoldTextStyle(
-                    fontSize: ManagerFontSize.s18,
-                    color: ManagerColors.primaryColor,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    controller.navigateToAddAddress();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        ManagerRadius.r12,
-                      ),
-                      border: Border.all(
-                        color: ManagerColors.primaryColor,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ManagerHeight.h10,
-                        vertical: ManagerHeight.h6,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            ManagerIcons.addAddress,
-                            color: ManagerColors.primaryColor,
-                          ),
-                          Text(
-                            ManagerStrings.addAddress,
-                            style: getRegularTextStyle(
-                              fontSize: ManagerFontSize.s16,
-                              color: ManagerColors.primaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ...controller.addresses.map((address) {
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: ManagerWidth.w16,
-                vertical: ManagerHeight.h12,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: ManagerColors.background,
+        appBar: AppBar(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () => Get.back(),
+                child: SvgPicture.asset(ManagerImages.arrows),
               ),
-              child:
-                  GestureDetector(
-                    onTap: () async {
-                      final editController = Get.put(EditAddressController());
-                      editController.model = address;
-                      editController.fetchModel();
+              Text(
+                'عناويني',
+                style: getBoldTextStyle(color: Colors.black, fontSize: 20),
+              ),
+              const SizedBox(width: 42),
+            ],
+          ),
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+          ),
+          automaticallyImplyLeading: false,
+          leadingWidth: 0,
+        ),
 
-                      await Get.to(() => const EditAddressView(), arguments: address);
+        body: Obx(() {
+          final items = controller.items;
 
-                      fetchAddresses();
-                    },
-
-
-                    child: Container(
-                  padding: EdgeInsets.all(ManagerHeight.h16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(ManagerRadius.r12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
+          // الحالة الفارغة
+          if (items.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  SvgPicture.asset(ManagerImages.weui_location),
+                    const SizedBox(height: 22),
+                    Text(
+                      'لا يوجد عناوين',
+                      style:
+                      getMediumTextStyle(color: Colors.black, fontSize: 16),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'إضغط على "إضافة عنوان" لإضافة عنوان التسليم',
+                      textAlign: TextAlign.center,
+                      style: getRegularTextStyle(
+                        fontSize: 12,
+                        color: ManagerColors.bongrey,
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(' ${ManagerStrings.addressType}: ${address.type}', style: getBoldTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.primaryColor)),
-                      Text('${ManagerStrings.city}: ${address.city}', style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.primaryColor)),
-                      Text('${ManagerStrings.governorate}: ${address.state}', style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.primaryColor)),
-                      Text('${ManagerStrings.street}: ${address.street}', style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.primaryColor)),
-                      Text('${ManagerStrings.postalCode}: ${address.postalCode}', style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.primaryColor)),
-                      if (address.isDefault == true)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(ManagerStrings.defaultAddress, style: getBoldTextStyle(fontSize: ManagerFontSize.s14, color: Colors.green)),
-                        )
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 26),
+                    SizedBox(
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: _gotoAdd,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ManagerColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding:
+                          const EdgeInsets.symmetric(horizontal: 24),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          'إضافة عنوان',
+                          style: getBoldTextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
-          }).toList(),
-        ],
+          }
+
+          // القائمة
+          return ListView(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            children: [
+              // إضافة عنوان جديد
+              Container(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    TextButton.icon(
+                      onPressed: _gotoAdd,
+                      icon: const Icon(Icons.add, color: Colors.black),
+                      label: Text(
+                        'إضافة عنوان جديد',
+                        style: getBoldTextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // بطاقات العناوين
+              ...items.asMap().entries.map((entry) {
+                final index = entry.key;
+                final a = entry.value;
+
+                return AddressCard(
+                  address: a,
+                  highlight: index == 0, // الأولى بمحيط بنفسجي
+                  onEdit: () async {
+                    final edited = await Get.to<Address?>(
+                          () =>  AddAddressView(),
+                      binding: BindingsBuilder(
+                            () => Get.lazyPut<AddAddressController>(
+                              () => AddAddressController(),
+                        ),
+                      ),
+                      arguments: {'address': a},
+                    );
+                    if (edited != null) controller.updateAddress(edited);
+                  },
+                  onDelete: () async {
+                    final ok = await showConfirmDialog(
+                      context: context,
+                      message: 'هل أنت متأكد أنك تريد\nحذف عنوانك؟',
+                      positive: 'حذف',
+                      negative: 'إلغاء',
+                    );
+                    if (ok == true) controller.remove(a.id);
+                  },
+                );
+              }),
+            ],
+          );
+        }),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    disposeAddresses();
-    super.dispose();
   }
 }

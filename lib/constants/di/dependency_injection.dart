@@ -1,5 +1,6 @@
 // Core imports
 import 'package:app_mobile/features/auth/data/repository/login_repository.dart';
+import 'package:app_mobile/features/auth/presentation/controller/login_email_controller.dart';
 import 'package:app_mobile/features/auth/presentation/controller/register_controller.dart';
 import 'package:app_mobile/features/categories/domain/di/categories_di.dart';
 import 'package:app_mobile/features/notifications/data/data_source/notifications_remote_data_source.dart';
@@ -19,6 +20,7 @@ import 'package:app_mobile/features/reset_password/data/repoitory_impl/reset_pas
 import 'package:app_mobile/features/reset_password/domain/repositroy/reset_password_repositroy.dart';
 import 'package:app_mobile/features/reset_password/domain/usecase/reset_password_use_case.dart';
 import 'package:app_mobile/features/search/presentation/controller/search_controller.dart';
+import 'package:app_mobile/features/wallet/domain/repo/wallet_repo.dart' hide IWalletRepo;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +41,17 @@ import '../../core/network/dio_factory.dart';
 import '../../core/notifications/notification_helper.dart';
 import '../../core/storage/hive/hive_session_box.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
+import '../../features/about/presentation/controller/about_controller.dart';
+import '../../features/account_edit/presentation/controller/account_edit_controller.dart';
+import '../../features/account_edit/presentation/controller/birthdate_controller.dart';
+import '../../features/account_edit/presentation/controller/change_phone_controller.dart';
+import '../../features/account_edit/presentation/controller/edit_email_controller.dart';
+import '../../features/account_edit/presentation/controller/edit_name_controller.dart';
+import '../../features/account_edit/presentation/controller/gender_controller.dart';
+import '../../features/account_edit/presentation/controller/height_controller.dart';
+import '../../features/account_edit/presentation/controller/phone_otp_controller.dart';
+import '../../features/account_edit/presentation/controller/skin_tone_controller.dart';
+import '../../features/account_edit/presentation/controller/weight_controller.dart';
 import '../../features/auth/data/data_source/login_data_source.dart';
 import '../../features/auth/data/data_source/remote_data_source.dart';
 import '../../features/auth/data/repository/register_repository_impl.dart';
@@ -46,16 +59,22 @@ import '../../features/auth/domain/repository/register_repository.dart';
 import '../../features/auth/domain/usecase/login_usecase.dart';
 import '../../features/auth/domain/usecase/register_usecase.dart';
 import '../../features/auth/presentation/controller/login_controller.dart';
+import '../../features/auth/presentation/controller/signup_controller.dart';
 import '../../features/favorite/domain/di/favorite_di.dart';
 import '../../features/forget_password/data/data_souces/remote_data_source.dart';
 import '../../features/forget_password/data/repoitory_impl/forget_password_repository_impl.dart';
 import '../../features/forget_password/domain/repositroy/forget_password_repositroy.dart';
 import '../../features/forget_password/domain/usecase/forget_password_usecase.dart';
 import '../../features/forget_password/presentation/controller/forget_pass_controller.dart';
+import '../../features/help/presentation/controller/help_controller.dart';
 import '../../features/home/presentation/controller/home_controller.dart';
 import '../../features/outboarding/presentation/controller/out_boarding_controller.dart';
 import '../../features/reset_password/presentation/controller/reset_password_controller.dart';
 import '../../features/splash/presentation/controller/splash_controller.dart';
+import '../../features/support/data/repo/support_repo_impl.dart';
+import '../../features/support/presentation/controller/support_controller.dart';
+import '../../features/support/presentation/controller/tickets_controller.dart';
+import '../../features/wallet/presentation/controller/wallet_controller.dart';
 
 
 final getIt = GetIt.instance;
@@ -383,6 +402,130 @@ initHome() {
 finishHome() {
   Get.delete<HomeController>();
 }
+initSignUp() {
+  Get.put<SignUpController>(SignUpController());
+}
+
+finishSignUp() {
+  Get.delete<SignUpController>();
+}
+initSignIn() {
+  Get.put<LoginEmailController>(LoginEmailController());
+}
+
+finishSignIn() {
+  Get.delete<LoginEmailController>();
+}
+initAccountEdit() {
+  Get.put<AccountEditController>(AccountEditController());
+}
+
+finishAccountEdit() {
+  Get.delete<AccountEditController>();
+}
+initEditName() {
+  Get.put<EditNameController>(EditNameController());
+}
+
+finishEditName() {
+  Get.delete<EditNameController>();
+}
+initEditEmail() {
+  Get.put<EditEmailController>(EditEmailController());
+}
+
+finishEditEmail() {
+  Get.delete<EditEmailController>();
+}
+initPhoneOtp() {
+  Get.put<PhoneOtpController>(PhoneOtpController());
+}
+
+finishPhoneOtp() {
+  Get.delete<PhoneOtpController>();
+}
+initChangePhone() {
+  Get.put<ChangePhoneController>(ChangePhoneController());
+}
+
+finishPChangePhone() {
+  Get.delete<ChangePhoneController>();
+}
+initGender() {
+  Get.put<GenderController>(GenderController());
+}
+
+finishGender() {
+  Get.delete<GenderController>();
+}
+initBirthdate() {
+  Get.put<BirthdateController>(BirthdateController());
+}
+
+finishBirthdate() {
+  Get.delete<BirthdateController>();
+}
+initWeight() {
+  Get.put<WeightController>(WeightController());
+}
+
+finishWeight() {
+  Get.delete<WeightController>();
+}
+initHeight() {
+  Get.put<HeightController>(HeightController());
+}
+
+finishHeight() {
+  Get.delete<HeightController>();
+}
+initSkinTone() {
+  Get.put<SkinToneController>(SkinToneController());
+}
+
+finishSkinTone() {
+  Get.delete<SkinToneController>();
+}
+initWallet() {
+  Get.put<WalletController>(WalletController());
+}
+
+finishWallet() {
+  Get.delete<WalletController>();
+}
+initHelp() {
+  Get.put<HelpController>(HelpController());
+}
+
+finishHelp() {
+  Get.delete<HelpController>();
+}
+initSupport() {
+  Get.put<SupportController>(SupportController());
+}
+
+finishSupport() {
+  Get.delete<SupportController>();
+}
+
+initTickets() {
+  final repo = SupportRepoImpl();           // أو مرر نسخة الريبو الحقيقي (Dio/Supabase)
+  Get.put<TicketsController>(TicketsController(repo));
+}
+
+finishTickets() {
+  Get.delete<TicketsController>();
+}
+initAbout() {
+  Get.put<AboutController>(AboutController());
+}
+
+finishAbout() {
+  Get.delete<AboutController>();
+}
+
+
+
 
 initOptions() {
   Get.put<OptionsController>(OptionsController());

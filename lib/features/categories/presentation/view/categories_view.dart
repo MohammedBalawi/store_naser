@@ -31,79 +31,15 @@ class CategoriesView extends StatelessWidget {
       child: GetBuilder<CategoriesController>(
         builder: (controller) {
           return Scaffold(
-            backgroundColor: ManagerColors.white,
+            backgroundColor: ManagerColors.background,
             extendBody: true,
-            appBar: AppBar(
-              centerTitle: true,
-              shadowColor: ManagerColors.grey,
-              elevation: 0.2,
-              backgroundColor: ManagerColors.white,
-              title: Text(
-                ManagerStrings.wishlist,
-                style: getBoldTextStyle(
-                  fontSize: ManagerFontSize.s18,
-                  color: ManagerColors.primaryColor,
-                ),
-              ),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        FutureBuilder<bool>(
-                          future: Get.find<HomeController>().checkIfAdmin(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const SizedBox();
-                            }
-                            if (snapshot.hasData && snapshot.data == true) {
-                              return IconButton(
-                                icon: const Icon(Icons.add, color: ManagerColors.primaryColor),
-                                onPressed: () => AddCategoryDialog(context).show(),
-                              );
-                            }
-                            return const SizedBox();
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                GetBuilder<HomeController>(
-                  builder: (controller) {
-                    return controller.isLoadingCategories
-                        ? const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Center(
-                        child: SizedBox(
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(
-                            color: ManagerColors.primaryColor,
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                ManagerColors.primaryColor),
-                          ),
-                        ),
-                      ),
-                    )
-                        : IconButton(
-                      icon: const Icon(Icons.refresh,
-                          color: ManagerColors.primaryColor),
-                      tooltip:ManagerStrings.update ,
-                      onPressed: () {
-                        controller.fetchCategoriess();
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
 
 
             body:
-            BrandTabsCard(),
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0,right: 5,top: 50),
+              child: BrandTabsCard(),
+            ),
           );
         },
       ),

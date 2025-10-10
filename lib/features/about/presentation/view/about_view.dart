@@ -24,7 +24,7 @@ class AboutView extends GetView<AboutController> {
             GestureDetector(
                 onTap: () => Get.back(),
                 child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('الدعم',
+            Text('حول التطبيق',
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             SizedBox(width: 30,),
           ],
@@ -48,13 +48,15 @@ class AboutView extends GetView<AboutController> {
             child: Padding(
               padding: const EdgeInsets.only(top:10.0,bottom: 10),
               child: Column(children: [
-                _RowTile(title: 'الدعم الفني', rightIcon: ManagerImages.plusCirc, onTap: controller.toTechSupport),
+                _RowTile(title: 'الموقع إلكتروني', rightIcon: ManagerImages.www, onTap: controller.toTechSupport),
                  Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 25,indent: 25,),
-                _RowTile(title: 'اتصل بخدمة العملاء', rightIcon: ManagerImages.chatCirc, onTap: controller.callCustomerService),
+                _RowTile(title: 'انستقرام', rightIcon: ManagerImages.instagram, onTap: controller.callCustomerService),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'واتساب', subtitle: controller.hotline, rightIcon: ManagerImages.basil_whatsapp, onTap: controller.openWhatsApp),
+                _RowTile(title: 'تيك توك', rightIcon: ManagerImages.tiktok),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'البريد الإلكتروني', rightIcon: ManagerImages.emailCirc, onTap: controller.mailUs),
+                _RowTile(title: 'سنابشات', rightIcon: ManagerImages.social, onTap: controller.mailUs),
+                const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
+                _RowTile(title: 'قناة التلجرام', rightIcon: ManagerImages.telegram_, onTap: controller.mailUs),
               ]),
             ),
           ),

@@ -14,9 +14,9 @@ PreferredSizeWidget mainAppBar({
     backgroundColor: ManagerColors.white,
     title: Text(
       title,
-      style: getMediumTextStyle(
-        fontSize: ManagerFontSize.s18,
-        color: ManagerColors.primaryColor,
+      style: getBoldTextStyle(
+        fontSize: ManagerFontSize.s20,
+        color: ManagerColors.black,
       ),
     ),
     actions: actions,

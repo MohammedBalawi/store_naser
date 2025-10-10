@@ -6,6 +6,7 @@ import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NoSearchView extends StatelessWidget {
   const NoSearchView({super.key});
@@ -19,7 +20,7 @@ class NoSearchView extends StatelessWidget {
         SizedBox(
           height: ManagerHeight.h60,
         ),
-        Image.asset(
+        SvgPicture.asset(
           ManagerImages.noSearch,
           width: ManagerWidth.w60,
         ),

@@ -10,7 +10,7 @@ import '../../../../core/resources/manager_height.dart';
 import '../../../../core/resources/manager_width.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../core/validator/validator.dart';
-import '../../../verification/presentation/view/widget/code_verification.dart';
+import '../../../verification/presentation/widget/code_verification.dart';
 import '../controller/otp_register_controller.dart';
 
 class OtpRegisterView extends StatelessWidget {

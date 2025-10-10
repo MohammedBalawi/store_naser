@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../../../../core/routes/routes.dart';
 
-class SupportController extends GetxController {
+class AboutController extends GetxController {
   final String hotline = '+966 588986285';
   final String email = 'support@example.com';
 
@@ -10,7 +10,6 @@ class SupportController extends GetxController {
         Routes.supportTech
     );
   }
-      // شاشة الدعم الفني
   void callCustomerService() {
     // TODO: launchUrl('tel:$hotline');
   }

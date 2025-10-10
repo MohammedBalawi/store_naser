@@ -6,6 +6,8 @@
     <string>We use local network to enable communication and debugging tools</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>GMSApiKey</key>
+    <string>AIzaSyAtDe3cZriNYlOe1KNNMRviWEbbiVfAj0c</string>
 	<key>CFBundleDisplayName</key>
 	<string>App Mobile</string>
 	<key>CFBundleExecutable</key>
@@ -22,6 +24,10 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>نحتاج للوصول إلى موقعك لعرض العنوان على الخريطة.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>نحتاج للوصول إلى موقعك لعرض العنوان على الخريطة.</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>

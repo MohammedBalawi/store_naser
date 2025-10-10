@@ -3,7 +3,7 @@ class Address {
   final String id;
   final String fullName;
   final String phone;
-  final String prettyAddress; // نص العنوان المختصر لعرضه
+  final String prettyAddress;
   final bool isPrimary;
 
   Address({

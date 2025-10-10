@@ -8,6 +8,8 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../constants/di/dependency_injection.dart';
 import '../../../../core/network/app_api.dart';
+import '../../../account_edit/presentation/controller/edit_password_controller.dart';
+import '../../../change_language/presentation/controller/change_language_controller.dart';
 import '../../presentation/controller/product_details_controller.dart';
 import '../use_case/add_rate_use_case.dart';
 
@@ -17,6 +19,20 @@ void initProductDetails() {
 
 void disposeProductDetails() {
   Get.delete<ProductDetailsController>();
+}
+void initEditPassword() {
+  Get.put(PasswordController());
+}
+
+void disposeEditPassword() {
+  Get.delete<PasswordController>();
+}
+void initLanguageCountry() {
+  Get.put(CountryLanguageController());
+}
+
+void disposeLanguageCountry() {
+  Get.delete<CountryLanguageController>();
 }
 
 void initAddRate() {

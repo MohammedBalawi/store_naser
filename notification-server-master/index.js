@@ -21,11 +21,9 @@ const auth = new google.auth.GoogleAuth({
 const projectId = serviceAccount.project_id;
 const messagingUrl = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
 
-// ✅ استقبال طلب الإشعار من Flutter
 app.post("/send-notification", async (req, res) => {
   const { title, body } = req.body;
 
-  // ✅ التحقق من وجود العنوان والمحتوى
   if (!title || !body) {
     return res.status(400).json({ error: "العنوان والمحتوى مطلوبان" });
   }
@@ -59,16 +57,15 @@ app.post("/send-notification", async (req, res) => {
       },
     });
 
-    console.log("✅ تم إرسال الإشعار:", response.data);
+    console.log(" تم إرسال الإشعار:", response.data);
     res.status(200).json({ success: true, message: "تم إرسال الإشعار بنجاح" });
 
   } catch (error) {
-    console.error("❌ فشل في الإرسال:", error.response?.data || error.message);
+    console.error(" فشل في الإرسال:", error.response?.data || error.message);
     res.status(500).json({ error: "فشل في إرسال الإشعار", details: error.message });
   }
 });
 
-// ✅ تشغيل السيرفر
 app.listen(port, () => {
-  console.log(`🚀 السيرفر يعمل على: http://localhost:${port}`);
+  console.log(` السيرفر يعمل على: http://localhost:${port}`);
 });

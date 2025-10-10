@@ -16,7 +16,7 @@ class TopBanner extends StatelessWidget {
 
       final isError = c.bannerState.value == VoucherBanner.invalid;
       final bg  = isError ? Colors.white : Colors.white;
-      final brd = isError ? Colors.red : Colors.green;
+      final brd = isError ? Colors.red : ManagerColors.greens;
       final icn = isError ? Icons.error_outline : Icons.check_circle;
 
       return Directionality(

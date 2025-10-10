@@ -7,6 +7,7 @@ import '../../../constants/shared_prefs_constants/shared_prefs_constants.dart';
 class AppSettingsPrefs {
   final SharedPreferences _sharedPreferences;
 
+
   clear() {
     _sharedPreferences.clear();
   }
@@ -246,6 +247,14 @@ class AppSettingsPrefs {
       SharedPrefsConstants.cart,
       ids,
     );
+  }
+  Future<void> setCountry(String code) async {
+    await _sharedPreferences.setString(SharedPrefsConstants.countryCode, code);
+  }
+
+  /// رجّع null إذا لسا ما انحفظت دولة
+  String? getCountry() {
+    return _sharedPreferences.getString(SharedPrefsConstants.countryCode);
   }
 
   Future<void> setCartItem(String id) async {

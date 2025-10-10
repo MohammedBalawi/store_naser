@@ -71,7 +71,27 @@ class _FavoriteViewState extends State<FavoriteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: homeAppBar(title: ManagerStrings.favorite,
+      appBar:AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+                onTap: () => Get.back(),
+                child: SvgPicture.asset(ManagerImages.arrows)),
+            Text('المفضلة',
+                style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            SizedBox(width: 30,),
+          ],
+        ),
+        leadingWidth: 0,
+        automaticallyImplyLeading: false,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
       ),
       backgroundColor: ManagerColors.background,
       body: isLoading

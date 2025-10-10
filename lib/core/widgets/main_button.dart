@@ -2,6 +2,7 @@ import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../resources/manager_font_size.dart';
 import '../resources/manager_height.dart';
 import '../resources/manager_radius.dart';
@@ -21,6 +22,7 @@ Widget mainButton({
   bool isLoading = false,
   bool isBold = false,
   bool enabled = true,
+  String? image ,
 }) {
   return Container(
     decoration: shapeDecoration ?? null,
@@ -44,21 +46,30 @@ Widget mainButton({
           ? const CircularProgressIndicator(
         color: ManagerColors.primaryColor,
       )
-          : child ??
-              Text(
-                buttonName.onNull(),
-                style: isBold
-                    ? getBoldTextStyle(
-                        fontSize: ManagerFontSize.s16,
-                        color:
-                            enabled ? ManagerColors.white : ManagerColors.grey,
-                      )
-                    : getRegularTextStyle(
-                        fontSize: ManagerFontSize.s16,
-                        color:
-                            enabled ? ManagerColors.white : ManagerColors.grey,
-                      ),
-              ),
+          : Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              image != null ? SvgPicture.asset(image!) : SizedBox(width: 1,),
+
+              child ??
+                  Text(
+                    buttonName.onNull(),
+                    style: isBold
+                        ? getBoldTextStyle(
+                            fontSize: ManagerFontSize.s16,
+                            color:
+                                enabled ? ManagerColors.white : ManagerColors.grey,
+                          )
+                        : getBoldTextStyle(
+                            fontSize: ManagerFontSize.s16,
+                            color:
+                                enabled ? ManagerColors.white : ManagerColors.grey,
+                          ),
+                  ),
+              // if(image != null)
+                SizedBox(width: 1,),
+            ],
+          ),
     ),
   );
 }

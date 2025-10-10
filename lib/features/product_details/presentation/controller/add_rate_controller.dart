@@ -1,108 +1,107 @@
-import 'package:app_mobile/core/resources/manager_images.dart';
-import 'package:app_mobile/core/storage/local/app_settings_prefs.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/material.dart';
+// lib/features/product_details/presentation/controller/add_rate_controller.dart
+import 'dart:io';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../constants/di/dependency_injection.dart';
-import '../../../../core/cache/app_cache.dart';
-import '../../../../core/service/notifications_service.dart';
-import '../view/add_rate_dialog.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
 
 class AddRateController extends GetxController {
-  TextEditingController title = TextEditingController();
-  TextEditingController comment = TextEditingController();
-  String userName = "";
-  String avatar = "";
-  double rate = 0;
-  bool isLoading = false;
+  // الحقول
+  final title = TextEditingController();
+  final comment = TextEditingController();
 
-  late int productId;
+  /// التقييم الحالي (عدد صحيح 1..5)
+  double rate = 0.0;
 
-  void changeIsLoading({required bool value}) {
-    isLoading = value;
+  /// صور مختارة محليًا (حد أقصى 5)
+  final List<XFile> selectedImages = [];
+  final int maxImages = 5;
+
+  /// اسم المستخدم المؤقت (بدّله ببيانات البروفايل عندك)
+  String userName = 'Guest';
+
+  /// إعادة ضبط النموذج
+  void resetForm() {
+    title.clear();
+    comment.clear();
+    rate = 0.0;
+    selectedImages.clear();
     update();
   }
 
+  /// تغيير قيمة التقييم من الـ RatingBar
+  void changeRate(double v) {
+    rate = v.clamp(0, 5); // double
+    update();
+  }
+
+  /// يظهر نصًا أسفل النجوم مثل الصور (5=رائع، 4=جيد جدًا...)
+  String get ratingLabel {
+    switch (rate) {
+      case 5:
+        return 'رائع';
+      case 4:
+        return 'جيد جدًا';
+      case 3:
+        return 'لقد كان جيدا';
+      case 2:
+        return 'ليس جيدا جدا';
+      case 1:
+        return 'مخيب للآمال';
+      default:
+        return '';
+    }
+  }
+
+  /// فعالية زر الإرسال
   bool checkButtonEnabled() {
-    return title.text.length > 4 && rate >= 1;
+    return rate >= 1 && comment.text.trim().isNotEmpty;
   }
 
-  Future<void> addRate() async {
-    changeIsLoading(value: true);
+  /// اختيار صور متعددة
+  Future<void> pickImages() async {
+    if (selectedImages.length >= maxImages) return;
+    final picker = ImagePicker();
+    final files = await picker.pickMultiImage(
+      imageQuality: 85,
+      maxWidth: 1600,
+      maxHeight: 1600,
+    );
+    if (files == null || files.isEmpty) return;
 
-    final supabase = Supabase.instance.client;
-    final userId = supabase.auth.currentUser?.id;
-
-    if (userId == null) {
-      print(' User not logged in');
-      changeIsLoading(value: false);
-      return;
-    }
-
-    try {
-      await supabase
-          .from('product_rates')
-          .insert({
-        'product_id': CacheData.productId,
-        'user_id': userId,
-        'rate': rate.toInt(),
-        'title': ' العنوان :${title.text}',
-        'comment': ' التفاصيل :${comment.text}',
-        'created_at': DateTime.now().toIso8601String(),
-      });
-
-      print('Rating inserted for product ${CacheData.productId} by user $userId');
-
-      await supabase
-          .from('products')
-          .update({
-        'rate': rate.toInt(),
-      })
-          .eq('id', CacheData.productId);
-
-      print('Product rate updated for product ${CacheData.productId} to rate=${rate.toInt()}');
-
-      changeIsLoading(value: false);
-      Get.back();
-      await addNotification(
-        title: 'تقييم',
-        description: 'شكراً على تقييمك لمنتجنا',
-      );
-
-
-
-      AwesomeDialog(
-        customHeader: Image.asset(
-          ManagerImages.assessAdded,
-        ),
-        context: Get.context!,
-        animType: AnimType.scale,
-        dialogType: DialogType.info,
-        body: addRateDialog(rate: rate),
-      ).show();
-    } catch (error) {
-      changeIsLoading(value: false);
-      print('Error adding rate to product ${CacheData.productId}: $error');
-    }
-  }
-
-
-  void getUser() {
-    AppSettingsPrefs prefs = instance<AppSettingsPrefs>();
-    avatar = prefs.getUserAvatar();
-    userName = prefs.getUserName();
+    final remain = maxImages - selectedImages.length;
+    selectedImages.addAll(files.take(remain));
     update();
   }
 
-  void changeRate(double value) {
-    rate = value;
+  /// حذف صورة من المعاينة
+  void removeImageAt(int index) {
+    if (index < 0 || index >= selectedImages.length) return;
+    selectedImages.removeAt(index);
     update();
   }
 
-  @override
-  void onInit() {
-    getUser();
-    super.onInit();
+  /// بناء مراجعة محلية (لإضافتها مباشرةً إلى القائمة)
+  /// ملاحظة: المفتاح 'photos' هو ما تستخدمه واجهة العرض _ReviewTile
+  Map<String, dynamic> buildLocalReview() {
+    return {
+      'rate': rate.round(),                          // int من 1 إلى 5
+      'username': userName,
+      'title': title.text.trim(),               // اختياري
+      'comment': comment.text.trim(),
+      'created_at': DateTime.now().toIso8601String(),
+      'likes': 1,                               // قيمة ابتدائية
+      'photos': selectedImages.map((x) => x.path).toList(), // مسارات محلية
+    };
+  }
+
+  /// (اختياري) إحصاءات بعدد المراجعات لكل نجمة؛ مفيد لو أردت شارات أرقام بجانب الفلاتر
+  Map<int, int> countsByStar(List<Map<String, dynamic>> reviews) {
+    final Map<int, int> m = {1:0, 2:0, 3:0, 4:0, 5:0};
+    for (final r in reviews) {
+      final v = (r['rate'] ?? 0);
+      final int star = v is int ? v : (v as num).round();
+      if (m.containsKey(star)) m[star] = (m[star] ?? 0) + 1;
+    }
+    return m;
   }
 }

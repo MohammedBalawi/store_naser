@@ -1,8 +1,7 @@
 import 'package:app_mobile/core/resources/manager_strings.dart';
-import 'package:app_mobile/features/addressess/domain/di/addresses_di.dart';
 import 'package:app_mobile/features/addressess/presentation/view/add_address_view.dart';
 import 'package:app_mobile/features/addressess/presentation/view/addresses_view.dart';
-import 'package:app_mobile/features/addressess/presentation/view/edit_address_view.dart';
+import 'package:app_mobile/features/auth/presentation/view/login_email_view.dart';
 import 'package:app_mobile/features/auth/presentation/view/login_view.dart';
 import 'package:app_mobile/features/auth/presentation/view/register_view.dart';
 import 'package:app_mobile/features/cart/domain/di/cart_di.dart';
@@ -33,18 +32,43 @@ import 'package:flutter/material.dart';
 import 'package:app_mobile/features/terms/domain/di/terms_di.dart';
 import 'package:app_mobile/features/terms/presentation/view/terms_view.dart';
 import 'package:app_mobile/features/welcome/presentaion/view/welcome_view.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/bindings_interface.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../../constants/di/dependency_injection.dart';
+import '../../features/about/presentation/view/about_view.dart';
+import '../../features/account_edit/presentation/controller/account_edit_controller.dart';
+import '../../features/account_edit/presentation/controller/edit_name_controller.dart';
+import '../../features/account_edit/presentation/view/account_edit_view.dart';
+import '../../features/account_edit/presentation/view/birthdate_view.dart';
+import '../../features/account_edit/presentation/view/change_phone_view.dart';
+import '../../features/account_edit/presentation/view/edit_email_view.dart';
+import '../../features/account_edit/presentation/view/edit_name_view.dart';
+import '../../features/account_edit/presentation/view/edit_password_view.dart';
+import '../../features/account_edit/presentation/view/gender_view.dart';
+import '../../features/account_edit/presentation/view/height_view.dart';
+import '../../features/account_edit/presentation/view/phone_otp_view.dart';
+import '../../features/account_edit/presentation/view/skin_tone_view.dart';
+import '../../features/account_edit/presentation/view/weight_view.dart';
+import '../../features/auth/presentation/view/signup_view.dart';
 import '../../features/favorite/presentation/view/favorite_view.dart';
+import '../../features/help/presentation/view/help_view.dart';
 import '../../features/home/presentation/view/home_view.dart';
 import '../../features/main/presentation/view/user_management_screen.dart';
 import '../../features/notifications/presentation/view/notifications _view_admin.dart';
 import '../../features/notifications/presentation/view/notifications_view.dart';
 import '../../features/outboarding/presentation/view/screen/out_boarding_view.dart';
 import '../../features/profile/presentation/view/profile_view.dart';
-import '../../features/profile/presentation/view/uploadp_profile_image_view.dart';
+import '../../features/reels/presentation/binding/reels_binding.dart';
+import '../../features/reels/presentation/view/reels_view.dart';
 import '../../features/security/presentation/view/widgets/activity_logs_view.dart';
 import '../../features/splash/presentation/view/splash_view.dart';
+import '../../features/support/presentation/view/open_ticket_view.dart';
+import '../../features/support/presentation/view/support_view.dart';
+import '../../features/support/presentation/view/tech_support_view.dart';
+import '../../features/wallet/presentation/view/wallet_view.dart';
 
 class Routes {
   static const String splashView = '/splash_view';
@@ -87,6 +111,25 @@ class Routes {
   static const String userManagementScreen = '/userManagement';
   static const String favoriteView = '/favoriteView';
   static const String notificationsAdmin = '/notificationsAdmin';
+  static const reels = '/reels';
+  static const signUp = '/signUp';
+  static const login_email = '/login_email';
+  static const accountEdit = '/accountEdit';
+  static const editName = '/editName';
+  static const phoneOtp = '/phoneOtp';
+  static const changePhone = '/changePhone';
+  static const gender = '/gender';
+  static const birthdate = '/birthdate';
+  static const weight = '/weight';
+  static const height = '/height';
+  static const skinTone = '/skinTone';
+  static const wallet = '/wallet';
+  static const changeEmail = '/changeEmail';
+  static const help = '/help';
+  static const support = '/support';
+  static const supportTech = '/supportTech';
+  static const openTicket = '/openTicket';
+  static const about = '/about';
 }
 
 class RouteGenerator {
@@ -143,12 +186,6 @@ class RouteGenerator {
       case Routes.addresses:
         initAddresses();
         return MaterialPageRoute(builder: (_) => const AddressesView(),  );
-      case Routes.addAddress:
-        initAddAddress();
-        return MaterialPageRoute(builder: (_) => const AddAddressView());
-      case Routes.editAddress:
-        initEditAddress();
-        return MaterialPageRoute(builder: (_) => const EditAddressView());
       case Routes.terms:
         initTerms();
         return MaterialPageRoute(builder: (_) => const TermsView());
@@ -159,9 +196,11 @@ class RouteGenerator {
         initCategoryProducts();
         return MaterialPageRoute(builder: (_) => const CategoryProductsView());
       case Routes.changePassword:
-        return MaterialPageRoute(builder: (_) => const ChangePasswordView());
+        initEditPassword();
+        return MaterialPageRoute(builder: (_) => const EditPasswordView());
       case Routes.changeLanguage:
-        return MaterialPageRoute(builder: (_) => const ChangeLanguageView());
+        initLanguageCountry();
+        return MaterialPageRoute(builder: (_) => const ChangeLanguageCountryView());
       case Routes.productDetails:
         initProductDetails();
         return MaterialPageRoute(
@@ -181,15 +220,67 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ActivityLogsTabsView());
       case Routes.home:
         initHome();
-        return MaterialPageRoute(builder: (_) => const HomeView());
+        return MaterialPageRoute(builder: (_) =>  HomeView());
         case Routes.userManagementScreen:
         return MaterialPageRoute(builder: (_) => const UserManagementScreen());
             case Routes.favoriteView:
         return MaterialPageRoute(builder: (_) => const FavoriteView());
       case Routes.editProfile:
         return MaterialPageRoute(builder: (_) => const ProfileView());
-        case Routes.uploadProfileImageView:
-        return MaterialPageRoute(builder: (_) => const UploadProfileImageView());
+        case Routes.signUp:
+          initSignUp();
+        return MaterialPageRoute(builder: (_) => const SignUpView());
+        case Routes.login_email:
+          initSignIn();
+        return MaterialPageRoute(builder: (_) => const LoginEmailView());
+        case Routes.accountEdit:
+          initAccountEdit();
+        return MaterialPageRoute(builder: (_) => const AccountEditView());
+        case Routes.editName:
+          initEditName();
+        return MaterialPageRoute(builder: (_) => const EditNameView());
+        case Routes.changeEmail:
+          initEditEmail();
+        return MaterialPageRoute(builder: (_) => const EditEmailView());
+        case Routes.phoneOtp:
+          initPhoneOtp();
+        return MaterialPageRoute(builder: (_) => const PhoneOtpView());
+        case Routes.changePhone:
+          initChangePhone();
+        return MaterialPageRoute(builder: (_) => const ChangePhoneView());
+        case Routes.gender:
+          initGender();
+        return MaterialPageRoute(builder: (_) => const GenderView());
+        case Routes.birthdate:
+          initBirthdate();
+        return MaterialPageRoute(builder: (_) => const BirthdateView());
+        case Routes.weight:
+          initWeight();
+        return MaterialPageRoute(builder: (_) => const WeightView());
+        case Routes.height:
+          initHeight();
+        return MaterialPageRoute(builder: (_) => const HeightView());
+        case Routes.skinTone:
+          initSkinTone();
+        return MaterialPageRoute(builder: (_) => const SkinToneView());
+        case Routes.wallet:
+          initWallet();
+        return MaterialPageRoute(builder: (_) => const WalletView());
+        case Routes.help:
+          initHelp();
+        return MaterialPageRoute(builder: (_) => const HelpView());
+        case Routes.support:
+          initSupport();
+        return MaterialPageRoute(builder: (_) => const SupportView());
+        case Routes.openTicket:
+          initSupport();
+        return MaterialPageRoute(builder: (_) => const OpenTicketView());
+        case Routes.supportTech:
+          initTickets();
+        return MaterialPageRoute(builder: (_) => const TechSupportView());
+        case Routes.about:
+          initAbout();
+        return MaterialPageRoute(builder: (_) => const AboutView());
       default:
         return unDefinedRoute();
     }
@@ -209,4 +300,27 @@ class RouteGenerator {
       ),
     );
   }
+  final List<GetPage> appPages = [
+    GetPage(
+      name: Routes.reels,
+      page: () => const ReelsView(),
+      binding: ReelsBinding(),
+    ),
+    GetPage(
+      name: Routes.accountEdit,
+      page: () => const AccountEditView(),
+      binding: BindingsBuilder(() {
+        Get.put(AccountEditController());
+      }),
+    ),
+    GetPage(
+      name: Routes.editName,
+      page: () => const EditNameView(),
+      binding: BindingsBuilder(() {
+        Get.put(EditNameController());
+      }),
+    ),
+    // ...
+  ];
+
 }

@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../constants/di/dependency_injection.dart';
 import '../../../../core/network/app_api.dart';
+import '../../../addressess/presentation/controller/addresses_controller.dart';
 import '../../presentation/controller/orders_controller.dart';
 import '../usecase/finished_order_usecase.dart';
 
@@ -24,6 +25,12 @@ initOrderDetails(){
 }
 disposeOrderDetails(){
   Get.delete<OrderDetailsController>();
+}
+initAddresses(){
+  Get.put(AddressesController());
+}
+disposeAddresses(){
+  Get.delete<AddressesController>();
 }
 
 initOrdersRequest() async {

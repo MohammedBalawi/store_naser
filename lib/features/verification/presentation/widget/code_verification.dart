@@ -1,4 +1,5 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -23,7 +24,7 @@ class CodeVerification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color borderColor =
-    hasError ? const Color(0xFFD81B60) : const Color(0xFFE6E6E6);
+    hasError ? ManagerColors.like : ManagerColors.gray_divedr;
 
     return SizedBox(
       width: 62,
@@ -35,7 +36,7 @@ class CodeVerification extends StatelessWidget {
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         cursorColor: ManagerColors.primaryColor,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        style:  getMediumTextStyle(fontSize: 16, color: Colors.black),
         inputFormatters:  [
           FilteringTextInputFormatter.digitsOnly,
           LengthLimitingTextInputFormatter(1),
@@ -52,14 +53,14 @@ class CodeVerification extends StatelessWidget {
           fillColor: Colors.white,
           contentPadding: EdgeInsets.zero,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(0),
             borderSide: BorderSide(color: borderColor, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(0),
             borderSide: BorderSide(
-              color: hasError ? const Color(0xFFD81B60) : ManagerColors.primaryColor,
-              width: 1.2,
+              color: hasError ? ManagerColors.like : ManagerColors.primaryColor,
+              width: 1,
             ),
           ),
         ),
