@@ -1,5 +1,6 @@
 // lib/features/auth/presentation/view/forgot_password_view.dart
 import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -122,7 +123,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                     borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
-              child: Text('إرسال',
+              child: Text(ManagerStrings.send,
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),

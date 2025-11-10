@@ -1,4 +1,3 @@
-// lib/features/addressess/domain/model/address.dart
 class Address {
   final String id;
   final String fullName;

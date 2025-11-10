@@ -102,8 +102,8 @@ class EditNameView extends GetView<EditNameController> {
         child: Obx(() {
           final enabled = controller.canSave.value;
 
-          const activeColor   = ManagerColors.color; // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor   = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,
@@ -111,7 +111,7 @@ class EditNameView extends GetView<EditNameController> {
               onPressed: enabled ? controller.save : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white, // لا تخليه شفاف
+                disabledForegroundColor: Colors.white,
                 backgroundColor: activeColor,
                 disabledBackgroundColor: inactiveColor,
                 shape: RoundedRectangleBorder(

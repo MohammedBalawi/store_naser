@@ -78,7 +78,7 @@ class _AddRateViewState extends State<AddRateView> {
       list = list.where((e) => (e['rate'] ?? 0) >= 3); // إيجابية: 3-5
     } else if (_sentimentTab == 2) {
       list = list.where((e) => (e['rate'] ?? 0) <= 2); // سلبية: 1-2
-    } // else 0 أو null => الكل
+    }
 
     return list.toList();
   }
@@ -108,7 +108,6 @@ class _AddRateViewState extends State<AddRateView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  // ====== صورة المنتج + التقييم ======
                   Container(
                     width: double.infinity,
                     color: ManagerColors.backg,
@@ -169,7 +168,6 @@ class _AddRateViewState extends State<AddRateView> {
                     ),
                   ),
 
-                  // ====== باقي الفورم ======
                   Padding(
                     padding: EdgeInsets.only(
                       left: 16,
@@ -191,7 +189,6 @@ class _AddRateViewState extends State<AddRateView> {
                         ),
                         const SizedBox(height: 10),
 
-                        // ====== الحقل النصي ======
                         TextField(
                           controller: c.comment,
                           maxLines: 5,
@@ -220,7 +217,6 @@ class _AddRateViewState extends State<AddRateView> {
                         ),
                         const SizedBox(height: 8),
 
-                        // ====== زر الإضافة + المعاينة ======
                         Row(
 
                           children: [
@@ -305,7 +301,6 @@ class _AddRateViewState extends State<AddRateView> {
 
                         const SizedBox(height: 18),
 
-                        // ====== زر الإرسال ======
                         SizedBox(
                           width: double.infinity,
                           height: 58,
@@ -388,7 +383,6 @@ class _AddRateViewState extends State<AddRateView> {
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
         children: [
-          // بطاقة المنتج
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -419,7 +413,6 @@ class _AddRateViewState extends State<AddRateView> {
           ),
           const SizedBox(height: 10),
 
-          // شريط المعدل + إضافة تقييم
           Container(
             padding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -467,25 +460,22 @@ class _AddRateViewState extends State<AddRateView> {
           ),
           const SizedBox(height: 10),
 
-          // الفلاتر
           _FiltersBar(
-            tab: _sentimentTab, // صار nullable
+            tab: _sentimentTab,
             onTabChanged: (t) => setState(() {
-              _sentimentTab = t;   // 0 | 1 | 2
-              _starsFilter = null; // مسح النجوم عند اختيار تبويب
+              _sentimentTab = t;
+              _starsFilter = null;
             }),
             stars: _starsFilter,
             onStarsChanged: (s) => setState(() {
-              // لو "الكل" مفعّل، لا نسمح بالنجوم
               if (_sentimentTab == 0) return;
-              _starsFilter = s;     // قد تكون null لإلغاء التحديد
-              _sentimentTab = null; // إلغاء أي تبويب عند اختيار نجمة
+              _starsFilter = s;
+              _sentimentTab = null;
             }),
           ),
 
           const SizedBox(height: 12),
 
-          // القائمة / الحالة الفارغة
           if (_filteredRates.isEmpty)
             _EmptyReviews()
           else
@@ -501,7 +491,6 @@ class _AddRateViewState extends State<AddRateView> {
   }
 }
 
-// ---------------- UI widgets ----------------
 
 class _FiltersBar extends StatelessWidget {
   const _FiltersBar({
@@ -511,9 +500,9 @@ class _FiltersBar extends StatelessWidget {
     required this.onStarsChanged,
   });
 
-  final int? tab; // 0 الكل | 1 الإيجابية | 2 السلبية | null = لا تبويب
+  final int? tab;
   final ValueChanged<int> onTabChanged;
-  final int? stars; // 5..1 أو null
+  final int? stars;
   final ValueChanged<int?> onStarsChanged;
 
   @override
@@ -550,7 +539,7 @@ class _FiltersBar extends StatelessWidget {
     }
 
     Widget _starChip(int v) {
-      final bool disabled = tab == 0; // النجوم معطّلة عندما "الكل"
+      final bool disabled = tab == 0;
       final bool selected = stars == v;
 
       final chip = Padding(
@@ -598,7 +587,7 @@ class _FiltersBar extends StatelessWidget {
             BorderSide(color: Colors.grey.shade300, width: 1)),
       ),
       child: Directionality(
-        textDirection: TextDirection.rtl, // يبدأ السحب من اليمين
+        textDirection: TextDirection.rtl,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
@@ -746,7 +735,6 @@ class _ReviewTileState extends State<ReviewTile> {
               ],
             ),
 
-            // التعليق + زر الإعجاب بجواره
             if (comment.isNotEmpty) ...[
               const SizedBox(height: 12),
               Row(
@@ -810,7 +798,6 @@ class _ReviewTileState extends State<ReviewTile> {
 
             const SizedBox(height: 12),
 
-            // شريط الصور
             if (photos.isNotEmpty)
               SizedBox(
                 height: 46,
@@ -852,7 +839,6 @@ class _ReviewTileState extends State<ReviewTile> {
   }
 }
 
-// ============ شاشة معاينة الصور ============
 class PhotoViewer extends StatefulWidget {
   const PhotoViewer({super.key, required this.photos, this.initialIndex = 0});
 
@@ -909,7 +895,6 @@ class _PhotoViewerState extends State<PhotoViewer> {
               );
             },
           ),
-          // شريط مصغّرات للتنقّل
           Positioned(
             left: 0,
             right: 0,

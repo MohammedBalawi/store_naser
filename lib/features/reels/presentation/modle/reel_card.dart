@@ -53,7 +53,7 @@ class ReelCard extends StatelessWidget {
                 isArabic ?
                 Positioned(
                   right: 25,
-                  bottom: 80, // فوق العنوان بقليل
+                  bottom: 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -80,7 +80,7 @@ class ReelCard extends StatelessWidget {
                 ):
                 Positioned(
                   left: 25,
-                  bottom: 80, // فوق العنوان بقليل
+                  bottom: 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [

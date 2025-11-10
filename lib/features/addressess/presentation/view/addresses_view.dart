@@ -1,4 +1,3 @@
-// lib/features/addressess/presentation/view/addresses_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,7 +16,6 @@ class AddressesView extends GetView<AddressesController> {
   const AddressesView({super.key});
 
   Future<void> _gotoAdd() async {
-    // الانتقال لصفحة إضافة عنوان مع Bindings نظيفة
     final result = await Get.to<Address?>(
           () =>  AddAddressView(),
       binding: BindingsBuilder(
@@ -65,7 +63,6 @@ class AddressesView extends GetView<AddressesController> {
         body: Obx(() {
           final items = controller.items;
 
-          // الحالة الفارغة
           if (items.isEmpty) {
             return Center(
               child: Padding(
@@ -118,12 +115,10 @@ class AddressesView extends GetView<AddressesController> {
             );
           }
 
-          // القائمة
           return ListView(
             padding:
             const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             children: [
-              // إضافة عنوان جديد
               Container(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -149,14 +144,13 @@ class AddressesView extends GetView<AddressesController> {
               ),
               const SizedBox(height: 12),
 
-              // بطاقات العناوين
               ...items.asMap().entries.map((entry) {
                 final index = entry.key;
                 final a = entry.value;
 
                 return AddressCard(
                   address: a,
-                  highlight: index == 0, // الأولى بمحيط بنفسجي
+                  highlight: index == 0,
                   onEdit: () async {
                     final edited = await Get.to<Address?>(
                           () =>  AddAddressView(),

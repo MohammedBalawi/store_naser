@@ -17,22 +17,17 @@ import '../../../../core/constants/endpoints.dart';
 class HomeController extends GetxController {
   final supabase = Supabase.instance.client;
 
-  // إشعارات
   var hasNewNotification = false.obs;
 
-  // الأصناف لواجهة BrandTabs
   var categories = <HomeMainCategoryModel>[].obs;
   bool isLoadingCategories = false;
   String? categoriesError;
 
-  // مستخدمين (للمشرف)
   var users = <Map<String, dynamic>>[];
   bool loadingUsers = false;
 
-  // لافتات
   var banners = <HomeBannerModel>[];
 
-  // منتجات
   List<ProductModel> featuredProducts = [];
   List<ProductModel> bestSales = [];
   List<ProductModel> lastProducts = [];
@@ -40,21 +35,13 @@ class HomeController extends GetxController {
   List<ProductModel> topRatedProducts = [];
   var productsWithDiscount = <ProductModel>[];
 
-  // سلة
   var isLoadingCart = false.obs;
   var lastProductss = <ProductModel>[].obs;
 
-  // صلاحيات
   bool isWholesaler = false;
   bool isAdminn = false;
-
-  // حالة عامة
   bool isLoading = true;
-
-  // مستخدم حالي
   Rxn<Map<String, dynamic>> currentUser = Rxn<Map<String, dynamic>>();
-
-  // Dio للـ API
   final _dio = ApiClient.I.dio;
 
   @override
@@ -82,7 +69,6 @@ class HomeController extends GetxController {
     await fetchProductss();
     await fetchBanners();
 
-    // الأصناف من REST API
     await fetchCategoriesFromApi();
 
     isLoading = false;
@@ -108,7 +94,6 @@ class HomeController extends GetxController {
   void markNotificationArrived() => hasNewNotification.value = true;
   void markNotificationRead() => hasNewNotification.value = false;
 
-  //============== Roles ==============//
   Future<void> getCurrentUserType() async {
     try {
       final user = supabase.auth.currentUser;
@@ -124,7 +109,6 @@ class HomeController extends GetxController {
         update();
       }
     } catch (e) {
-      // ignore
     }
   }
 
@@ -155,7 +139,6 @@ class HomeController extends GetxController {
     }
   }
 
-  //============== Users (admin) ==============//
   Future<void> fetchUsers() async {
     loadingUsers = true;
     update();
@@ -195,7 +178,6 @@ class HomeController extends GetxController {
     }
   }
 
-  //============== Products ==============//
   Future<void> fetchProducts() async {
     try {
       final response =
@@ -212,7 +194,6 @@ class HomeController extends GetxController {
       productsWithDiscount = all.where((e) => (e.sellingPrice ?? 0) > 0).toList();
       update();
     } catch (_) {
-      // ignore
     }
   }
 
@@ -224,7 +205,6 @@ class HomeController extends GetxController {
       );
       update();
     } catch (_) {
-      // ignore
     }
   }
 
@@ -235,11 +215,9 @@ class HomeController extends GetxController {
       products.add(ProductModel.fromJson(inserted));
       update();
     } catch (_) {
-      // ignore
     }
   }
 
-  //============== Banners ==============//
   Future<void> fetchBanners() async {
     try {
       final response =
@@ -247,11 +225,9 @@ class HomeController extends GetxController {
       banners = (response as List).map((e) => HomeBannerModel.fromJson(e)).toList();
       update();
     } catch (_) {
-      // ignore
     }
   }
 
-  //============== Categories from REST API ==============//
   Future<void> fetchCategoriesFromApi() async {
     try {
       isLoadingCategories = true;
@@ -266,7 +242,6 @@ class HomeController extends GetxController {
       categories.assignAll(
         list.map<HomeMainCategoryModel>((e) {
           final m = e as Map<String, dynamic>;
-          // دعم مفتاحي الصورة: image أو image_url
           final img = (m['image'] ?? m['image_url'])?.toString();
           return HomeMainCategoryModel(
             id: m['id'] is int ? m['id'] : int.tryParse('${m['id']}') ?? 0,
@@ -284,7 +259,6 @@ class HomeController extends GetxController {
     }
   }
 
-  //============== Cart ==============//
   Future<void> fetchCartProducts() async {
     isLoadingCart.value = true;
     try {
@@ -335,7 +309,6 @@ class HomeController extends GetxController {
     await fetchCartProducts();
   }
 
-  //============== Nav ==============//
   void navigateToUserManagement() => Get.toNamed('/userManagement');
   void navigateToActivity() { Get.back(); Get.toNamed(Routes.activity); }
   void navigateToNotification() { Get.back(); Get.toNamed(Routes.notificationsAdmin); }

@@ -92,7 +92,6 @@ class HelpView extends GetView<HelpController> {
     );
   }
 
-  // يربط اسم الأيقونة القادمة من الـ API بـ ManagerImages
   String _mapIcon(String name) {
     switch (name) {
       case 'search':
@@ -102,12 +101,11 @@ class HelpView extends GetView<HelpController> {
       case 'privacy':
         return ManagerImages.privacy;
       default:
-        return ManagerImages.search; // fallback
+        return ManagerImages.search;
     }
   }
 }
 
-/// عنصر سطر مطابق للصور: سهم يسار، عنوان بالوسط، أيقونة يمين
 class _HelpTile extends StatelessWidget {
   const _HelpTile({
     required this.title,

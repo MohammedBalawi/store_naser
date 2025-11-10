@@ -79,7 +79,7 @@ class AccountEditController extends GetxController {
                       child: ElevatedButton(
                         onPressed: () => Navigator.of(dialogCtx).pop(false),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFB26BE8), // بنفسجي
+                          backgroundColor: const Color(0xFFB26BE8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -97,7 +97,7 @@ class AccountEditController extends GetxController {
                       child: ElevatedButton(
                         onPressed: () => Navigator.of(dialogCtx).pop(true),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD70C63), // فوشي/أحمر
+                          backgroundColor: const Color(0xFFD70C63),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

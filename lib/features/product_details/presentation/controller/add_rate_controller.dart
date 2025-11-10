@@ -5,21 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
 class AddRateController extends GetxController {
-  // الحقول
   final title = TextEditingController();
   final comment = TextEditingController();
 
-  /// التقييم الحالي (عدد صحيح 1..5)
   double rate = 0.0;
 
-  /// صور مختارة محليًا (حد أقصى 5)
   final List<XFile> selectedImages = [];
   final int maxImages = 3;
 
-  /// اسم المستخدم المؤقت (بدّله ببيانات البروفايل عندك)
   String userName = 'Guest';
 
-  /// إعادة ضبط النموذج
   void resetForm() {
     title.clear();
     comment.clear();
@@ -28,13 +23,11 @@ class AddRateController extends GetxController {
     update();
   }
 
-  /// تغيير قيمة التقييم من الـ RatingBar
   void changeRate(double v) {
     rate = v.clamp(0, 5); // double
     update();
   }
 
-  /// يظهر نصًا أسفل النجوم مثل الصور (5=رائع، 4=جيد جدًا...)
   String get ratingLabel {
     switch (rate) {
       case 5:
@@ -52,13 +45,10 @@ class AddRateController extends GetxController {
     }
   }
 
-  /// فعالية زر الإرسال
   bool checkButtonEnabled() {
     return rate >= 1 && comment.text.trim().isNotEmpty;
   }
 
-  /// اختيار صور متعددة
-  // ======= المطلوب: pickImages كاملة =======
   Future<void> pickImages() async {
     if (selectedImages.length >= maxImages) return;
 
@@ -74,20 +64,17 @@ class AddRateController extends GetxController {
     final remain = maxImages - selectedImages.length;
     selectedImages.addAll(files.take(remain));
 
-    update(); // لتحديث الواجهة وإخفاء/إظهار زر الإضافة حسب العدد
+    update();
   }
 
 
 
-  /// حذف صورة من المعاينة
   void removeImageAt(int index) {
     if (index < 0 || index >= selectedImages.length) return;
     selectedImages.removeAt(index);
     update();
   }
 
-  /// بناء مراجعة محلية (لإضافتها مباشرةً إلى القائمة)
-  /// ملاحظة: المفتاح 'photos' هو ما تستخدمه واجهة العرض _ReviewTile
   Map<String, dynamic> buildLocalReview() {
     return {
       'rate': rate.round(),                          // int من 1 إلى 5
@@ -100,7 +87,6 @@ class AddRateController extends GetxController {
     };
   }
 
-  /// (اختياري) إحصاءات بعدد المراجعات لكل نجمة؛ مفيد لو أردت شارات أرقام بجانب الفلاتر
   Map<int, int> countsByStar(List<Map<String, dynamic>> reviews) {
     final Map<int, int> m = {1:0, 2:0, 3:0, 4:0, 5:0};
     for (final r in reviews) {

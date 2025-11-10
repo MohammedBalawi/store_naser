@@ -20,11 +20,11 @@ class AccountEditView extends GetView<AccountEditController> {
       backgroundColor: ManagerColors.background,
       appBar:AppBar(
         elevation: 0,
-        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
-        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
-        // أهم سطر: إلغِ استماع الـ AppBar لإشعارات السكـرول
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.transparent,
+
         notificationPredicate: (notification) => false,
 
         centerTitle: true,

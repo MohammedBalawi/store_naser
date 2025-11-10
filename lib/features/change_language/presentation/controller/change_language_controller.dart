@@ -9,7 +9,7 @@ class CountryModel {
   final String nameAr;
   final String nameEn;
   final String code;     // SA, KW, AE, BH, QA, OM
-  final String flag;     // asset path (svg/png)
+  final String flag;
   CountryModel({
     required this.nameAr,
     required this.nameEn,
@@ -19,14 +19,13 @@ class CountryModel {
 }
 
 class CountryLanguageController extends GetxController {
-  // المفاتيح في الـ Prefs (عدّلها لو عندك أسماء مختلفة)
   static const _kLocaleKey = 'locale';
   static const _kCountryKey = 'country_code';
 
   final AppSettingsPrefs _prefs = instance<AppSettingsPrefs>();
 
   String language = 'ar';
-  String? selectedCountry; // country code
+  String? selectedCountry;
   late final List<CountryModel> countries;
 
   bool get canSubmit => selectedCountry != null && selectedCountry!.isNotEmpty;
@@ -40,18 +39,17 @@ class CountryLanguageController extends GetxController {
 
   void _loadInitial() {
     language = _prefs.getLocale();
-    selectedCountry = _prefs.getCountry(); // بدل getString
+    selectedCountry = _prefs.getCountry();
   }
 
   void submit() {
     if (!canSubmit) return;
-    _prefs.setCountry(selectedCountry!);   // حفظ الدولة
+    _prefs.setCountry(selectedCountry!);
     Get.back(result: {'locale': language, 'country': selectedCountry});
   }
 
 
   void _buildCountries() {
-    // ضيف/عدّل مسارات الأعلام حسب ManagerImages عندك
     countries = [
       CountryModel(
         nameAr: 'المملكة العربية السعودية',

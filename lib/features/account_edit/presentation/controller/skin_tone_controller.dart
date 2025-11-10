@@ -33,15 +33,14 @@ class SkinToneController extends GetxController {
     Get.closeAllSnackbars();
 
     Get.rawSnackbar(
-      // ⬇️ تحكم بالموقع العمودي ليكون بمنتصف الجزء العلوي
       margin: EdgeInsets.only(
         left: Get.width * 0.1,
         right: Get.width * 0.1,
-        top: Get.height * 0.02, // نسبة من ارتفاع الشاشة (عدّلها حسب موقعك المفضل)
+        top: Get.height * 0.02,
       ),
       borderRadius: 12,
       backgroundColor: Colors.white,
-      snackPosition: SnackPosition.TOP, // نخليه TOP حتى يسمح بالتحكم بالموقع
+      snackPosition: SnackPosition.TOP,
       messageText: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -60,7 +59,7 @@ class SkinToneController extends GetxController {
         ],
       ),
       duration: const Duration(seconds: 2),
-      snackStyle: SnackStyle.FLOATING, // شكل جميل يطفو فوق المحتوى
+      snackStyle: SnackStyle.FLOATING,
       boxShadows: [
         BoxShadow(
           color: Colors.grey.withOpacity(0.05),

@@ -31,14 +31,11 @@ class ReelsController extends GetxController {
   }
 
   void play(Reel r) {
-    // لاحقاً: افتح مشغّل فيديو (video_player/chewie) باستخدام r.videoUrl
   }
 
   void share(Reel r) {
-    // لاحقاً: شارك r.shareUrl عبر share_plus
   }
 
   void orderNow(Reel r) {
-    // نفّذ CTA الشراء حسب منطقك
   }
 }

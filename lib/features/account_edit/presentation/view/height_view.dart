@@ -22,10 +22,10 @@ class HeightView extends GetView<HeightController> {
       backgroundColor: ManagerColors.background,
       appBar:AppBar(
         elevation: 0,
-        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
-        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.transparent,
         notificationPredicate: (notification) => false,
 
         centerTitle: true,
@@ -83,7 +83,7 @@ class HeightView extends GetView<HeightController> {
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
-                    width: 84, // حسب لقطة الشاشة 84x60
+                    width: 84,
                     height: 60,
                     decoration: BoxDecoration(
                       color: ManagerColors.primaryColor,
@@ -108,13 +108,13 @@ class HeightView extends GetView<HeightController> {
                   magnification: 1,
                   squeeze: 1,
                   onSelectedItemChanged: controller.onSelected,
-                  selectionOverlay: const SizedBox.shrink(), // لأننا رسمنا الهايلايت
+                  selectionOverlay: const SizedBox.shrink(),
                   looping: false,
                   children: items.map((v) {
                     final isSelected = v == sel;
                     return Center(
                       child: SizedBox(
-                        width: 84, // نفس عرض المستطيل ليثبت التمركز
+                        width: 84,
                         child: Text(
                           v.toStringAsFixed(2),
                           textAlign: TextAlign.center,
@@ -159,8 +159,8 @@ class HeightView extends GetView<HeightController> {
         child: Obx(() {
           final enabled = controller.canSave.value;
 
-          const activeColor   = ManagerColors.color; // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor   = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,
@@ -168,7 +168,7 @@ class HeightView extends GetView<HeightController> {
               onPressed: enabled ? controller.save : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white, // لا تخليه شفاف
+                disabledForegroundColor: Colors.white,
                 backgroundColor: activeColor,
                 disabledBackgroundColor: inactiveColor,
                 shape: RoundedRectangleBorder(

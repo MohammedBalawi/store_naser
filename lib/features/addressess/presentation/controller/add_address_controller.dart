@@ -16,25 +16,21 @@ class PlaceHit {
 }
 
 class AddAddressController extends GetxController {
-  // ===== UI STATE =====
-  final locationOff = true.obs;            // بانر تفعيل الموقع
-  final topAddress = ''.obs;               // السطر تحت الأب بار
-  final showNotPrecise = false.obs;        // رسالة العنوان غير دقيق
-  final canSave = false.obs;               // زر الحفظ
-  final showSheet = false.obs;             // إظهار الشيت العائم بعد تحديد نقطة
+  final locationOff = true.obs;
+  final topAddress = ''.obs;
+  final showNotPrecise = false.obs;
+  final canSave = false.obs;
+  final showSheet = false.obs;
 
-  // البحث
   final searchCtrl = TextEditingController();
   final isSearching = false.obs;
   final hits = <PlaceHit>[].obs;
 
-  // نموذج الشيت
   final nameCtrl = TextEditingController();
   final extraInfoCtrl = TextEditingController();
   final directionsCtrl = TextEditingController();
   final phone = '+966 512345678';
 
-  // الموقع الحالي/المحدد
   double? lat;
   double? lng;
 
@@ -45,7 +41,6 @@ class AddAddressController extends GetxController {
     super.onInit();
     _initLocationStatus();
 
-    // debounce للبحث
     searchCtrl.addListener(() {
       final q = searchCtrl.text.trim();
       _debounce?.cancel();
@@ -65,9 +60,7 @@ class AddAddressController extends GetxController {
     super.onClose();
   }
 
-  // ===== Public API =====
 
-  /// لمس الخريطة يدويًا
   void onMapTapMock(LatLng p) {
     lat = p.latitude;
     lng = p.longitude;
@@ -77,7 +70,6 @@ class AddAddressController extends GetxController {
     _reverseToTopAddress(p);
   }
 
-  /// زر "موقعي"
   Future<void> onMyLocationTap() async {
     final ok = await _ensurePermission();
     if (!ok) return;
@@ -108,7 +100,6 @@ class AddAddressController extends GetxController {
     Get.back(result: a);
   }
 
-  // ===== Internal =====
 
   Future<void> _initLocationStatus() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -186,7 +177,6 @@ class AddAddressController extends GetxController {
     }
     isSearching.value = true;
     try {
-      // Placeholder بحث باستخدام geocoding (استبدله لاحقًا بـ Places API)
       final locs = await geo.locationFromAddress(q);
       hits.value = locs.take(5).map((l) {
         final pt = LatLng(l.latitude, l.longitude);

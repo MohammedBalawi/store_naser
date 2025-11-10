@@ -13,17 +13,14 @@ class ForgotPasswordController extends GetxController {
 
   void onEmailChanged(String v) {
     email.value = v.trim();
-    showNotRegistered.value = false; // أخفِ الخطأ عند التعديل
+    showNotRegistered.value = false;
   }
 
-  // محاكاة: لو البريد ينتهي بـ "gmail.com" اعتبره مسجّل، غير ذلك غير مسجل
-// lib/features/auth/presentation/controller/forgot_password_controller.dart
 
 
   Future<void> send() async {
     if (!validEmail) return;
 
-    // محاكاة التسجيل
     final registered = email.value.toLowerCase().endsWith('gmail.com');
     if (!registered) {
       showNotRegistered.value = true;

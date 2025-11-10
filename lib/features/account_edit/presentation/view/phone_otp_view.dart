@@ -43,10 +43,10 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
       appBar:
       AppBar(
         elevation: 0,
-        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
-        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.transparent,
         notificationPredicate: (notification) => false,
 
         centerTitle: true,
@@ -54,7 +54,7 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
             .copyWith(statusBarColor: Colors.white),
 
         flexibleSpace: const SizedBox.expand(
-          child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
+          child: ColoredBox(color: Colors.white),
         ),
 
         title: Row(
@@ -132,8 +132,8 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
         child: Obx(() {
           final enabled = controller.ready;
 
-          const activeColor   = ManagerColors.color; // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor   = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,
@@ -141,7 +141,7 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
               onPressed: enabled ? controller.submit : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white, // لا تخليه شفاف
+                disabledForegroundColor: Colors.white,
                 backgroundColor: activeColor,
                 disabledBackgroundColor: inactiveColor,
                 shape: RoundedRectangleBorder(

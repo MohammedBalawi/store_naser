@@ -31,7 +31,7 @@ class _LayeredBag extends StatelessWidget {
 }
 
 class _FlagGlyph extends StatelessWidget {
-  final String asset; // svg or png asset path
+  final String asset;
   const _FlagGlyph({required this.asset, super.key});
 
   @override

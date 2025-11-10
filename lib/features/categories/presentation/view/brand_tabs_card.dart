@@ -214,7 +214,6 @@ class BrandTabsCard extends StatelessWidget {
   }
 }
 
-/* ====================== أجزاء واجهة مُعادة الاستخدام ====================== */
 
 class _TopSearchBar extends StatelessWidget {
   const _TopSearchBar({required this.radius});

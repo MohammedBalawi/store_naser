@@ -9,12 +9,12 @@ class AuthRemote {
 
   Future<AuthResponse> register({
     required String name,
-    required String mobile,                // أرقام دولية بدون +
+    required String mobile,
     required String password,
-    required String passwordConfirmation,  // نفس كلمة المرور
+    required String passwordConfirmation,
     String role = 'user',
-    String? email,                         // اختياري
-    String? fcmToken,                      // اختياري
+    String? email,
+    String? fcmToken,
   }) async {
     final form = FormData.fromMap({
       'name': name,

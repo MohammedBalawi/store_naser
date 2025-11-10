@@ -221,7 +221,6 @@ class ProfileController extends GetxController {
   }
 
 
-  // ===== مثال لتحديث بيانات =====
   Future<void> updateUserProfile() async {
     final user = _sb.auth.currentUser;
     if (user == null) return;

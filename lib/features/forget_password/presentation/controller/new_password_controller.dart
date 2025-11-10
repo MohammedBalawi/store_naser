@@ -1,4 +1,3 @@
-// lib/features/auth/presentation/controller/new_password_controller.dart
 import 'package:get/get.dart';
 
 class NewPasswordController extends GetxController {

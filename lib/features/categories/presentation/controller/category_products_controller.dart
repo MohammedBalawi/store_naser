@@ -16,8 +16,8 @@ enum ProductSort { popular, newest, offersFirst, priceHighLow, priceLowHigh }
 class BrandChipModel {
   final String id;
   final String name;
-  final String productImage; // صورة المنتج اللي بتطلع فوق الكرت الداكن
-  final String? logo;        // لوجو الماركة (اختياري)
+  final String productImage;
+  final String? logo;
   BrandChipModel({required this.id, required this.name, required this.productImage, this.logo});
 }
 
@@ -31,7 +31,6 @@ class CategoryProductsController extends GetxController {
   String search = "";
   TextEditingController searchController = TextEditingController();
 
-  // === تبويبات فرعية (نفس اللي بالصورة) ===
   final List<String> subTabs = const [
     'جميع المنتجات',
     'العناية بالوجه',
@@ -47,7 +46,6 @@ class CategoryProductsController extends GetxController {
     update();
   }
 
-  // === ماركات (Strip أفقي) — عيّنها من الـ API لاحقاً ===
   List<BrandChipModel> brands = [
     BrandChipModel(
       id: 'cerave',
@@ -76,7 +74,6 @@ class CategoryProductsController extends GetxController {
     update();
   }
 
-  // === الفرز (فلتر) ===
   ProductSort? sort;
   void setSort(ProductSort? s) {
     sort = s;
@@ -88,28 +85,23 @@ class CategoryProductsController extends GetxController {
     update();
   }
 
-  // === البحث + الفلترة + الفرز معًا ===
   List<ProductModel> filteredProducts() {
-    // 1) فلترة نصية
     String q = searchController.text.toLowerCase().trim();
     Iterable<ProductModel> data = products;
     if (q.isNotEmpty) {
       data = data.where((p) => (p.name ?? '').toLowerCase().contains(q));
     }
 
-    // 2) فلترة ماركة (اختياري)
     if (selectedBrandId != null) {
       // TODO: لو المنتج يحوي brandId
       data = data.where((p) => (p.category?.name ?? '').toLowerCase().contains(selectedBrandId!.toLowerCase()));
     }
 
-    // 3) فلترة تبويب (اختياري) — هنا مجرد مثال بالتسمية
     if (selectedSubTab != 0) {
       final tabName = subTabs[selectedSubTab];
       data = data.where((p) => (p.category?.name ?? '').contains(tabName));
     }
 
-    // 4) الفرز
     final list = data.toList();
     switch (sort) {
       case ProductSort.priceHighLow:
@@ -132,8 +124,6 @@ class CategoryProductsController extends GetxController {
     }
     return list;
   }
-
-  // ====== باقي الكود الأصلي عندك ======
 
 
   void changeIsLoading({required bool value}) {

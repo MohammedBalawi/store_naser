@@ -14,7 +14,6 @@ class ChangePhoneView extends GetView<ChangePhoneController> {
 
   @override
   Widget build(BuildContext context) {
-    // مفتاح للزر حتى نعلّق عليه المنيو بدقة
     final countryKey = GlobalKey();
     final bool isArabic = Get.locale?.languageCode == 'ar';
 
@@ -137,7 +136,6 @@ class ChangePhoneView extends GetView<ChangePhoneController> {
   }
 }
 
-/// زر اختيار الدولة مطابق للصورة
 class _CountryButton extends StatelessWidget {
   const _CountryButton({super.key});
 

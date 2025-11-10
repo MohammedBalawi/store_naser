@@ -57,7 +57,6 @@ class _FavoritesCarouselState extends State<FavoritesCarousel> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // السلايد نفسه
         SizedBox(
           height: widget.height,
           width: double.infinity,
@@ -112,12 +111,11 @@ class _BannerSlide extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // صورة على الأسفل يسار (تشبه اللقطة)
             Positioned(
               left: 8,
               bottom: 0,
               child: SizedBox(
-                width: h * 1.45,               // عرض مناسب للصورة
+                width: h * 1.45,
                 height: h * 0.85,
                 child: imageUrl.isEmpty
                     ? const SizedBox.shrink()
@@ -129,13 +127,12 @@ class _BannerSlide extends StatelessWidget {
               ),
             ),
 
-            // النص على اليمين
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 18, 0),
                 child: Row(
                   children: [
-                    const Spacer(), // يدفع المحتوى لليمين
+                    const Spacer(),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -154,7 +151,7 @@ class _BannerSlide extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              title, // "خصم"
+                              title,
                               textAlign: TextAlign.right,
                               style: getRegularTextStyle(
                                 fontSize: word.toDouble(),

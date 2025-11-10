@@ -81,8 +81,8 @@ class SkinToneView extends GetView<SkinToneController> {
         child: Obx(() {
           final enabled = controller.canSave;
 
-          const activeColor   = ManagerColors.color; // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor   = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,
@@ -90,7 +90,7 @@ class SkinToneView extends GetView<SkinToneController> {
               onPressed: enabled ? controller.save : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white, // لا تخليه شفاف
+                disabledForegroundColor: Colors.white,
                 backgroundColor: activeColor,
                 disabledBackgroundColor: inactiveColor,
                 shape: RoundedRectangleBorder(

@@ -56,7 +56,6 @@ class ChangeLanguageCountryView extends StatelessWidget {
                     vertical: ManagerHeight.h14,
                   ),
                   children: [
-                    // عنوان داخلي مثل الصور
                     Text(
         ManagerStrings.countryAndLanguage,
                       style: getBoldTextStyle(
@@ -66,7 +65,6 @@ class ChangeLanguageCountryView extends StatelessWidget {
                     ),
                     SizedBox(height: ManagerHeight.h20),
 
-                    // تبويبات اللغات (عربي / English)
                     Row(
                       children: [
                         Expanded(
@@ -91,7 +89,6 @@ class ChangeLanguageCountryView extends StatelessWidget {
 
                     SizedBox(height: ManagerHeight.h20),
 
-                    // قائمة الدول
                     ...c.countries.map((country) {
                       final isSelected = c.selectedCountry == country.code;
                       return Padding(
@@ -110,7 +107,6 @@ class ChangeLanguageCountryView extends StatelessWidget {
                 ),
               ),
 
-              // زر "تم"
               SafeArea(
                 top: false,
                 minimum: EdgeInsets.all(ManagerWidth.w20),
@@ -154,7 +150,6 @@ class ChangeLanguageCountryView extends StatelessWidget {
   }
 }
 
-/// تبويب لغة بشكل كبسّة بحواف مستديرة وحدود بنفسجية عند التحديد
 class _LangTab extends StatelessWidget {
   final String text;
   final bool isSelected;
@@ -194,7 +189,6 @@ class _LangTab extends StatelessWidget {
   }
 }
 
-/// عنصر الدولة كما في الصور: حاوية بظل خفيف وحدود، وعند التحديد يصبح الحد بنفسجي واضح
 class _CountryTile extends StatelessWidget {
   final String title;
   final String flagAsset;
@@ -244,7 +238,6 @@ class _CountryTile extends StatelessWidget {
                   ),
                 ),
               ),
-              // العلم على اليمين مثل الصور
 
             ],
           ),

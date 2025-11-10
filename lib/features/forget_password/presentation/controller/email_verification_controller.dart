@@ -24,7 +24,6 @@ class EmailVerificationController extends GetxController {
   final canResend = false.obs;
   Timer? _timer;
 
-  // الرمز الصحيح المطلوب
   final String expected = '2222';
 
   bool get ready => code.value.length == 4 && !hasError.value;
@@ -114,7 +113,6 @@ class EmailVerificationController extends GetxController {
     // TODO: نداء API لإعادة إرسال الرمز
   }
 
-// lib/features/auth/presentation/controller/email_verification_controller.dart
 
   void submit() {
     if (code.value.length != 4) return;
@@ -128,7 +126,7 @@ class EmailVerificationController extends GetxController {
     Get.to(
           () => const NewPasswordView(),
       binding: BindingsBuilder(() {
-        Get.put(NewPasswordController()); // <-- تسجيل الكونترولر
+        Get.put(NewPasswordController());
       }),
     );
   }

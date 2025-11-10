@@ -14,7 +14,6 @@ class PhoneOtpController extends GetxController {
   final code = ''.obs;
   final hasError = false.obs;
 
-  // عدّاد إعادة الإرسال
   final secondsLeft = 54.obs;
   final canResend = false.obs;
   Timer? _timer;

@@ -1,4 +1,3 @@
-// lib/features/addressess/presentation/controller/addresses_controller.dart
 import 'dart:async';
 
 import 'package:get/get.dart';
@@ -8,10 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import '../../domain/model/address.dart';
 
 class AddressesController extends GetxController {
-  // ================== DATA ==================
   final items = <Address>[].obs;
 
-  // ================== MAP STATE ==================
   static const LatLng _riyadh = LatLng(24.7136, 46.6753);
 
   final cameraPos = const CameraPosition(
@@ -27,15 +24,13 @@ class AddressesController extends GetxController {
   GoogleMapController? _mapCtrl;
   final _mapReady = false.obs;
 
-  // لو بدك تظهر زر موقعي في الواجهة حسب الصلاحية
   final canUseLocation = false.obs;
 
-  // ================== LIFECYCLE ==================
   @override
   void onInit() {
     super.onInit();
-    load();             // TODO: حمل عناوينك من API إن وجِدت
-    _initLocationFlag(); // يحدّث canUseLocation
+    load();             // TODO: حمل عناوينك من API
+    _initLocationFlag();
   }
 
   @override
@@ -44,22 +39,18 @@ class AddressesController extends GetxController {
     super.onClose();
   }
 
-  // ================== PUBLIC API ==================
 
-  /// استدعها بعد إنشاء الخريطة من الواجهة (onMapCreated)
   void onMapCreated(GoogleMapController c) {
     _mapCtrl = c;
     _mapReady.value = true;
   }
 
-  /// لمسة على الخريطة → حرّك الماركر وقرّب الكاميرا
   void onTap(LatLng p) {
     marker.value = Marker(markerId: const MarkerId('pin'), position: p);
     cameraPos.value = CameraPosition(target: p, zoom: 15);
     _animateTo(p, 15);
   }
 
-  /// يوسّط الكاميرا على موقعي الحالي (مع طلب الإذن إذا لزم)
   Future<void> centerMyLocation() async {
     final granted = await _ensurePermission();
     if (!granted) return;
@@ -75,32 +66,26 @@ class AddressesController extends GetxController {
 
       await _animateTo(here, 16);
     } catch (_) {
-      // ممكن تعرض Snackbar من الواجهة حسب حاجتك
     }
   }
 
-  /// أضِف عنوانًا جديدًا للقائمة
   void add(Address a) {
     items.add(a);
   }
 
-  /// عدّل عنوانًا موجودًا بالقائمة
   void updateAddress(Address a) {
     final i = items.indexWhere((e) => e.id == a.id);
     if (i >= 0) items[i] = a;
   }
 
-  /// احذف عنوانًا بالقائمة
   void remove(String id) {
     items.removeWhere((e) => e.id == id);
   }
 
-  /// حمّل العناوين (حاليًا فارغة؛ اربطها بـ API لاحقًا)
   void load() {
     items.assignAll([]);
   }
 
-  // ================== INTERNAL HELPERS ==================
 
   Future<void> _animateTo(LatLng target, double zoom) async {
     if (!_mapReady.value || _mapCtrl == null) return;
@@ -119,16 +104,13 @@ class AddressesController extends GetxController {
         perm != LocationPermission.deniedForever;
   }
 
-  /// يتأكد من تفعيل الخدمة ووجود الإذن — يطلب الإذن عند الحاجة
   Future<bool> _ensurePermission() async {
-    // الخدمة
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       canUseLocation.value = false;
       return false;
     }
 
-    // الإذن
     var perm = await Geolocator.checkPermission();
     if (perm == LocationPermission.denied) {
       perm = await Geolocator.requestPermission();

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-/// غيّر العنوان إذا لزم
 const String kApiAuthUrl = 'http://195.35.56.128:4675/api/auth';
 
 class AuthApiResult {
@@ -19,11 +18,9 @@ class AuthApiResult {
 }
 
 class AuthApi {
-  /// يطبع رقم الهاتف إلى أرقام فقط (يحذف + ومسافات وأي رموز)
   static String _normalizeMobile(String input) =>
       input.replaceAll(RegExp(r'[^\d]'), '');
 
-  /// تسجيل دخول بالهاتف: body = { mobile, password } بصيغة x-www-form-urlencoded
   static Future<AuthApiResult> loginWithMobile({
     required String mobile,
     required String password,
@@ -48,7 +45,6 @@ class AuthApi {
     return _parseLoginResponse(resp);
   }
 
-  /// تسجيل دخول بالبريد (إذا كان نفس المسار يدعمه): body = { email, password }
   static Future<AuthApiResult> loginWithEmail({
     required String email,
     required String password,
@@ -73,7 +69,6 @@ class AuthApi {
     return _parseLoginResponse(resp);
   }
 
-  /// تفكيك الاستجابة الموحدة
   static AuthApiResult _parseLoginResponse(http.Response resp) {
     final code = resp.statusCode;
     final rawText = resp.body.isEmpty ? '{}' : resp.body;
@@ -97,7 +92,6 @@ class AuthApi {
       return AuthApiResult(ok: true, token: token, raw: json);
     }
 
-    // رسائل مفيدة لحالات 400/401/422
     final friendly = msg.isNotEmpty
         ? msg
         : (code == 401

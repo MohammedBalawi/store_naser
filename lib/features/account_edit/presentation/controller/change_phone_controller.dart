@@ -23,10 +23,8 @@ class GulfCountry {
 }
 
 class ChangePhoneController extends GetxController {
-  // رقمك الحالي لعرضه أعلى البطاقة
   final currentPhone = '+966 515345678'.obs;
 
-  // قائمة دول الخليج
   final List<GulfCountry> gulfCountries = const [
     GulfCountry(name: 'المملكة العربية السعودية', dialCode: '+966', flagAsset: ManagerImages.su, minLen: 9),
     GulfCountry(name: 'الكويت',                 dialCode: '+965', flagAsset: ManagerImages.kw, minLen: 8),
@@ -36,7 +34,6 @@ class ChangePhoneController extends GetxController {
     GulfCountry(name: 'قطر',                    dialCode: '+974', flagAsset: ManagerImages.qa, minLen: 8),
   ];
 
-  // الدولة المختارة
   final Rx<GulfCountry> selected = const GulfCountry(
     name: 'المملكة العربية السعودية',
     dialCode: '+966',
@@ -44,15 +41,12 @@ class ChangePhoneController extends GetxController {
     minLen: 9,
   ).obs;
 
-  // الحقل
   final phoneCtrl = TextEditingController();
   final focusPhone = FocusNode();
 
-  // حالة الواجهة
   final hasError = false.obs;
   final canSubmit = false.obs;
 
-  // الفورماترز على حسب طول الدولة المختارة
   List<TextInputFormatter> get phoneFormatters => [
     FilteringTextInputFormatter.digitsOnly,
     LengthLimitingTextInputFormatter(selected.value.minLen),
@@ -70,7 +64,6 @@ class ChangePhoneController extends GetxController {
     canSubmit.value = validLocal;
   }
 
-  /// منيو الدول – منسّقة مثل الصورة (العلم 23.997657775878906 × 18، النص 16)
   Future<void> openCountryMenu(BuildContext context, GlobalKey anchorKey) async {
     final box = anchorKey.currentContext!.findRenderObject() as RenderBox;
     final offset = box.localToGlobal(Offset.zero);
@@ -130,7 +123,6 @@ class ChangePhoneController extends GetxController {
   }
 
 
-  /// تحقق ثم انتقال لصفحة OTP
   void submit() {
     if (!validLocal) {
       hasError.value = true;
@@ -165,7 +157,6 @@ class ChangePhoneController extends GetxController {
     Get.toNamed(Routes.phoneOtp, arguments: {'phone': fullNewPhone});
   }
 
-  /// بعد نجاح التحقق/الـOTP
   void applySuccessAndReset(String newFullPhone) {
     currentPhone.value = newFullPhone;
     phoneCtrl.clear();

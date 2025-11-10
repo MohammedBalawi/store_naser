@@ -49,7 +49,6 @@ class EditPasswordView extends GetView<PasswordController> {
                 children: [
                   const SizedBox(height: 12),
 
-                  // ====== بطاقة الحقول ======
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -58,16 +57,15 @@ class EditPasswordView extends GetView<PasswordController> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     child: Column(
                       children: [
-                        // كلمة المرور الجديدة
                         _PasswordField(
                           controller: controller.newCtrl,
                           hint: ManagerStrings.enterNewPassword,
                           obscureRx: controller.obscureNew,
                           onChanged: controller.onChangedNew,
-                          isValidRx: controller.validLength,     // طول ≥ 8
+                          isValidRx: controller.validLength,
                           showIndicatorsRx: controller.showIndicators,
                           showErrorWhenInvalidAndNotEmpty: true,
-                          isLengthRule: true, // لتمييز لون الأيقونة إن رغبت
+                          isLengthRule: true,
                         ),
                         const SizedBox(height: 16),
 
@@ -80,13 +78,12 @@ class EditPasswordView extends GetView<PasswordController> {
                         ),
                         const SizedBox(height: 16),
 
-                        // تأكيد كلمة المرور
                         _PasswordField(
                           controller: controller.confirmCtrl,
                           hint:  ManagerStrings.enterCurrentPassword,
                           obscureRx: controller.obscureConfirm,
                           onChanged: controller.onChangedConfirm,
-                          isValidRx: controller.matchValid,       // تطابق
+                          isValidRx: controller.matchValid,
                           showIndicatorsRx: controller.showIndicators,
                           showErrorWhenInvalidAndNotEmpty: true,
                         ),
@@ -99,7 +96,6 @@ class EditPasswordView extends GetView<PasswordController> {
               ),
             ),
 
-            // ====== بانر منزلق فوق الـ AppBar ======
             _DropBanner(
               message: controller.banner.value?.message ?? '',
               isError: controller.banner.value?.isError ?? false,
@@ -109,13 +105,12 @@ class EditPasswordView extends GetView<PasswordController> {
         );
       }),
 
-      // ====== زر الحفظ ======
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 60),
         child: Obx(() {
           final enabled = controller.canSave.value;
-          const activeColor   = ManagerColors.color;      // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off;  // بنفسجي فاتح
+          const activeColor   = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,

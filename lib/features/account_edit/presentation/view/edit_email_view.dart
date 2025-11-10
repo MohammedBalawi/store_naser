@@ -19,10 +19,10 @@ class EditEmailView extends GetView<EditEmailController> {
       backgroundColor: ManagerColors.background,
       appBar:AppBar(
         elevation: 0,
-        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
-        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.transparent,
         notificationPredicate: (notification) => false,
 
         centerTitle: true,
@@ -121,8 +121,8 @@ class EditEmailView extends GetView<EditEmailController> {
         const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 60),
         child: Obx(() {
           final enabled = controller.canSave.value;
-          const activeColor = ManagerColors.color; // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,
@@ -233,7 +233,6 @@ class _EmailField extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: ManagerColors.primaryColor),
             ),
-            // 🔹 الأيقونة الآن في جهة الشمال (نهاية الحقل)
             suffixIcon: trailingIcon == null
                 ? null
                 : SizedBox(
@@ -252,7 +251,6 @@ class _EmailField extends StatelessWidget {
 }
 
 
-/// بانر علوي ينزل من فوق الـ AppBar ثم يطلع (✔️/⚠️)
 class _DropBanner extends StatelessWidget {
   const _DropBanner({
     required this.message,

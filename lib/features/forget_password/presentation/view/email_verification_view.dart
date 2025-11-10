@@ -52,7 +52,6 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
           ),
           const SizedBox(height: 25),
 
-          // صناديق OTP
           Obx(() {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,7 +97,6 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
 
           const SizedBox(height: 12),
 
-          // خطأ الرمز
           Obx(() => Visibility(
             visible: controller.hasError.value,
             child: Row(
@@ -114,7 +112,6 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
 
           const SizedBox(height: 12),
 
-          // إعادة إرسال
           Padding(
             padding: const EdgeInsets.only(right: 28.0),
             child: Obx(() {
@@ -138,7 +135,6 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
 
           const SizedBox(height: 24),
 
-          // زر التحقق
           Obx(() {
             final enabled = controller.ready;
             return SizedBox(

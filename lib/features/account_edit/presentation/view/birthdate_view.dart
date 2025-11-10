@@ -22,32 +22,31 @@ class BirthdateView extends GetView<BirthdateController> {
       appBar:
       AppBar(
         elevation: 0,
-        scrolledUnderElevation: 0, // يمنع تأثير الـ tint
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white, // لا تضيف طبقة لونية
+        surfaceTintColor: Colors.white,
         shadowColor: Colors.transparent,
         notificationPredicate: (notification) => false,
 
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Padding(
-            padding: isArabic? EdgeInsets.all(2.0):EdgeInsets.all(15.0), // 👈 تحكم بالمسافة حول الأيقونة
+            padding: isArabic? EdgeInsets.all(2.0):EdgeInsets.all(15.0),
             child: SizedBox(
               width: 20,
               height: 20,
               child: SvgPicture.asset(
                 isArabic
-                    ? ManagerImages.arrows       // ← أيقونة للعربية
-                    : ManagerImages.arrow_left,  // ← أيقونة للإنجليزية
-                fit: BoxFit.contain, // 👈 يضمن التناسب داخل المساحة
+                    ? ManagerImages.arrows
+                    : ManagerImages.arrow_left,
+                fit: BoxFit.contain,
               ),
             ),
           ),
         ),
 
-        // ✅ خلي النظام ما يضيف سهم تلقائي
         automaticallyImplyLeading: false,
-        leadingWidth: 52, // مساحة كافية لعرض الأيقونة
+        leadingWidth: 52,
 
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
@@ -234,8 +233,8 @@ class BirthdateView extends GetView<BirthdateController> {
         child: Obx(() {
           final enabled = controller.canSave.value;
 
-          const activeColor   = ManagerColors.color; // بنفسجي غامق
-          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor   = ManagerColors.color;
+          const inactiveColor = ManagerColors.color_off;
 
           return SizedBox(
             height: 52,
@@ -243,7 +242,7 @@ class BirthdateView extends GetView<BirthdateController> {
               onPressed: enabled ? controller.save : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white, // لا تخليه شفاف
+                disabledForegroundColor: Colors.white,
                 backgroundColor: activeColor,
                 disabledBackgroundColor: inactiveColor,
                 shape: RoundedRectangleBorder(
@@ -279,7 +278,7 @@ class _Wheel extends StatelessWidget {
       width: width,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.white, // ✅ خلفية بيضاء لمنطقة العجلة
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         // boxShadow: const [
           // BoxShadow(color: Color(0x0D000000), blurRadius: 6, offset: Offset(0, 2)),
@@ -288,7 +287,6 @@ class _Wheel extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // ✅ مستطيل رمادي تحت الصف الأوسط (خلف النص)
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
@@ -305,10 +303,9 @@ class _Wheel extends StatelessWidget {
             ),
           ),
 
-          // الخط العلوي
 
           CupertinoPicker(
-            backgroundColor: Colors.white, // ✅ تبقى بيضاء
+            backgroundColor: Colors.white,
             itemExtent: 44,
             useMagnifier: true,
             magnification: 1,
@@ -316,7 +313,6 @@ class _Wheel extends StatelessWidget {
             scrollController: FixedExtentScrollController(initialItem: initialIndex),
             onSelectedItemChanged: onSelectedItemChanged,
 
-            // ❌ لا نستخدم تراكب يغطي النص
             selectionOverlay: const SizedBox.shrink(),
 
             children: items
@@ -329,7 +325,6 @@ class _Wheel extends StatelessWidget {
                 .toList(),
           ),
           const Positioned(left: 10, right: 10, top: 56, child: _Line()),
-          // الخط السفلي
           const Positioned(left: 10, right: 10, bottom: 56, child: _Line()),
 
         ],

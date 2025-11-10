@@ -13,9 +13,9 @@ import '../../data/auth_api.dart';
 
 class GulfCountry {
   final String name;
-  final String dialCode;     // مثل: +966
+  final String dialCode;
   final String flagAsset;
-  final int minLen;          // الحد الأدنى للأرقام المحلية
+  final int minLen;
   const GulfCountry({
     required this.name,
     required this.dialCode,
@@ -27,7 +27,7 @@ class GulfCountry {
 class LoginEmailController extends GetxController with GetSingleTickerProviderStateMixin {
   final currentTabIndex = 0.obs;
 
-  final phoneLocal = ''.obs;   // بدون المقدّمة
+  final phoneLocal = ''.obs;
   final email = ''.obs;
   final password = ''.obs;
 

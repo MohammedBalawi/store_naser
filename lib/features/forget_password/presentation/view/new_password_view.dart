@@ -76,7 +76,7 @@ class NewPasswordView extends GetView<NewPasswordController> {
                             color: ManagerColors.color, size: 20),
                       ),
                     InkWell(
-                      onTap: controller.toggleObscure, // يقلب القيمة
+                      onTap: controller.toggleObscure,
                       child: controller.obscure.value
                           ? SvgPicture.asset(ManagerImages.close_eye, width: 22, height: 22)
                           : const Icon(Icons.visibility_outlined, size: 22),
@@ -121,7 +121,6 @@ class NewPasswordView extends GetView<NewPasswordController> {
                 elevation: 0,
               ),
               child: Text('Reset Password',
-                  // النص بالإنجليزية كما في الصورة
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),

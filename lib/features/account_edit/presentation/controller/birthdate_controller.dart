@@ -7,14 +7,13 @@ class BirthdateController extends GetxController {
   DateTime initial = DateTime(2017, 8, 31);
 
   final year = 2017.obs;
-  final month = 8.obs;  // 1..12
+  final month = 8.obs;
   final day = 31.obs;
 
   final canSave = false.obs;
   final hasError = false.obs;
   final errorText = ''.obs;
 
-  // حدود الاختيار
   late final int minYear;
   late final int maxYear;
   final months = const [
@@ -101,7 +100,6 @@ class BirthdateController extends GetxController {
     Get.closeAllSnackbars();
 
     Get.rawSnackbar(
-      // 🟣 موقع الإشعار في منتصف الجزء العلوي من الشاشة
       margin: EdgeInsets.only(
         left: Get.width * 0.1,
         right: Get.width * 0.1,

@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 
 class HelpItem {
   final String id;
-  final String titleAr;      // العنوان بالعربي
-  final String titleEn;      // العنوان بالإنجليزي (لو بدك لاحقًا)
-  final String iconAsset;    // مسار الأيقونة (svg/png) من ManagerImages
-  final String action;       // نوع الإجراء: route / url / slug
-  final String value;        // قيمة الإجراء: مسار الراوت أو رابط خارجي
+  final String titleAr;
+  final String titleEn;
+  final String iconAsset;
+  final String action;
+  final String value;
 
   HelpItem({
     required this.id,
@@ -24,7 +24,7 @@ class HelpItem {
       id: '${j['id']}',
       titleAr: j['title_ar'] ?? '',
       titleEn: j['title_en'] ?? '',
-      iconAsset: j['icon_asset'] ?? '',   // احفظ اسم الأيقونة (ونحوّلها لاحقًا لمدير الصور)
+      iconAsset: j['icon_asset'] ?? '',
       action: j['action'] ?? 'route',
       value: j['value'] ?? '',
     );
@@ -32,23 +32,18 @@ class HelpItem {
 }
 
 class HelpController extends GetxController {
-  // ======= حالة الشاشة =======
   final isLoading = true.obs;
   final isError = false.obs;
   final items = <HelpItem>[].obs;
 
-  // لو عندك لغة منPrefs/Localization غيّرها
   String get _lang => 'ar';
 
-  // ======= الشبكة =======
   final Dio _dio = Dio(BaseOptions(
-    // غيّرها لباك-إندك
     baseUrl: 'https://api.example.com',
     connectTimeout: const Duration(seconds: 12),
     receiveTimeout: const Duration(seconds: 12),
   ));
 
-  // endpoint المقترح: GET /help/links
   static const _endpoint = '/help/links';
 
   @override
@@ -62,30 +57,26 @@ class HelpController extends GetxController {
       isLoading.value = true;
       isError.value = false;
 
-      // استبدل الطلب حسب باك-إندك:
       final res = await _dio.get(_endpoint);
       final data = (res.data is List) ? res.data as List : [];
 
       final list = data.map((e) => HelpItem.fromJson(e)).toList();
 
-      // fallback لو الباك-إند لسه مش جاهز — نفس العناصر اللي بالصورة
       items.assignAll(list.isNotEmpty ? list : _fallback());
     } catch (_) {
       isError.value = true;
-      // fallback للعرض المحلي حتى تبني الـ API
       items.assignAll(_fallback());
     } finally {
       isLoading.value = false;
     }
   }
 
-  // عناصر افتراضية مطابقة للصورة (الترتيب مهم)
   List<HelpItem> _fallback() => [
     HelpItem(
       id: '1',
       titleAr:ManagerStrings.helpInfo,
       titleEn: 'Help Info',
-      iconAsset: 'search', // Name سنحوّله لمدير الصور في الـ View
+      iconAsset: 'search',
       action: 'route',
       value: '/help/info',
     ),
@@ -115,11 +106,9 @@ class HelpController extends GetxController {
         }
         break;
       case 'url':
-      // افتح WebView أو launchUrl
       // launchUrlString(item.value);
         break;
       default:
-      // slug مخصص
       // Get.toNamed('/help/${item.value}');
         break;
     }

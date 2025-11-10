@@ -37,7 +37,6 @@ class ProductDetailsView extends StatefulWidget {
 class _ProductDetailsViewState extends State<ProductDetailsView> {
   bool isLoading = true;
 
-  // بيانات المنتج
   late int id;
   late String name;
   late String image;
@@ -60,7 +59,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   bool isWholesaler = false;
   Timer? _timer;
 
-  // تدرجات/أحجام كما لديك
   final List<Shade> _shades = const [
     Shade(Color(0xFFD1A07E), 'بني 4'),
     Shade(Color(0xFFC48A63), 'بني 6'),
@@ -77,7 +75,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   final List<String> _sizes = ['56','54','52','50','60','58'];
   String _sizeSel = '50';
 
-  // سلايدر الصور
   final _page = PageController();
   int _pageIndex = 0;
   final bannerImages = [
@@ -87,13 +84,11 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     ManagerImages.f_2,
   ];
 
-  // تبويب
   int _tab = 0;
 
-  // ====== جديد: التحكم في العنوان حسب التمرير ======
   final _scroll = ScrollController();
-  final _nameKey = GlobalKey();   // نضعه على عنصر الاسم المرجعي
-  double _triggerOffset = 280;    // تُحسب لاحقًا بدقة بعد البناء
+  final _nameKey = GlobalKey();
+  double _triggerOffset = 280;
   bool _showTitle = false;
 
   void _onScroll() {
@@ -106,11 +101,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     final ro = ctx?.findRenderObject() as RenderBox?;
     if (ro == null) return;
     final pos = ro.localToGlobal(Offset.zero); // موضع الاسم على الشاشة
-    // حوّل الموضع إلى Offset داخل Scroll (طرح ارتفاع AppBar وهوامش بسيطة)
     _triggerOffset = (_scroll.offset + pos.dy) - kToolbarHeight - 8;
     _onScroll();
   }
-  // ================================================
 
   Future<void> loadData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -245,12 +238,11 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
       ),
 
       body: ListView(
-        controller: _scroll, // مهم لالتقاط التمرير
+        controller: _scroll,
         padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
         children: [
           SizedBox(height: ManagerHeight.h16),
 
-          // سلايدر الصور
           SizedBox(
             height: 340,
             child: Stack(
@@ -271,7 +263,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           SizedBox(height: ManagerHeight.h20),
 
-          // مؤشرات الصفحات
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(4, (i) {
@@ -294,7 +285,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           SizedBox(height: ManagerHeight.h10),
 
-          // شريط علوي: الاسم + التقييم + مشاركة/مفضلة
           Row(
             children: [
               Container(
@@ -352,15 +342,13 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           SizedBox(height: ManagerHeight.h6),
 
-          // ====== عنصر الاسم المرجعي لظهور العنوان عند تجاوزه ======
           Text(
             sku,
-            key: _nameKey, // مفتاح الحساب
+            key: _nameKey,
             textAlign: TextAlign.start,
             style: getMediumTextStyle(
                 fontSize: ManagerFontSize.s16, color: ManagerColors.black),
           ),
-          // ================================================
 
           SizedBox(height: ManagerHeight.h12),
 
@@ -384,7 +372,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           SizedBox(height: ManagerHeight.h10),
 
-          // اختيار اللون
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -428,7 +415,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               ),
               const SizedBox(height: 18),
 
-              // اختيار الحجم ml
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -490,7 +476,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
               const SizedBox(height: 18),
 
-              // المقاسات
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -557,7 +542,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           const SizedBox(height: 10),
 
-          // السعر
           _PriceBlock(
             price: price,
             sellingPrice: sellingPrice,
@@ -574,7 +558,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
           ),
           SizedBox(height: ManagerHeight.h12),
 
-          // زر السلة
           mainButton(
             onPressed: () => _addToCart(),
             buttonName: 'أضف إلى حقيبتي',
@@ -584,7 +567,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           const SizedBox(height: 46),
 
-          // تبويب وصف/مواصفات
           _TabsHeader(
             tab: _tab,
             onChanged: (t) => setState(() => _tab = t),
@@ -907,8 +889,8 @@ class _SpecsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double labelWidth = 90; // عرض عمود العناوين (عدّل إذا حبيت)
-    const double gap = 86;        // المسافة بين العمودين
+    const double labelWidth = 90;
+    const double gap = 86;
 
     Widget specRow(String title, String value) {
       final String v = (value.isEmpty) ? '-' : value;
@@ -917,7 +899,6 @@ class _SpecsSection extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // العنوان: ثابت العرض ومحاذاته يمين
             SizedBox(
               width: labelWidth,
               child: Text(
@@ -931,7 +912,6 @@ class _SpecsSection extends StatelessWidget {
             ),
             const SizedBox(width: gap),
 
-            // القيمة: تتمدّد لليسار وتلف لو طويلة
             Expanded(
               child: Text(
                 v,
@@ -1056,7 +1036,6 @@ class _RecentlyViewedGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // عناصر وهمية بنفس التصميم (استخدم الكومبوننت الحقيقية عندك لو حابب)
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -1065,7 +1044,7 @@ class _RecentlyViewedGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 16,
-        mainAxisExtent: mainAxisExtent, // يمنع overflow
+        mainAxisExtent: mainAxisExtent,
       ),
       itemBuilder: (_, i) {
         return Container(
@@ -1188,7 +1167,6 @@ class _NoReviewsHint extends StatelessWidget {
   Widget build(BuildContext context) {
     final supabase = Supabase.instance.client;
     return FutureBuilder<List<Map<String, dynamic>>>(
-      // نكتفي بالتحقق إن كان فيه عنصر واحد فقط
       future: supabase
           .from('product_rates')
           .select('id')
@@ -1217,7 +1195,6 @@ class _NoReviewsIllustration extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16),
         child: Column(
           children: [
-            // الأيقونة (نجمة مع دائرة X بنفسجية)
             SizedBox(
               height: 120,
               child: Stack(
@@ -1244,7 +1221,6 @@ class _NoReviewsIllustration extends StatelessWidget {
             const SizedBox(height: 18),
             TextButton(
               onPressed: () {
-                // نفذ اللي تحتاجه هنا (فتح شاشة جميع المراجعات مثلاً)
               },
               child: Text(
                 'شاهد جميع المراجعات',

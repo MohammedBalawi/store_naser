@@ -17,7 +17,6 @@ class BrandTabs extends StatelessWidget {
 
     return GetBuilder<HomeController>(
       builder: (_) {
-        // تحميل
         if (controller.isLoadingCategories) {
           return const SizedBox(
             height: 220,
@@ -25,7 +24,6 @@ class BrandTabs extends StatelessWidget {
           );
         }
 
-        // خطأ
         if (controller.categoriesError != null) {
           return SizedBox(
             height: 220,
@@ -51,7 +49,6 @@ class BrandTabs extends StatelessWidget {
           );
         }
 
-        // لا توجد أصناف
         if (controller.categories.isEmpty) {
           return SizedBox(
             height: 220,
@@ -67,7 +64,6 @@ class BrandTabs extends StatelessWidget {
           );
         }
 
-        // عرض الشبكة
         return SizedBox(
           height: 220,
           child: GridView.builder(

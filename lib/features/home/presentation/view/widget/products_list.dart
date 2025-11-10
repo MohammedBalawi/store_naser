@@ -60,7 +60,7 @@ Widget productsList({
                 ,
                 style: getRegularTextStyle(
                   fontSize: ManagerFontSize.s16,
-                  color: Colors.black, // رمادي خفيف
+                  color: Colors.black, 
                 ),
               ),
             ),

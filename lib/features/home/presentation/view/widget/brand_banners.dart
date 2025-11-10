@@ -82,7 +82,6 @@ class _BannerCard extends StatelessWidget {
               child: Image.asset(
                 url,
                 fit: BoxFit.cover,
-                // لودر بسيط
                 // loadingBuilder: (c, w, p) =>
                 // p == null ? w : const Center(child: CircularProgressIndicator(strokeWidth: 2)),
                 // errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.image_not_supported)),
