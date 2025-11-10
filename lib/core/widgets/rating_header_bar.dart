@@ -7,11 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 class RatingHeaderBar extends StatelessWidget {
   const RatingHeaderBar({
     super.key,
-    required this.average,      // مثال: 5.0
-    required this.count,        // مثال: 3242
-    required this.onRateTap,    // الضغط على "تقييم المنتج"
-    this.bgColor = const Color(0xFFF3ECFF), // بنفسجي فاتح
-    this.primary = const Color(0xFF8A4DFF), // بنفسجي للنص
+    required this.average,
+    required this.count,
+    required this.onRateTap,
+    this.bgColor = const Color(0xFFF3ECFF),
+    this.primary = const Color(0xFF8A4DFF),
   });
 
   final double average;
@@ -58,7 +58,6 @@ class RatingHeaderBar extends StatelessWidget {
                     color: Colors.black54,
                   ),
                 ),
-                // 5 نجوم ممتلئة (يمكنك جعلها ديناميكية إن أردت)
               ],
             ),
             const Spacer(),
@@ -84,7 +83,6 @@ class RatingHeaderBar extends StatelessWidget {
             ),
 
 
-            // التقييم + النجوم
           ],
         ),
       ),

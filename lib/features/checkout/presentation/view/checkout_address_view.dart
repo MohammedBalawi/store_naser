@@ -29,7 +29,6 @@ class CheckoutAddressView extends StatelessWidget {
           builder: (c) {
             return Column(
               children: [
-                // Header
                 Padding(
                   padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
                   child: Row(
@@ -50,7 +49,7 @@ class CheckoutAddressView extends StatelessWidget {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: CheckoutStepper(step: 0), // يظهر اليسار كـ تم ✓ والوسط نشط
+                  child: CheckoutStepper(step: 0),
                 ),
                 const SizedBox(height: 14),
                 Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
@@ -114,7 +113,7 @@ class CheckoutAddressView extends StatelessWidget {
       ),
 
         bottomNavigationBar: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 60),
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
           child: SizedBox(
             height: 52,
             child: ElevatedButton(
@@ -183,9 +182,9 @@ class _AddressCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  TextButton(onPressed: onEdit, child:  Text("تعديل", style: getBoldTextStyle(color: ManagerColors.color, fontSize: 12)) ),
+                  TextButton(onPressed: onEdit, child:  Text(ManagerStrings.edit, style: getBoldTextStyle(color: ManagerColors.color, fontSize: 12)) ),
                   const SizedBox(width: 8),
-                  TextButton(onPressed: onDelete, child:  Text("حذف", style: getBoldTextStyle(color: ManagerColors.color,fontSize: 12 )) ),
+                  TextButton(onPressed: onDelete, child:  Text(ManagerStrings.delete, style: getBoldTextStyle(color: ManagerColors.color,fontSize: 12 )) ),
                 ],
               ),
             ],

@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -22,7 +23,7 @@ class AddAddressView extends GetView<AddAddressController> {
     markerId: const MarkerId('pin'),
     position: _riyadh,
     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-    infoWindow: const InfoWindow(title: 'سيتم تسليم طلبك إلى هذا الموقع'),
+    infoWindow:  InfoWindow(title: ManagerStrings.yourLocation),
   ).obs;
 
   Future<void> _animate(CameraUpdate update) async {
@@ -37,7 +38,7 @@ class AddAddressView extends GetView<AddAddressController> {
   Future<void> _setPin(LatLng p, {double? zoom}) async {
     _pin.value = _pin.value.copyWith(
       positionParam: p,
-      infoWindowParam: const InfoWindow(title: 'سيتم تسليم طلبك إلى هذا الموقع'),
+      infoWindowParam:  InfoWindow(title: ManagerStrings.yourLocation),
     );
     await _animate(CameraUpdate.newLatLngZoom(p, zoom ?? _zoom.value));
     await _gMap?.showMarkerInfoWindow(const MarkerId('pin'));
@@ -64,7 +65,7 @@ class AddAddressView extends GetView<AddAddressController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('إضافة عنوان جديد', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            Text(ManagerStrings.addNewAddress, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             const SizedBox(width: 42),
           ],
         ),
@@ -105,7 +106,7 @@ class AddAddressView extends GetView<AddAddressController> {
                   compassEnabled: false,
                   mapToolbarEnabled: false,
                   onTap: (latLng) {
-                    controller.onMapTapMock(latLng); // يحدّث العنوان ويفعل الحفظ
+                    controller.onMapTapMock(latLng);
                     _setPin(latLng, zoom: 16);
                   },
                   markers: {_pin.value},
@@ -125,14 +126,15 @@ class AddAddressView extends GetView<AddAddressController> {
                     child: Row(
                       children: [
                         Text(
-                          'قم بتفعيل خاصية تحديد موقعك حتى\nنستطيع تحديد مكان استلام طلبك',
+                          ManagerStrings.activateYourLocationReceiveYourOrder
+                          ,
                           textAlign: TextAlign.right,
                           style: getRegularTextStyle(fontSize: 12, color: Colors.black),
                         ),
                         const SizedBox(width: 8),
                         TextButton(
                           onPressed: controller.openAppSettings,
-                          child: Text('الإعدادات', style: getBoldTextStyle(color: ManagerColors.primaryColor, fontSize: 12)),
+                          child: Text(ManagerStrings.settings, style: getBoldTextStyle(color: ManagerColors.primaryColor, fontSize: 12)),
                         ),
                       ],
                     ),
@@ -164,7 +166,7 @@ class AddAddressView extends GetView<AddAddressController> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                       ),
-                      child: Text('موقعي', style: getBoldTextStyle(color: ManagerColors.primaryColor, fontSize: 12)),
+                      child: Text(ManagerStrings.myLocation, style: getBoldTextStyle(color: ManagerColors.primaryColor, fontSize: 12)),
                     ),
                   ),
                 ),
@@ -184,7 +186,8 @@ class AddAddressView extends GetView<AddAddressController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('العنوان غير دقيق، قم بتكبير الخريطة لتحديد موقعك بدقة أكبر',
+                Text(ManagerStrings.theAddressZoomYourLocationMoreAccurately
+                    ,
                     style: getRegularTextStyle(fontSize: 12, color: Colors.black)),
                 SvgPicture.asset(ManagerImages.warning)
               ],
@@ -208,7 +211,7 @@ class AddAddressView extends GetView<AddAddressController> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
-              child: Text('حفظ', style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
+              child: Text(ManagerStrings.save, style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),
         );

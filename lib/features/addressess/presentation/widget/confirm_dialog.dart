@@ -8,7 +8,7 @@ Future<bool?> showConfirmDialog({
   required String message,
   String positive = 'حذف',
   String negative = 'إلغاء',
-  Color positiveColor = const Color(0xFFD40A62), // فوشيا كما بالصورة
+  Color positiveColor = const Color(0xFFD40A62),
 }) {
   return showDialog<bool>(
     context: context,

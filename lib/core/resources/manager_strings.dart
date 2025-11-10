@@ -772,6 +772,7 @@ class ManagerStrings {
   static String get  items  => tr('items');
   static String get  sAR  => tr('sAR');
   static String get  orderCheckout  => tr('orderCheckout');
+  static String get  paymentOfTheOrder  => tr('paymentOfTheOrder');
   static String get  addNewAddress  => tr('addNewAddress');
   static String get  shippingAddress  => tr('shippingAddress');
   static String get  payment  => tr('payment');
@@ -801,6 +802,47 @@ class ManagerStrings {
   static String get   shippingFee  => tr('shippingFee');
   static String get   totalWithTax => tr('totalWithTax');
   static String get   ifQitafIsSelected => tr('ifQitafIsSelected');
+  static String get   yourLocation => tr('yourLocation');
+  static String get   activateYourLocationReceiveYourOrder => tr('yourLocation');
+  static String get   settings => tr('settings');
+  static String get   areYouSureYouWantToDeleteYourAddress => tr('areYouSureYouWantToDeleteYourAddress');
+  static String get   myLocation => tr('myLocation');
+  static String get   pressAddAddressDeliveryAddress => tr('pressAddAddressDeliveryAddress');
+  static String get   thereNoAddresses => tr('thereNoAddresses');
+  static String get   theAddressZoomYourLocationMoreAccurately => tr('theAddressZoomYourLocationMoreAccurately');
+  static String get   placeOrder => tr('placeOrder');
+  static String get   supSusses => tr('supSusses');
+  static String get   supNotification => tr('supNotification');
+  static String get   activate => tr('activate');
+  static String get   fromToDays => tr('fromToDays');
+  static String get   goToOrderDetailTo => tr('goToOrderDetailTo');
+  static String get   areYouHappyWithYourExperience => tr('areYouHappyWithYourExperience');
+  static String get   productsQuality => tr('productsQuality');
+  static String get   deliverySpeed => tr('deliverySpeed');
+  static String get   deliveryRepresentative => tr('deliveryRepresentative');
+  static String get   howWasYourLastShoppingExperience => tr('howWasYourLastShoppingExperience');
+  static String get   orderDate => tr('orderDate');
+  static String get   notSatisfied => tr('notSatisfied');
+  static String get   decent => tr('decent');
+  static String get   satisfied => tr('satisfied');
+  static String get   tellUsMore => tr('tellUsMore');
+  static String get   whatIsYourFeedback => tr('whatIsYourFeedback');
+  static String get   saveAndEvaluateProducts => tr('saveAndEvaluateProducts');
+  static String get   thanksForYourFeedback => tr('thanksForYourFeedback');
+  static String get   supThanks => tr('supThanks');
+  static String get   selectCountry => tr('selectCountry');
+  static String get   searchByCountryNameOrDialingCode => tr('searchByCountryNameOrDialingCode');
+  static String get   enterMobileNumber => tr('enterMobileNumber');
+  static String get   enterTheMobileNumberRegisteredInSTCPAY => tr('enterTheMobileNumberRegisteredInSTCPAY');
+  static String get   areYouSureYouWantToDeleteThisItem => tr('areYouSureYouWantToDeleteThisItem');
+  static String get   amazing => tr('amazing');
+  static String get   veryGood => tr('veryGood');
+  static String get   itWasGood => tr('itWasGood');
+  static String get   notVeryGood => tr('notVeryGood');
+  static String get   disappointing => tr('disappointing');
+  static String get   writeReviewHelpOthersKnowWhatsGood => tr('writeReviewHelpOthersKnowWhatsGood');
+  static String get   customerOpinions => tr('customerOpinions');
+
   //
 
   //

@@ -1,4 +1,5 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,6 @@ class RatingSheets {
   static const _green  = ManagerColors.greens;
   static const _chipBg = Color(0xFFF2F2F7);
 
-  /// STEP 1: رضا عام (نعم/لا). بعد الاختيار ننتقل للـ Home ونمرر بارامتر لفتح الشيت التالي.
   static Future<void> showSatisfactionSheet(
       BuildContext context, {
         required String appName,
@@ -26,13 +26,11 @@ class RatingSheets {
     );
 
     if (result != null) {
-      // انتقل للـ Home واطلب فتح شيت التقييم التفصيلي
       Get.back();
 
     }
   }
 
-  /// STEP 2: التقييم التفصيلي (يُستدعى من الشاشة الرئيسية)
   static Future<void> showDeepRatingSheet(
       BuildContext context, {
         required String appName,
@@ -60,7 +58,6 @@ class RatingSheets {
     }
   }
 
-  /// STEP 3: شيت الشكر
   static Future<void> showThanksSheet(BuildContext context) {
     return Get.bottomSheet(
       _ThanksSheet(),
@@ -73,7 +70,6 @@ class RatingSheets {
   }
 }
 
-/* ======================= Widgets ======================= */
 
 class _SatisfactionSheet extends StatefulWidget {
   const _SatisfactionSheet({required this.appName});
@@ -84,7 +80,7 @@ class _SatisfactionSheet extends StatefulWidget {
 }
 
 class _SatisfactionSheetState extends State<_SatisfactionSheet> {
-  bool? satisfied; // true = نعم, false = لا
+  bool? satisfied;
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +95,10 @@ class _SatisfactionSheetState extends State<_SatisfactionSheet> {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // عنوان
               Row(
                 children: [
                   Text(
-                    " التقييم - ${widget.appName} -",
+                    " ${ManagerStrings.rate} - ${widget.appName} -",
                     style:  getBoldTextStyle(
                         fontSize: 18, color: ManagerColors.black),
                   ),
@@ -126,7 +121,8 @@ class _SatisfactionSheetState extends State<_SatisfactionSheet> {
                 children: [
                   Text(
                     textAlign: TextAlign.start,
-                    "هل أنت راضٍ عن تجربتك مع - اسم التطبيق - ؟",
+                    ManagerStrings.areYouHappyWithYourExperience
+                    ,
                     style: getRegularTextStyle(fontSize: 14,color: ManagerColors.black),
                   ),
                 ],
@@ -138,14 +134,14 @@ class _SatisfactionSheetState extends State<_SatisfactionSheet> {
                 children: [
                   _EmojiChoice(
                     emoji: "🙂",
-                    label: "نعم",
+                    label: ManagerStrings.supYes,
                     selected: satisfied == true,
                     onTap: () => setState(() => satisfied = true),
                   ),
                   const SizedBox(width: 28),
                   _EmojiChoice(
                     emoji: "😐",
-                    label: "لا",
+                    label: ManagerStrings.supNo,
                     selected: satisfied == false,
                     onTap: () => setState(() => satisfied = false),
                   ),
@@ -168,7 +164,7 @@ class _SatisfactionSheetState extends State<_SatisfactionSheet> {
                   onPressed:
                   satisfied == null ? null : () => Get.back(result: satisfied),
                   child:  Text(
-                    "متابعة",
+                    ManagerStrings.continues,
                     style:
                     getBoldTextStyle(color: Colors.white, fontSize: 14),
                   ),
@@ -212,7 +208,7 @@ class _EmojiChoice extends StatelessWidget {
             height: 58,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: bg, // الخلفية هي اللي تتغير
+              color: bg,
             ),
             child: Center(
               child: Text(emoji, style: const TextStyle(fontSize: 34)),
@@ -233,7 +229,6 @@ class _EmojiChoice extends StatelessWidget {
 }
 
 
-/* ---------- Deep rating ---------- */
 
 class _DeepRatingSheet extends StatefulWidget {
   const _DeepRatingSheet({
@@ -253,13 +248,14 @@ class _DeepRatingSheet extends StatefulWidget {
 }
 
 class _DeepRatingSheetState extends State<_DeepRatingSheet> {
-  final Map<String, int> ratings = {}; // 0=غير راضي,1=مقبول,2=راضي
+  final Map<String, int> ratings = {};
   final ctrl = TextEditingController();
 
-  final cats = const [
-    "جودة المنتجات",
-    "سرعة التسليم",
-    "مندوب التوصيل",
+  final cats =  [
+    ManagerStrings.
+    productsQuality,
+    ManagerStrings.deliverySpeed,
+    ManagerStrings.deliveryRepresentative,
   ];
 
   bool get _valid => cats.every((c) => ratings.containsKey(c));
@@ -267,106 +263,103 @@ class _DeepRatingSheetState extends State<_DeepRatingSheet> {
   @override
   Widget build(BuildContext context) {
     final insets = MediaQuery.of(context).viewInsets.bottom;
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return SafeArea(
       top: false,
       child: Padding(
         padding: EdgeInsets.only(bottom: insets),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // شريط علوي
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Get.back(),
-                    ),
-                    const Spacer(),
-                    const SizedBox(width: 48),
-                  ],
-                ),
-                Text(
-                  "كيف كانت تجربة التسوق الأخيرة الخاصة بك؟",
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  "تاريخ الطلب: ${_fmtDate(widget.orderDate)}  رقم الطلب: ${widget.orderNumber}",
-                  style:
-                  const TextStyle(color: Colors.black54, fontSize: 13.5),
-                ),
-                const SizedBox(height: 12),
-                const Divider(),
-
-                const SizedBox(height: 6),
-                // الأسطر
-                ...cats.map((c) => _ratingRow(
-                  title: c,
-                  value: ratings[c],
-                  onChanged: (v) => setState(() => ratings[c] = v),
-                )),
-                const SizedBox(height: 10),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text("أخبرنا المزيد..",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 16)),
-                ),
-                const SizedBox(height: 8),
-
-                // نص
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFFE6E6EB)),
-                    borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Get.back(),
                   ),
-                  child: TextField(
-                    controller: ctrl,
-                    maxLines: 4,
-                    decoration: const InputDecoration(
-                      hintText: "ما هو تعليقك؟",
-                      border: InputBorder.none,
-                    ),
+                  const Spacer(),
+                  const SizedBox(width: 48),
+                ],
+              ),
+              Text(
+                ManagerStrings.howWasYourLastShoppingExperience,
+                style:  getBoldTextStyle(
+                    fontSize: 20, color: Colors.black),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "${ManagerStrings.orderDate}: ${_fmtDate(widget.orderDate)} ${ManagerStrings.orderNumber}: ${widget.orderNumber}",
+                style:
+                const TextStyle(color: Colors.black54, fontSize: 13.5),
+              ),
+              const SizedBox(height: 12),
+              const Divider(),
+
+              const SizedBox(height: 6),
+              ...cats.map((c) => _ratingRow(
+                title: c,
+                value: ratings[c],
+                onChanged: (v) => setState(() => ratings[c] = v),
+              )),
+              const SizedBox(height: 10),
+
+              Align(
+                alignment:isArabic? Alignment.centerRight:Alignment.centerLeft,
+                child: Text(ManagerStrings.tellUsMore
+                    ,
+                    style:  getMediumTextStyle(
+                        fontSize: 16,color: Colors.black)),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: const Color(0xFFE6E6EB)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: TextField(
+                  controller: ctrl,
+                  maxLines: 4,
+                  decoration:  InputDecoration(
+                    hintText: ManagerStrings.whatIsYourFeedback,
+                    border: InputBorder.none,
                   ),
                 ),
-                const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 16),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      _valid ? RatingSheets._purple : Colors.grey.shade400,
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: _valid
-                        ? () => Get.back(
-                      result: _DeepRatingResult(
-                        ratings: ratings,
-                        comment: ctrl.text.trim(),
-                      ),
-                    )
-                        : null,
-                    child: const Text(
-                      "حفظ وتقييم المنتجات",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w700),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                    _valid ? RatingSheets._purple : Colors.grey.shade400,
+                    minimumSize: const Size.fromHeight(52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
+                  onPressed: _valid
+                      ? () => Get.back(
+                    result: _DeepRatingResult(
+                      ratings: ratings,
+                      comment: ctrl.text.trim(),
+                    ),
+                  )
+                      : null,
+                  child:  Text(
+                    ManagerStrings.saveAndEvaluateProducts
+                    ,
+                    style: getBoldTextStyle(
+                        color: Colors.white, fontSize: 16),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -378,13 +371,14 @@ class _DeepRatingSheetState extends State<_DeepRatingSheet> {
     required int? value,
     required ValueChanged<int> onChanged,
   }) {
-    final labels = ["غير راضي", "مقبول", "راضي"];
-    final emojis  = ["🤢", "😐", "🙂"]; // بدّل لإيموجيزك إن لزم
+    final labels = [ManagerStrings.notSatisfied, ManagerStrings.decent, ManagerStrings.satisfied];
+    final emojis  = ["🤢", "😐", "🙂"];
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          // الخيارات
           Expanded(
             child: Wrap(
               spacing: 22,
@@ -418,12 +412,17 @@ class _DeepRatingSheetState extends State<_DeepRatingSheet> {
                       const SizedBox(height: 6),
                       Text(
                         labels[i],
-                        style: TextStyle(
+                        style: selected ?
+                        getBoldTextStyle(
                           color: selected
                               ? RatingSheets._purple
                               : Colors.black45,
-                          fontWeight:
-                          selected ? FontWeight.w700 : FontWeight.w400,
+                          fontSize: 12.5,
+                        ):
+                getMediumTextStyle(
+                          color: selected
+                              ? RatingSheets._purple
+                              : Colors.black45,
                           fontSize: 12.5,
                         ),
                       ),
@@ -434,14 +433,13 @@ class _DeepRatingSheetState extends State<_DeepRatingSheet> {
             ),
           ),
           const SizedBox(width: 14),
-          // العنوان على يمين الصورة (حسب لقطة الشاشة)
           SizedBox(
             width: 140,
             child: Text(
               title,
-              textAlign: TextAlign.right,
+              textAlign:isArabic? TextAlign.right:TextAlign.left,
               style:
-              const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+               getBoldTextStyle( fontSize: 16,color: Colors.black),
             ),
           ),
         ],
@@ -459,7 +457,6 @@ class _DeepRatingResult {
   final String comment;
 }
 
-/* ---------- Thanks ---------- */
 
 class _ThanksSheet extends StatelessWidget {
   @override
@@ -475,15 +472,17 @@ class _ThanksSheet extends StatelessWidget {
             children: [
               const Text("❤️", style: TextStyle(fontSize: 40)),
               const SizedBox(height: 8),
-              const Text(
-                "شكراً على تعليقاتك!",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+               Text(
+                 ManagerStrings.thanksForYourFeedback
+                ,
+                style: getBoldTextStyle(fontSize: 22, color: Colors.black),
               ),
               const SizedBox(height: 8),
-              const Text(
-                "نحن سعداء جداً لأنك تستمتع في اسم التطبيق!",
+               Text(
+                 ManagerStrings.supThanks
+                ,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black54, height: 1.5),
+                style: getMediumTextStyle(color: Colors.black54, fontSize: 16),
               ),
               const SizedBox(height: 18),
               SizedBox(
@@ -497,9 +496,9 @@ class _ThanksSheet extends StatelessWidget {
                     ),
                   ),
                   onPressed: () => Get.back(),
-                  child: const Text("تم",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w700)),
+                  child:  Text(ManagerStrings.ok,
+                      style: getBoldTextStyle(
+                          color: Colors.white, fontSize: 16)),
                 ),
               ),
             ],

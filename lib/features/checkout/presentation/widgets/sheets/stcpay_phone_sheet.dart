@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,7 +24,6 @@ class GulfCountry {
   });
 }
 
-/// كونترولر STC PAY
 class StcPayPhoneController extends GetxController {
   final List<GulfCountry> gulfCountries = const [
     GulfCountry(name: 'السعودية', dialCode: '+966', flagAsset: ManagerImages.su, iso: 'SA', minLen: 9),
@@ -67,7 +67,7 @@ class StcPayPhoneController extends GetxController {
     if (selected.value.iso == 'SA' && local.isNotEmpty && !local.startsWith('5')) {
       hasError.value = true;
     }
-    update(); // لو فيه Widgets مبنية على GetBuilder
+    update();
   }
 
   void applyCountry(GulfCountry c) {
@@ -88,7 +88,6 @@ class StcPayPhoneController extends GetxController {
   }
 }
 
-/// شيت اختيار دولة مع بحث
 Future<GulfCountry?> _pickCountryBottomSheet(
     BuildContext context, {
       required List<GulfCountry> all,
@@ -125,7 +124,9 @@ Future<GulfCountry?> _pickCountryBottomSheet(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('اختر الدولة', style: getBoldTextStyle(fontSize: 16, color: Colors.black)),
+                    Text(
+                      ManagerStrings.selectCountry
+                        , style: getBoldTextStyle(fontSize: 16, color: Colors.black)),
                     const SizedBox(width: 24),
                     IconButton(
                       onPressed: () => Navigator.pop(ctx),
@@ -154,7 +155,7 @@ Future<GulfCountry?> _pickCountryBottomSheet(
                           style: getRegularTextStyle(fontSize: 14, color: ManagerColors.black),
                           onChanged: (v) => query.value = v.trim(),
                           decoration: InputDecoration(
-                            hintText: 'ابحث باسم الدولة أو كود الاتصال',
+                            hintText:ManagerStrings.searchByCountryNameOrDialingCode,
                             hintStyle: getRegularTextStyle(fontSize: 14, color: Colors.grey),
                             border: InputBorder.none,
                           ),
@@ -165,7 +166,6 @@ Future<GulfCountry?> _pickCountryBottomSheet(
                 ),
               ),
               const SizedBox(height: 8),
-              // ملاحظة: Obx واحدة تكفي هنا
               Expanded(
                 child: Obx(() {
                   final q = query.value;
@@ -227,7 +227,6 @@ Future<GulfCountry?> _pickCountryBottomSheet(
   );
 }
 
-/// تعرض شيت إدخال رقم STC PAY وتعيد الرقم بصيغة +9665########
 Future<String?> showStcPayPhoneSheet(BuildContext context) async {
   final tag = 'stc-pay-${DateTime.now().microsecondsSinceEpoch}';
   final c = Get.put(StcPayPhoneController(), tag: tag);
@@ -244,13 +243,11 @@ Future<String?> showStcPayPhoneSheet(BuildContext context) async {
       builder: (ctx) => Directionality(
         textDirection: TextDirection.rtl,
         child: AnimatedPadding(
-          // عشان الكيبورد
           duration: const Duration(milliseconds: 150),
           padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-              // استخدم GetX واحدة بدلاً من خلط GetBuilder و Obx
               child: GetX<StcPayPhoneController>(
                 tag: tag,
                 builder: (ctrl) {
@@ -268,10 +265,12 @@ Future<String?> showStcPayPhoneSheet(BuildContext context) async {
                           ),
                         ),
                       ),
-                      Text('أدخل رقم الهاتف المحمول', textAlign: TextAlign.center,
+                      Text(
+                        ManagerStrings.enterMobileNumber
+                          , textAlign: TextAlign.center,
                           style: getBoldTextStyle(fontSize: 18, color: Colors.black)),
                       const SizedBox(height: 18),
-                      Text('أدخل رقم الهاتف المحمول المسجل في STCPAY',
+                      Text(ManagerStrings.enterTheMobileNumberRegisteredInSTCPAY,
                           style: getRegularTextStyle(color: Colors.black, fontSize: 14)),
                       const SizedBox(height: 24),
 
@@ -290,7 +289,7 @@ Future<String?> showStcPayPhoneSheet(BuildContext context) async {
                                 keyboardType: TextInputType.number,
                                 inputFormatters: ctrl.formatters,
                                 decoration: InputDecoration(
-                                  hintText: 'رقم الهاتف',
+                                  hintText: ManagerStrings.phone,
                                   hintStyle: getRegularTextStyle(fontSize: 16, color: ManagerColors.bongrey),
                                   border: InputBorder.none,
                                 ),
@@ -352,12 +351,11 @@ Future<String?> showStcPayPhoneSheet(BuildContext context) async {
                           ),
                           onPressed: canContinue
                               ? () {
-                            // مهم: فكّ الفوكس قبل الإغلاق
                             FocusScope.of(ctx).unfocus();
                             Navigator.pop(ctx, ctrl.fullNumber);
                           }
                               : null,
-                          child: Text('متابعة', style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
+                          child: Text(ManagerStrings.continues, style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
                         ),
                       ),
                       const SizedBox(height: 36),

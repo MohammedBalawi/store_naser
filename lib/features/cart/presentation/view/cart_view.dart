@@ -177,10 +177,9 @@ class _CartViewState extends State<CartView> {
                     }, isFavorite: isFav,
                     onToggleFavorite: () {
                       setState(() => isFav = !isFav);
-                      // أو controller.toggleFavorite(productId);
                     },
                     // showNewRibbon: true,
-                    // discountText: '20%', // إن وُجد
+                    // discountText: '20%',
                   );
                 },
               ),

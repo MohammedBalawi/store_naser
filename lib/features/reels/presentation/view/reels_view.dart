@@ -47,7 +47,7 @@ class ReelsView extends GetView<ReelsController> {
           }
           final items = controller.reels;
           if (items.isEmpty) {
-            return const Center(child: Text('لا توجد ريلز حتى الآن'));
+            return  Center(child: Text('لا توجد ريلز حتى الآن',style: getBoldTextStyle(fontSize: 16, color: Colors.black),));
           }
           return ListView.separated(
             itemCount: items.length,

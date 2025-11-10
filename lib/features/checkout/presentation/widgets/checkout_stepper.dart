@@ -2,32 +2,31 @@ import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-/// step:
-/// 0 = عنوان الشحن (نشط)  | 1 = الدفع (نشط)  | 2 = تم الإرسال (نشط)
 class CheckoutStepper extends StatelessWidget {
   final int step;
   const CheckoutStepper({super.key, required this.step});
 
-  Color get green => ManagerColors.greens; // الأخضر المستخدم عندك
+  Color get green => ManagerColors.greens;
   Color get lineGray => const Color(0xFFE6E6E6);
   Color get nodeGray => const Color(0xFFEDEDED);
   Color get labelGray => const Color(0xFFB5B5B5);
 
   @override
   Widget build(BuildContext context) {
-    // نعرض من اليسار لليمين: تم الإرسال (2) — خط — الدفع (1) — خط — عنوان الشحن (0)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
-            _node(0),         // عنوان الشحن (يمين)
-            _seg(rightIndex: 0), // خط بين (1) و (0) — يصير أخضر فقط إذا step >= 1
-            _node(1),         // الدفع (وسط)
-            _seg(rightIndex: 1), // خط بين (2) و (1) — يصير أخضر فقط إذا step >= 2
+            _node(0),
+            _seg(rightIndex: 0),
+            _node(1),
+            _seg(rightIndex: 1),
 
-            _node(2),         // تم الإرسال (يسار)
+            _node(2),
           ],
         ),
         const SizedBox(height: 10),
@@ -61,30 +60,25 @@ class CheckoutStepper extends StatelessWidget {
         child: isCompleted
             ? const Icon(Icons.check, size: 18, color: Colors.white)
             : isActive
-        // النقطة البيضاء الصغيرة في المنتصف (مثل الصورة)
             ? Container(
           width: 6, height: 6,
           decoration: const BoxDecoration(
             color: Colors.white, shape: BoxShape.circle,
           ),
         )
-        // رقم الخطوة داخل الدائرة الرمادية
             : Text(
           '${idx + 1}',
-          style: const TextStyle(
+          style:  getBoldTextStyle(
             color: Color(0xFF7B7B7B),
-            fontWeight: FontWeight.w700,
+           fontSize: 14
           ),
         ),
       ),
     );
   }
 
-  /// لون المقطع بين العقدتين:
-  /// يصبح أخضر فقط إذا كانت الخطوة الحالية أكبر من العقدة التي على يمينه.
-  /// مثال: الخط بين (1) و(0) أخضر عندما step >= 1
   Widget _seg({required int rightIndex}) {
-    final bool filled = step > rightIndex; // >=1 للخط اليميني، >=2 للخط اليساري
+    final bool filled = step > rightIndex;
     return Expanded(
       child: Container(
         height: 4,
@@ -93,16 +87,17 @@ class CheckoutStepper extends StatelessWidget {
     );
   }
 
-  /// لون عنوان كل عقدة: أسود للمنجزة/النشطة، رمادي للقادمة
   Widget _label(String text, int idx) {
     final bool highlight = step >= idx;
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Text(
       text,
       style: getMediumTextStyle(
       fontSize: 12,
         color: highlight ? Colors.black : labelGray,
       ),
-      textAlign: TextAlign.right,
+      textAlign:isArabic? TextAlign.right:TextAlign.left,
     );
   }
 }

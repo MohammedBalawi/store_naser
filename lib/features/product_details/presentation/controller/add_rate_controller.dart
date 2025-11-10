@@ -1,5 +1,6 @@
 // lib/features/product_details/presentation/controller/add_rate_controller.dart
 import 'dart:io';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -31,15 +32,15 @@ class AddRateController extends GetxController {
   String get ratingLabel {
     switch (rate) {
       case 5:
-        return 'رائع';
+        return ManagerStrings.amazing;
       case 4:
-        return 'جيد جدًا';
+        return ManagerStrings.veryGood;
       case 3:
-        return 'لقد كان جيدا';
+        return ManagerStrings.itWasGood;
       case 2:
-        return 'ليس جيدا جدا';
+        return ManagerStrings.notVeryGood;
       case 1:
-        return 'مخيب للآمال';
+        return ManagerStrings.disappointing;
       default:
         return '';
     }

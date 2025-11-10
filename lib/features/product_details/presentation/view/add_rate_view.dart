@@ -1,6 +1,7 @@
 // lib/features/product_details/presentation/view/add_rate_view.dart
 import 'dart:io';
 import 'package:app_mobile/core/cache/app_cache.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/service/image_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -47,15 +48,15 @@ class _AddRateViewState extends State<AddRateView> {
   String _labelFor(int r) {
     switch (r) {
       case 5:
-        return 'رائع';
+        return ManagerStrings.amazing;
       case 4:
-        return 'جيد جدًا';
+        return ManagerStrings.veryGood;
       case 3:
-        return 'لقد كان جيدا';
+        return ManagerStrings.itWasGood;
       case 2:
-        return 'ليس جيداً جداً';
+        return ManagerStrings.notVeryGood;
       case 1:
-        return 'مُخيب للآمال';
+        return ManagerStrings.disappointing;
       default:
         return '';
     }
@@ -92,6 +93,7 @@ class _AddRateViewState extends State<AddRateView> {
   void _openAddSheet() {
     final c = Get.find<AddRateController>();
     c.resetForm();
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     showModalBottomSheet(
       context: context,
@@ -114,7 +116,7 @@ class _AddRateViewState extends State<AddRateView> {
                     child: Column(
                       children: [
                         Align(
-                          alignment: Alignment.centerRight,
+                          alignment: isArabic?Alignment.centerRight:Alignment.centerLeft,
                           child: IconButton(
                             onPressed: () => Navigator.pop(context),
                             icon: SvgPicture.asset(ManagerImages.cansel_icon),
@@ -180,7 +182,7 @@ class _AddRateViewState extends State<AddRateView> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            'أخبرنا المزيد',
+                            ManagerStrings.tellUsMore,
                             style: getBoldTextStyle(
                               fontSize: 16,
                               color: ManagerColors.black,
@@ -199,7 +201,8 @@ class _AddRateViewState extends State<AddRateView> {
                               color: ManagerColors.textColorProfile,
                             ),
                             hintText:
-                            'اكتب مراجعة لمساعدة الآخرين على معرفة ما هو جيد',
+                                ManagerStrings.writeReviewHelpOthersKnowWhatsGood
+                            ,
                             counterText: '$counter/500',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -324,7 +327,7 @@ class _AddRateViewState extends State<AddRateView> {
                               disabledBackgroundColor: ManagerColors.color_off,
                             ),
                             child: Text(
-                              'أرسال',
+                              ManagerStrings.send,
                               style: getBoldTextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
@@ -367,7 +370,9 @@ class _AddRateViewState extends State<AddRateView> {
             GestureDetector(
                 onTap: () => Get.back(),
                 child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('آراء العملاء',
+            Text(
+              ManagerStrings.customerOpinions
+                ,
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             const SizedBox(width: 42),
           ],
@@ -975,7 +980,8 @@ Future<bool> confirmDeleteImageDialog(BuildContext context) async {
             children: [
               const SizedBox(height: 6),
               Text(
-                'هل أنت متأكد أنك تريد حذف\nهذا العنصر؟',
+ManagerStrings.areYouSureYouWantToDeleteThisItem
+                ,
                 textAlign: TextAlign.center,
                 style: getBoldTextStyle(
                     fontSize: 16, color: ManagerColors.black),
@@ -996,7 +1002,7 @@ Future<bool> confirmDeleteImageDialog(BuildContext context) async {
                         const Size.fromHeight(48),
                         elevation: 0,
                       ),
-                      child: Text('إلغاء',
+                      child: Text(ManagerStrings.cancel,
                           style: getBoldTextStyle(
                               fontSize: 16, color: Colors.white)),
                     ),
@@ -1015,7 +1021,7 @@ Future<bool> confirmDeleteImageDialog(BuildContext context) async {
                         const Size.fromHeight(48),
                         elevation: 0,
                       ),
-                      child: Text('حذف',
+                      child: Text(ManagerStrings.delete,
                           style: getBoldTextStyle(
                               fontSize: 16, color: Colors.white)),
                     ),
