@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -82,7 +83,7 @@ class HelpController extends GetxController {
   List<HelpItem> _fallback() => [
     HelpItem(
       id: '1',
-      titleAr: 'معلومات المساعدة',
+      titleAr:ManagerStrings.helpInfo,
       titleEn: 'Help Info',
       iconAsset: 'search', // Name سنحوّله لمدير الصور في الـ View
       action: 'route',
@@ -90,7 +91,7 @@ class HelpController extends GetxController {
     ),
     HelpItem(
       id: '2',
-      titleAr: 'الشروط والسياسات',
+      titleAr: ManagerStrings.termsAndPolicies,
       titleEn: 'Terms & Policies',
       iconAsset: 'target',
       action: 'route',
@@ -98,7 +99,7 @@ class HelpController extends GetxController {
     ),
     HelpItem(
       id: '3',
-      titleAr: 'سياسة الخصوصية',
+      titleAr: ManagerStrings.privacyPolicy,
       titleEn: 'Privacy Policy',
       iconAsset: 'privacy',
       action: 'route',

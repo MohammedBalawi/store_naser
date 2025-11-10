@@ -14,7 +14,7 @@ class AddRateController extends GetxController {
 
   /// صور مختارة محليًا (حد أقصى 5)
   final List<XFile> selectedImages = [];
-  final int maxImages = 5;
+  final int maxImages = 3;
 
   /// اسم المستخدم المؤقت (بدّله ببيانات البروفايل عندك)
   String userName = 'Guest';
@@ -58,20 +58,26 @@ class AddRateController extends GetxController {
   }
 
   /// اختيار صور متعددة
+  // ======= المطلوب: pickImages كاملة =======
   Future<void> pickImages() async {
     if (selectedImages.length >= maxImages) return;
+
     final picker = ImagePicker();
     final files = await picker.pickMultiImage(
       imageQuality: 85,
       maxWidth: 1600,
       maxHeight: 1600,
     );
+
     if (files == null || files.isEmpty) return;
 
     final remain = maxImages - selectedImages.length;
     selectedImages.addAll(files.take(remain));
-    update();
+
+    update(); // لتحديث الواجهة وإخفاء/إظهار زر الإضافة حسب العدد
   }
+
+
 
   /// حذف صورة من المعاينة
   void removeImageAt(int index) {

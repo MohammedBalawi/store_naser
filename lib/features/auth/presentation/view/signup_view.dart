@@ -1,4 +1,5 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -13,100 +14,114 @@ class SignUpView extends GetView<SignUpController> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: ManagerColors.background_2,
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_ios_outlined,
-                    color: Colors.black,
-                  )),
-              Text('التسجيل',
-                  style: getBoldTextStyle(
-                      color: ManagerColors.black, fontSize: 20)),
-              const SizedBox(width: 50)
-            ],
-          ),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
+    return Scaffold(
+      backgroundColor: ManagerColors.background_2,
+      appBar:AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(height: 6),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text('إنشاء حساب جديد',
-                  style: getBoldTextStyle(
-                      color: ManagerColors.greens, fontSize: 18)),
+            IconButton(
+              onPressed: () => Get.back(),
+              icon: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left),
             ),
-            const SizedBox(height: 15),
-
-            Container(
-              decoration: BoxDecoration(
-                color: ManagerColors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: ManagerColors.white),
-              ),
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: const [
-                  _NameField(),
-                  SizedBox(height: 10),
-                  PhoneField(),
-                  SizedBox(height: 10),
-                  _EmailField(),
-                  SizedBox(height: 10),
-                  _PasswordField(),
-                ],
-              ),
+            Text(
+              ManagerStrings.register,
+              style: getBoldTextStyle(color: Colors.black, fontSize: 18),
             ),
-
-            const SizedBox(height: 14),
-            const _TermsText(),
-
-            const SizedBox(height: 32),
-            Obx(() {
-              final enabled = controller.canSubmit;
-
-              const activeColor = ManagerColors.color;      // بنفسجي غامق
-              const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
-
-              return SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: controller.onSubmitPressed,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    disabledForegroundColor: Colors.white, // حتى لما يكون غير مفعل يبقى النص أبيض
-                    backgroundColor: enabled ? activeColor : inactiveColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'متابعة',
-                    style: getBoldTextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              );
-            }),
-
-
-            const SizedBox(height: 24),
+            const SizedBox(width: 40),
           ],
         ),
+        leadingWidth: 0,
+        automaticallyImplyLeading: false,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        // automaticallyImplyLeading: false,
+        // leadingWidth: 0,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        children: [
+          const SizedBox(height: 6),
+          Align(
+            alignment:isArabic?  Alignment.centerRight:Alignment.centerLeft,
+            child: Text(ManagerStrings.createNewAccount,
+                style: getBoldTextStyle(
+                    color: ManagerColors.greens, fontSize: 18)),
+          ),
+          const SizedBox(height: 15),
+
+          Container(
+            decoration: BoxDecoration(
+              color: ManagerColors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: ManagerColors.white),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: const [
+                _NameField(),
+                SizedBox(height: 10),
+                PhoneField(),
+                SizedBox(height: 10),
+                _EmailField(),
+                SizedBox(height: 10),
+                _PasswordField(),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 14),
+          const _TermsText(),
+
+          const SizedBox(height: 32),
+          Obx(() {
+            final enabled = controller.canSubmit && !controller.isSubmitting.value;
+
+            const activeColor = ManagerColors.color;      // بنفسجي غامق
+            const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+
+            return SizedBox(
+              height: 52,
+              child: ElevatedButton(
+                onPressed: enabled ? controller.onSubmitPressed : null,
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  disabledForegroundColor: Colors.white,
+                  backgroundColor: enabled ? activeColor : inactiveColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 0,
+                ),
+                child: controller.isSubmitting.value
+                    ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                    : Text(
+                  ManagerStrings.continues
+                  ,
+                  style: getBoldTextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            );
+          }),
+
+
+
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }
@@ -119,9 +134,9 @@ class _NameField extends GetView<SignUpController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final hasError =
-          controller.showErrors.value && !controller.validName; // ⬅️ هنا
+          controller.showErrors.value && !controller.validName;
       return _FieldShell(
-        errorText: hasError ? 'أدخل الاسم' : null,
+        errorText: hasError ? ManagerStrings.enterTheName : null,
         child: Row(
           children: [
             Expanded(
@@ -130,8 +145,8 @@ class _NameField extends GetView<SignUpController> {
                 getRegularTextStyle(fontSize: 16, color: ManagerColors.black),
                 focusNode: controller.focusName,
                 onChanged: (v) => controller.name.value = v,
-                decoration: const InputDecoration(
-                  hintText: 'الاسم الأول والأخير',
+                decoration:  InputDecoration(
+                  hintText:ManagerStrings.firstAndLastName ,
                   border: InputBorder.none,
                 ),
                 textInputAction: TextInputAction.next,
@@ -158,6 +173,8 @@ class PhoneField extends GetView<SignUpController> {
         errorText: hasError ? controller.phoneErrorText : null,
         child: Row(
           children: [
+            CountryButton(),
+            const SizedBox(width: 10),
             Expanded(
               child: TextField(
                 focusNode: controller.focusPhone,
@@ -166,15 +183,14 @@ class PhoneField extends GetView<SignUpController> {
                 style: getRegularTextStyle(
                     fontSize: 16, color: ManagerColors.grey_2),
                 onChanged: controller.onPhoneChanged,
-                decoration: const InputDecoration(
-                  hintText: 'رقم الهاتف',
+                decoration:  InputDecoration(
+                  hintText: ManagerStrings.phone,
                   border: InputBorder.none,
                 ),
                 textInputAction: TextInputAction.next,
               ),
             ),
-            const SizedBox(width: 10),
-            CountryButton(),
+
             if (hasError) const _ErrorDot(),
           ],
         ),
@@ -189,9 +205,9 @@ class _EmailField extends GetView<SignUpController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final hasError =
-          controller.showErrors.value && !controller.validEmail; // ⬅️ هنا
+          controller.showErrors.value && !controller.validEmail;
       return _FieldShell(
-        errorText: hasError ? 'أدخل عنوان بريد إلكتروني صالح' : null,
+        errorText: hasError ? ManagerStrings.enterEmailAddress : null,
         child: Row(
           children: [
             Expanded(
@@ -201,8 +217,8 @@ class _EmailField extends GetView<SignUpController> {
                 focusNode: controller.focusEmail,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (v) => controller.email.value = v,
-                decoration: const InputDecoration(
-                  hintText: 'عنوان البريد الإلكتروني',
+                decoration:  InputDecoration(
+                  hintText: ManagerStrings.emailAddress,
                   border: InputBorder.none,
                 ),
                 textInputAction: TextInputAction.next,
@@ -226,7 +242,7 @@ class _PasswordField extends GetView<SignUpController> {
           controller.showErrors.value && !controller.validPass; // ⬅️ هنا
 
       return _FieldShell(
-        errorText: hasError ? 'يجب أن تكون كلمة المرور من 8 أحرف على الأقل' : null,
+        errorText: hasError ? ManagerStrings.thePasswordMustCharacters : null,
         child: Row(
           children: [
             Expanded(
@@ -236,8 +252,8 @@ class _PasswordField extends GetView<SignUpController> {
                 onChanged: (v) => controller.password.value = v,
                 style: getRegularTextStyle(
                     fontSize: 16, color: ManagerColors.grey_2),
-                decoration: const InputDecoration(
-                  hintText: 'كلمة المرور',
+                decoration:  InputDecoration(
+                  hintText:ManagerStrings.password,
                   border: InputBorder.none,
                 ),
                 textInputAction: TextInputAction.done,
@@ -300,9 +316,11 @@ class _ErrorDot extends StatelessWidget {
   const _ErrorDot({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(right: 6.0),
-      child: Icon(Icons.error, color: ManagerColors.red_info, size: 22),
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
+    return  Padding(
+      padding: isArabic? EdgeInsets.only(right: 6.0):EdgeInsets.only(left: 6.0),
+      child: SvgPicture.asset(ManagerImages.warning),
     );
   }
 }
@@ -356,16 +374,6 @@ class CountryButton extends GetView<SignUpController> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.expand_more, size: 18, color: Colors.black54),
-            const SizedBox(width: 4),
-            Text(
-              controller.selected.value.dialCode,
-              style: getRegularTextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(width: 8),
             Container(
               width: 32,
               height: 22,
@@ -377,6 +385,17 @@ class CountryButton extends GetView<SignUpController> {
                 controller.selected.value.flagAsset,
               ),
             ),
+            const SizedBox(width: 4),
+            Text(
+              controller.selected.value.dialCode,
+              style: getRegularTextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.expand_more, size: 18, color: Colors.black54),
+
           ],
         ),
       ),

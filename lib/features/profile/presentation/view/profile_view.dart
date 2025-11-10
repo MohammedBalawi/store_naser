@@ -1,4 +1,5 @@
 // lib/features/profile/presentation/view/profile_view.dart
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,6 @@ class _C {
   static const muted = Color(0xFF717171);
 }
 
-// اللوجو الدائري البنفسجي (مطابق للصور)
 class _LayeredBag extends StatelessWidget {
   const _LayeredBag({super.key});
   @override
@@ -25,7 +25,7 @@ class _LayeredBag extends StatelessWidget {
       width: 160,
       height: 160,
       alignment: Alignment.center,
-      child: Image.asset(ManagerImages.loge, width: 150, height: 150),
+      child: Image.asset(ManagerImages.image_app, width: 150, height: 150),
     );
   }
 }
@@ -91,7 +91,7 @@ class _MenuTile extends StatelessWidget {
                 label,
                 style: getRegularTextStyle(
                   fontSize: 18,
-                  color: color!,
+                  color: color,
                 ),
               ),
             ),
@@ -109,267 +109,311 @@ class ProfileView extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: _C.bg,
-        body: SafeArea(
-          child: GetBuilder<ProfileController>(
-            builder: (_) {
-              return ListView(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                children: [
-                  const SizedBox(height: 6),
-                  const Center(child: _LayeredBag()),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      'إيـليـك',//Eilik
-                      style: getBoldTextStyle(
-                        fontSize: 20,
-                        color: ManagerColors.black,
-                      ),
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
+    return Scaffold(
+      backgroundColor: _C.bg,
+      body: SafeArea(
+        child: GetBuilder<ProfileController>(
+          builder: (_) {
+            return ListView(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              children: [
+                const SizedBox(height: 6),
+                const Center(child: _LayeredBag()),
+                const SizedBox(height: 10),
+                Center(
+                  child: Text(
+                    ManagerStrings.eilik,
+                    style: getBoldTextStyle(
+                      fontSize: 20,
+                      color: ManagerColors.black,
                     ),
                   ),
-                  const SizedBox(height: 22),
+                ),
+                const SizedBox(height: 22),
 
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 14),
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _C.card,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Obx(() {
-                      if (!controller.isLoggedIn.value) {
-                        return Column(
-                          children: [
-                            InkWell(
-                              onTap: controller.onSignupTap,
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 14),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(ManagerImages.add_parson),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        'تسجيل حساب جديد',
-                                        style: getRegularTextStyle(
-                                          fontSize: 18,
-                                          color: ManagerColors.greens,
-                                        ),
-                                      ),
-                                    ),
-                                    SvgPicture.asset(ManagerImages.arrow_left),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const Divider(height: 1, color: _C.divider),
-                            InkWell(
-                              onTap: controller.onSigninTap,
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 14),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(ManagerImages.login_2),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        'تسجيل الدخول',
-                                        style: getRegularTextStyle(
-                                          fontSize: 18,
-                                          color: ManagerColors.color,
-                                        ),
-                                      ),
-                                    ),
-                                    SvgPicture.asset(ManagerImages.arrow_left),
-
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 14),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _C.card,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Obx(() {
+                    if (!controller.isLoggedIn.value) {
                       return Column(
                         children: [
-                          _MenuTile(
-                            label: 'تعديل الحساب',
-                            color: ManagerColors.color,
-                            rightIcon: ManagerImages.edit_profile,
-                            leftGlyph: SvgPicture.asset(
-                              ManagerImages.arrow_left,
-                              // color: ManagerColors.color,
+                          InkWell(
+                            onTap: controller.onSignupTap,
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 14),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(ManagerImages.add_parson),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      ManagerStrings.registerAccount,
+                                      style: getRegularTextStyle(
+                                        fontSize: 18,
+                                        color: ManagerColors.greens,
+                                      ),
+                                    ),
+                                  ),
+                                  SvgPicture.asset(
+                                    isArabic?
+                                    ManagerImages.arrow_left:
+                                    ManagerImages.arrow_en,
+                                    // color: ManagerColors.color,
+                                  ),
+                                ],
+                              ),
                             ),
-                            onTap: controller.onEditAccount,
                           ),
-                          // const Divider(height: 1, color: _C.divider),
-                          _MenuTile(
-                            label: 'عنـاويني',
-                            color: ManagerColors.greens,
-                            rightIcon: ManagerImages.location,
-                            leftGlyph: SvgPicture.asset(
-                              ManagerImages.arrow_left,
-                              // color: ManagerColors.greens,
+                          const Divider(height: 1, color: _C.divider),
+                          InkWell(
+                            onTap: controller.onSigninTap,
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 14),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(ManagerImages.login_2),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      ManagerStrings.login,
+
+                                      style: getRegularTextStyle(
+                                        fontSize: 18,
+                                        color: ManagerColors.color,
+                                      ),
+                                    ),
+                                  ),
+                                  SvgPicture.asset(
+                                    isArabic?
+                                    ManagerImages.arrow_left:
+                                    ManagerImages.arrow_en,
+                                    // color: ManagerColors.color,
+                                  ),
+
+                                ],
+                              ),
                             ),
-                            onTap: controller.onAddresses,
-                          ),
-                          // const Divider(height: 1, color: _C.divider),
-                          _MenuTile(
-                            label: 'طلباتي',
-                            color: ManagerColors.blou,
-                            rightIcon: ManagerImages.order,
-                            leftGlyph: SvgPicture.asset(
-                              ManagerImages.arrow_left,
-                              // color: ManagerColors.blou,
-                            ),
-                            onTap: controller.onOrders,
-                          ),
-                          // const Divider(height: 1, color: _C.divider),
-                          _MenuTile(
-                            label: 'الرصيد',
-                            color: ManagerColors.yolo,
-                            rightIcon: ManagerImages.wallet,
-                            leftGlyph: SvgPicture.asset(
-                              ManagerImages.arrow_left,
-                              // color: ManagerColors.yolo,
-                            ),
-                            onTap: controller.onWallet,
-                          ),
-                          // const Divider(height: 1, color: _C.divider),
-                          _MenuTile(
-                            label: 'المفضلة',
-                            color: ManagerColors.like,
-                            rightIcon: ManagerImages.love,
-                            leftGlyph: SvgPicture.asset(ManagerImages.arrow_left),
-                            onTap: controller.onFavorites,
                           ),
                         ],
                       );
-                    }),
-                  ),
+                    }
 
-                  const SizedBox(height: 14),
-
-                  // الكرت السفلي (عام)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 14),
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _C.card,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
+                    return Column(
                       children: [
-                        // البلد واللغة — العلم ديناميكي من الكنترولر
                         _MenuTile(
-                          label: 'البلد واللغة',
-                          color: ManagerColors.black,
-
-                          rightIcon: ManagerImages.country,
-                          leftGlyph: Obx(
-                                () => Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _FlagGlyph(asset: controller.currentFlagAsset),
-
-                                const SizedBox(width: 8),
-                                SvgPicture.asset(ManagerImages.arrow_left),
-                              ],
-                            ),
+                          label: ManagerStrings.editAccount,
+                          color: ManagerColors.color,
+                          rightIcon: ManagerImages.edit_profile,
+                          leftGlyph: SvgPicture.asset(
+                            isArabic?
+                            ManagerImages.arrow_left:
+                              ManagerImages.arrow_en,
+                            // color: ManagerColors.color,
                           ),
-                          onTap: controller.onCountryLanguage,
-                        ),
-
-                        // const Divider(height: 1, color: _C.divider),
-                        _MenuTile(
-                          label: 'المساعدة',
-                          color: ManagerColors.black,
-
-                          rightIcon: ManagerImages.help,
-                          leftGlyph: SvgPicture.asset(ManagerImages.arrow_left),
-                          onTap: controller.onHelp,
+                          onTap: controller.onEditAccount,
                         ),
                         // const Divider(height: 1, color: _C.divider),
                         _MenuTile(
-                          label: 'يدعم',
-                          color: ManagerColors.black,
-
-                          rightIcon: ManagerImages.regster,
-                          leftGlyph: SvgPicture.asset(ManagerImages.arrow_left),
-                          onTap: controller.onSupport,
-                        ),
-                        // const Divider(height: 1, color: _C.divider),
-                        _MenuTile(
-                          label: 'حول التطبيق',
-                          color: ManagerColors.black,
-
-                          rightIcon: ManagerImages.us,
-                          leftGlyph: SvgPicture.asset(ManagerImages.arrow_left),
-                          onTap: controller.onAbout,
-                        ),
-                        // const Divider(height: 1, color: _C.divider),
-                        Obx(
-                              () => Visibility(
-                            visible: controller.isLoggedIn.value,
-                            child: _MenuTile(
-                              label: 'تسجيل الخروج',
-                              color: ManagerColors.black,
-                              rightIcon: ManagerImages.logout,
-                              rightIconColor: ManagerColors.like,
-                              leftGlyph:
-                              SvgPicture.asset(ManagerImages.arrow_left),
-                              onTap: () => controller.confirmLogout(context),
-                            ),
+                          label: ManagerStrings.myAddresses,
+                          color: ManagerColors.greens,
+                          rightIcon: ManagerImages.location,
+                          leftGlyph:  SvgPicture.asset(
+                            isArabic?
+                            ManagerImages.arrow_left:
+                            ManagerImages.arrow_en,
+                            // color: ManagerColors.color,
                           ),
+                          onTap: controller.onAddresses,
+                        ),
+                        // const Divider(height: 1, color: _C.divider),
+                        _MenuTile(
+                          label:ManagerStrings.myOrders ,
+                          color: ManagerColors.blou,
+                          rightIcon: ManagerImages.order,
+                          leftGlyph: SvgPicture.asset(
+                            isArabic?
+                            ManagerImages.arrow_left:
+                            ManagerImages.arrow_en,
+                            // color: ManagerColors.color,
+                          ),
+                          onTap: controller.onOrders,
+                        ),
+                        // const Divider(height: 1, color: _C.divider),
+                        _MenuTile(
+                          label: ManagerStrings.balance,
+                          color: ManagerColors.yolo,
+                          rightIcon: ManagerImages.wallet,
+                          leftGlyph: SvgPicture.asset(
+                            isArabic?
+                            ManagerImages.arrow_left:
+                            ManagerImages.arrow_en,
+                            // color: ManagerColors.color,
+                          ),
+                          onTap: controller.onWallet,
+                        ),
+                        // const Divider(height: 1, color: _C.divider),
+                        _MenuTile(
+                          label: ManagerStrings.favourites,
+                          color: ManagerColors.like,
+                          rightIcon: ManagerImages.love,
+                          leftGlyph:  SvgPicture.asset(
+                            isArabic?
+                            ManagerImages.arrow_left:
+                            ManagerImages.arrow_en,
+                            // color: ManagerColors.color,
+                          ),
+                          onTap: controller.onFavorites,
                         ),
                       ],
-                    ),
+                    );
+                  }),
+                ),
+
+                const SizedBox(height: 14),
+
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 14),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _C.card,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-
-                  const SizedBox(height: 24),
-
-                  // الفوتر
-                  Column(
+                  child: Column(
                     children: [
-                      Text(
-                        'جميع الحقوق محفوظة للتطبيق ${controller.footerYear}',
-                        style: getRegularTextStyle(
-                          fontSize: 14,
-                          color: ManagerColors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'VAT No.${controller.vatNo}  CR No.${controller.crNo}',
-                        style: getRegularTextStyle(
-                          fontSize: 14,
-                          color: ManagerColors.bongrey,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'الإصدار ${controller.version}',
-                        style: getRegularTextStyle(
-                          fontSize: 14,
-                          color: ManagerColors.bongrey,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
+                      _MenuTile(
+                        label: ManagerStrings.countryAndLanguage,
+                        color: ManagerColors.black,
 
+                        rightIcon: ManagerImages.country,
+                        leftGlyph: Obx(
+                              () => Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _FlagGlyph(asset: controller.currentFlagAsset),
+
+                              const SizedBox(width: 8),
+                              SvgPicture.asset(
+                                isArabic?
+                                ManagerImages.arrow_left:
+                                ManagerImages.arrow_en,
+                                // color: ManagerColors.color,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: controller.onCountryLanguage,
+                      ),
+
+                      _MenuTile(
+                        label: ManagerStrings.help,
+                        color: ManagerColors.black,
+
+                        rightIcon: ManagerImages.help,
+                        leftGlyph:  SvgPicture.asset(
+                          isArabic?
+                          ManagerImages.arrow_left:
+                          ManagerImages.arrow_en,
+                          // color: ManagerColors.color,
+                        ),
+                        onTap: controller.onHelp,
+                      ),
+                      // const Divider(height: 1, color: _C.divider),
+                      _MenuTile(
+                        label: ManagerStrings.support,
+                        color: ManagerColors.black,
+
+                        rightIcon: ManagerImages.regster,
+                        leftGlyph:  SvgPicture.asset(
+                          isArabic?
+                          ManagerImages.arrow_left:
+                          ManagerImages.arrow_en,
+                          // color: ManagerColors.color,
+                        ),
+                        onTap: controller.onSupport,
+                      ),
+                      // const Divider(height: 1, color: _C.divider),
+                      _MenuTile(
+                        label: ManagerStrings.aboutApp,
+                        color: ManagerColors.black,
+
+                        rightIcon: ManagerImages.us,
+                        leftGlyph:  SvgPicture.asset(
+                          isArabic?
+                          ManagerImages.arrow_left:
+                          ManagerImages.arrow_en,
+                          // color: ManagerColors.color,
+                        ),
+                        onTap: controller.onAbout,
+                      ),
+                      // const Divider(height: 1, color: _C.divider),
+                      Obx(
+                            () => Visibility(
+                          visible: controller.isLoggedIn.value,
+                          child: _MenuTile(
+                            label: ManagerStrings.logout,
+                            color: ManagerColors.black,
+                            rightIcon: ManagerImages.logout,
+                            rightIconColor: ManagerColors.like,
+                            leftGlyph:
+                            SvgPicture.asset(
+                              isArabic?
+                              ManagerImages.arrow_left:
+                              ManagerImages.arrow_en,
+                              // color: ManagerColors.color,
+                            ),
+                            onTap: () => controller.confirmLogout(context),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+
+                const SizedBox(height: 24),
+
+                Column(
+                  children: [
+                    Text(
+                  ManagerStrings.supVersion,
+                      style: getRegularTextStyle(
+                        fontSize: 14,
+                        color: ManagerColors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'VAT No.${controller.vatNo}  CR No.${controller.crNo}',
+                      style: getRegularTextStyle(
+                        fontSize: 14,
+                        color: ManagerColors.bongrey,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${ManagerStrings.version} ${controller.version}',
+                      style: getRegularTextStyle(
+                        fontSize: 14,
+                        color: ManagerColors.bongrey,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

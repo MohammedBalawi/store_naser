@@ -1,6 +1,8 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RatingHeaderBar extends StatelessWidget {
   const RatingHeaderBar({
@@ -35,9 +37,9 @@ class RatingHeaderBar extends StatelessWidget {
                 Row(
                   children: List.generate(
                     5,
-                        (_) => const Padding(
+                        (_) =>  Padding(
                       padding: EdgeInsets.symmetric(horizontal: 1.5),
-                      child: Icon(Icons.star, size: 15, color: Color(0xFFFFC107)),
+                      child: SvgPicture.asset(ManagerImages.star,height: 18,)
                     ),
                   ),
                 ),
@@ -52,7 +54,7 @@ class RatingHeaderBar extends StatelessWidget {
                 ),                Text(
                   '( ${count.toString()} مراجعة)  ',
                   style:  getRegularTextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Colors.black54,
                   ),
                 ),
@@ -66,13 +68,13 @@ class RatingHeaderBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Row(
                 children: [
-                  Icon(Icons.add, color: ManagerColors.color, size: 22),
+                  Icon(Icons.add, color: ManagerColors.color, size: 25),
                   const SizedBox(width: 8),
 
                   Text(
                     'تقييم المنتج',
                     style: getRegularTextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
 
                       color: ManagerColors.color,
                     ),

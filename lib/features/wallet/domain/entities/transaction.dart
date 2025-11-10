@@ -1,14 +1,14 @@
-enum WalletTab { total, credit, debit } // المجموع - ائتمان - بدل
+enum WalletTab { total, credit, debit }
 
-enum TxType { in_, out } // داخل/خارج
+enum TxType { in_, out }
 
 class WalletTransaction {
   final String id;
   final DateTime createdAt;
-  final TxType type; // in_ = +, out = -
+  final TxType type;
   final double amount;
-  final String title; // مثل: SHAKES أو "خصم الطلب رقم #26579639"
-  final String? note; // مثل: "صالحة حتى 04-04-2025 الساعة 19:35:15"
+  final String title;
+  final String? note;
   WalletTransaction({
     required this.id,
     required this.createdAt,

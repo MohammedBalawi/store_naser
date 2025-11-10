@@ -32,6 +32,7 @@ class ManagerColors {
   static const Color primaryColorDark = Color(0xFFB8C9CC);
   static const Color primaryColorLight = Color(0x4C253EA7);
   static const Color background = Color(0xffFAFAFA);
+  static const Color backg = Color(0xffF8F6FB);
   static const Color backgroundForm = Color(0xFFFBFBFE);
   static const Color grey = Colors.grey;
   static const Color lightBlack = Colors.black54;
@@ -98,6 +99,8 @@ class ManagerColors {
   static const Color gray_3 = Color(0xFF727272);
   static const Color gray_taxt = Color(0xFF585858);
   static const Color text_color = Color(0xFF565656);
+  static const Color star = Color(0xFF474747);
+  static const Color star_empte = Color(0xFF4A4A4C);
   static const Color color_off = Color(0xFFCFB3E6);
   static const Color red_info = Color(0xFFEF2D28);
   static const Color red_worn = Color(0xFFE3161B);

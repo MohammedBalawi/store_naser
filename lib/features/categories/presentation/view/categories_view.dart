@@ -25,7 +25,7 @@ class CategoriesView extends StatelessWidget {
       elevation: 0,
       onRefresh: () async {
     await Get.find<HomeController>().homeRequest();
-    await Get.find<HomeController>().fetchCategoriess();
+    // await Get.find<HomeController>().fetchCategoriess();
     },
         child: willPopScope(
       child: GetBuilder<CategoriesController>(

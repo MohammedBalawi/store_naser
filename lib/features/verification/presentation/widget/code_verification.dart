@@ -9,7 +9,8 @@ class CodeVerification extends StatelessWidget {
   final FocusNode? previousFocusNode;
   final void Function(String value) onChanged;
   final String? Function(String?)? validator;
-  final bool hasError; // جديد: للتحكم بلون الحدود عند الخطأ
+  final bool hasError;
+
 
   const CodeVerification({
     Key? key,

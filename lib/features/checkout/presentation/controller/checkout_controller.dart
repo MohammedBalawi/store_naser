@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:get/get.dart';
 
 import '../view/checkout_payment_view.dart';
@@ -34,7 +35,7 @@ class CheckoutController extends GetxController {
   double productPrice = 189.75;
   int productQty = 3;
   String productImage =
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Placeholder_Camera.svg/512px-Placeholder_Camera.svg.png"; // بدّلها بصورة منتجك
+      ManagerImages.crame; // بدّلها بصورة منتجك
 
   // طرق الدفع
   PaymentMethod? selectedMethod = PaymentMethod.card;

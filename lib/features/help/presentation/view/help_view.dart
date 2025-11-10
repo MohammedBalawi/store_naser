@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,8 @@ class HelpView extends GetView<HelpController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
       appBar: AppBar(
@@ -30,8 +33,8 @@ class HelpView extends GetView<HelpController> {
           children: [
             GestureDetector(
                 onTap: () => Get.back(),
-                child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('المساعدة',
+                child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(ManagerStrings.help,
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             SizedBox(width: 30,),
           ],
@@ -118,6 +121,8 @@ class _HelpTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return InkWell(
       onTap: onTap,
       child: SizedBox(
@@ -138,8 +143,9 @@ class _HelpTile extends StatelessWidget {
                 ),
             ),
             const SizedBox(width: 12),
-
-            SvgPicture.asset(ManagerImages.arrow_left, width: 22, height: 22),
+            isArabic ?
+            SvgPicture.asset(ManagerImages.arrow_left, width: 22, height: 22):
+            SvgPicture.asset(ManagerImages.arrow_en, width: 22, height: 22),
             const SizedBox(width: 22),
           ],
         ),
@@ -148,7 +154,6 @@ class _HelpTile extends StatelessWidget {
   }
 }
 
-/// هيكل تحميل بسيط يحافظ على نفس الأبعاد
 class _HelpSkeleton extends StatelessWidget {
   const _HelpSkeleton();
 
@@ -203,7 +208,6 @@ class _HelpSkeleton extends StatelessWidget {
   }
 }
 
-/// ويدجت خطأ + إعادة المحاولة
 class _ErrorRetry extends StatelessWidget {
   const _ErrorRetry({required this.onRetry});
   final VoidCallback onRetry;

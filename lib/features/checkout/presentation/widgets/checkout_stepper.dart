@@ -1,4 +1,6 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
 
 /// step:
@@ -32,10 +34,10 @@ class CheckoutStepper extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _label("عنوان الشحن", 0),
-            _label("الدفع", 1),
+            _label(ManagerStrings.shippingAddress, 0),
+            _label(ManagerStrings.payment, 1),
 
-            _label("تم الإرسال", 2),
+            _label(ManagerStrings.orderSent, 2),
           ],
         ),
       ],
@@ -61,7 +63,7 @@ class CheckoutStepper extends StatelessWidget {
             : isActive
         // النقطة البيضاء الصغيرة في المنتصف (مثل الصورة)
             ? Container(
-          width: 8, height: 8,
+          width: 6, height: 6,
           decoration: const BoxDecoration(
             color: Colors.white, shape: BoxShape.circle,
           ),
@@ -96,8 +98,8 @@ class CheckoutStepper extends StatelessWidget {
     final bool highlight = step >= idx;
     return Text(
       text,
-      style: TextStyle(
-        fontWeight: FontWeight.w600,
+      style: getMediumTextStyle(
+      fontSize: 12,
         color: highlight ? Colors.black : labelGray,
       ),
       textAlign: TextAlign.right,

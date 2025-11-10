@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class OpenTicketView extends GetView<TicketsController> {
   Widget build(BuildContext context) {
     final TextEditingController detailsCtrl = TextEditingController();
     detailsCtrl.addListener(() => controller.setDetails(detailsCtrl.text));
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: ManagerColors.background,
@@ -28,8 +30,8 @@ class OpenTicketView extends GetView<TicketsController> {
           children: [
             GestureDetector(
                 onTap: () => Get.back(),
-                child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('فتح تذكرة',
+                child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(ManagerStrings.openTicket,
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             SizedBox(width: 30,),
           ],
@@ -51,7 +53,7 @@ class OpenTicketView extends GetView<TicketsController> {
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.all(14),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                    _lineRow(label: 'رقم الطلب', value: controller.orderId.value.isEmpty ? '26579639' : controller.orderId.value),
+                    _lineRow(label: ManagerStrings.orderNo, value: controller.orderId.value.isEmpty ? '26579639' : controller.orderId.value),
                     Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 5,indent: 5,),
                     const SizedBox(height: 10),
 
@@ -62,12 +64,12 @@ class OpenTicketView extends GetView<TicketsController> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('ما هي مشكلتك؟', style: getBoldTextStyle(fontSize: 12, color: ManagerColors.black)),
+                            Text(ManagerStrings.whatProblem, style: getBoldTextStyle(fontSize: 12, color: ManagerColors.black)),
 
 
                             Row(children: [
                               const SizedBox(width: 12),
-                              Text(controller.selectedProblem.value.isEmpty ? 'اختر المشكلة' : controller.selectedProblem.value,
+                              Text(controller.selectedProblem.value.isEmpty ? ManagerStrings.chooseProblem : controller.selectedProblem.value,
                                   style: getRegularTextStyle(fontSize: 14, color: Colors.black)),
                               const SizedBox(width: 12),
 
@@ -82,7 +84,7 @@ class OpenTicketView extends GetView<TicketsController> {
                     Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 5,indent: 5,),
 
                     const SizedBox(height: 16),
-                    Text('إضافة التفاصيل', style: getBoldTextStyle(fontSize: 12, color: ManagerColors.black)),
+                    Text(ManagerStrings.addDetails, style: getBoldTextStyle(fontSize: 12, color: ManagerColors.black)),
                     const SizedBox(height: 20),
                     _DetailsWithAttach(
                       controller: controller,
@@ -103,7 +105,7 @@ class OpenTicketView extends GetView<TicketsController> {
                     final ok = await controller.submit();
                     if (ok && context.mounted) {
                       _showSuccess(context);
-                      Get.back(); // ارجع لقائمة التذاكر
+                      Get.back();
                     }
                   } : null,
                   style: ElevatedButton.styleFrom(
@@ -112,7 +114,7 @@ class OpenTicketView extends GetView<TicketsController> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
                   ),
-                  child: Text('إرسال', style: getBoldTextStyle(fontSize: 16, color: Colors.white)),
+                  child: Text(ManagerStrings.send, style: getBoldTextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ),
             ),
@@ -124,12 +126,12 @@ class OpenTicketView extends GetView<TicketsController> {
 
   void _showProblemsSheet(BuildContext context) {
     final options = [
-      'منتجات مفقودة',
-      'منتجات إضافية',
-      'تلقيت طلبًا خاطئًا',
-      'منتجات تالفة',
-      'إرجاع المنتج',
-      'آخر',
+      ManagerStrings.missingProducts,
+      ManagerStrings.extraProducts,
+      ManagerStrings.receivedWrongOrder,
+      ManagerStrings.damagedProducts,
+      ManagerStrings.returnProduct,
+      ManagerStrings.another,
     ];
     showModalBottomSheet(
       context: context,
@@ -142,20 +144,18 @@ class OpenTicketView extends GetView<TicketsController> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ العنوان مع زر الإغلاق بالنهاية
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // النص بالبداية (يمين في RTL)
                 Text(
-                  'ما هي المشكلة',
+                  ManagerStrings.whatIsProblem
+                  ,
                   style: getBoldTextStyle(
                     fontSize: 16,
                     color: ManagerColors.black,
                   ),
                 ),
 
-                // زر الإغلاق بالنهاية (يسار)
                 IconButton(
                   onPressed: () => Get.back(),
                   icon: const Icon(Icons.close, color: Colors.black),
@@ -165,7 +165,8 @@ class OpenTicketView extends GetView<TicketsController> {
 
             const SizedBox(height: 14),
             Text(
-              'اختر من الأسباب',
+              ManagerStrings.selectReasons
+              ,
               style: getRegularTextStyle(
                 fontSize: 12,
                 color: Colors.black,
@@ -173,7 +174,6 @@ class OpenTicketView extends GetView<TicketsController> {
             ),
             const SizedBox(height: 24),
 
-            // ✅ قائمة الخيارات
             for (final o in options) ...[
               _OptionTile(
                 text: o,
@@ -216,13 +216,16 @@ class _OptionTile extends StatelessWidget {
   final String text; final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.only(right: 12),
+
+        padding:isArabic ? EdgeInsets.only(right: 12):EdgeInsets.only(left: 12),
         height: 55,
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFFE5E7EB))),
-        alignment: Alignment.centerRight,
+        alignment:isArabic ? Alignment.centerRight:Alignment.centerLeft,
         child: Text(text, style: getBoldTextStyle(fontSize: 12, color: ManagerColors.black)),
       ),
     );
@@ -245,7 +248,7 @@ class _DetailsWithAttach extends StatelessWidget {
             controller: detailsCtrl,
             maxLines: 6,
             decoration: InputDecoration(
-              hintText: 'أضف تفاصيل المشكلة وسنتواصل بك',
+              hintText: ManagerStrings.supDetails,
               hintStyle:  getMediumTextStyle(fontSize:12,color: Colors.black),
               filled: true,
               fillColor:  Colors.white,
@@ -258,16 +261,15 @@ class _DetailsWithAttach extends StatelessWidget {
             bottom: 8, right: 10,
             child: Column(
               children: [
-                // زر اختيار صورة (هنا مثال وهمي يرفق صورة رمادية)
                 InkWell(
                   onTap: () {
                     // TODO: استخدم image_picker ثم:
                     controller.attachImage(Uint8List(8));
                   },
                   child: Container(
-                    width: 36, height: 36,
+                    width: 40, height: 40,
                     decoration: BoxDecoration(border: Border.all(color: const Color(0xFFD1D5DB)), borderRadius: BorderRadius.circular(8), color: Colors.white),
-                    child: const Icon(Icons.image_outlined, color: Color(0xFF7C3AED)),
+                    child: SvgPicture.asset(ManagerImages.add_image)
                   ),
                 ),
                 const SizedBox(height: 8),

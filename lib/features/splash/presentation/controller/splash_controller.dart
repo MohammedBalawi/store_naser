@@ -35,7 +35,7 @@ class SplashController extends GetxController {
     if (user != null) {
       Get.offAllNamed(Routes.main);
     } else {
-      Get.offAllNamed(Routes.login);
+      Get.offAllNamed(Routes.main);
     }
   }
 }

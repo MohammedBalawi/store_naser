@@ -1,7 +1,9 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../controller/edit_email_controller.dart';
@@ -11,27 +13,47 @@ class EditEmailView extends GetView<EditEmailController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
-      appBar: AppBar(
+      appBar:AppBar(
         elevation: 0,
-        centerTitle: true,
+        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
         backgroundColor: Colors.white,
-        title: Text('تغيير البريد الإلكتروني',
-            style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16),
-            child: SvgPicture.asset(ManagerImages.arrows),
-          ),
-        ),
-      ),
+        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
+        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        notificationPredicate: (notification) => false,
 
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark
+            .copyWith(statusBarColor: Colors.white),
+
+        flexibleSpace: const SizedBox.expand(
+          child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
+        ),
+
+        title:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(ManagerStrings.changeEmail,
+                style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            const SizedBox(width: 42),
+          ],
+        ),
+
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 0,
+      )
+      ,
       body: Obx(() {
         final state = controller.emailState.value;
 
-        // حقل الإدخال + الشرح – نفس تصميمك
         final textField = _EmailField(
           controller: controller.emailController,
           state: state,
@@ -40,52 +62,51 @@ class EditEmailView extends GetView<EditEmailController> {
 
         return Stack(
           children: [
-            ListView(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              children: [
-                const SizedBox(height: 15),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      textField,
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'أدخل عنوان البريد الإلكتروني الجديد',
-                              style: getBoldTextStyle(
-                                  fontSize: 14, color: ManagerColors.bongrey),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'هذا البريد الإلكتروني مرتبط بحسابك ولا يمكن لأحد رؤيته\n'
-                                  'سواك. إذا قمت بتغييره، فقد يتم الاحتفاظ به لأغراض استرداد\n'
-                                  'الحساب.',
-                              style: getBoldTextStyle(
-                                  fontSize: 12, color: ManagerColors.gray_3),
-                            ),
-                          ],
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        textField,
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ManagerStrings.enterEmailAddress,
+                                style: getBoldTextStyle(
+                                    fontSize: 14, color: ManagerColors.bongrey),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                ManagerStrings.supEmail,
+                                style: getBoldTextStyle(
+                                    fontSize: 12, color: ManagerColors.gray_3),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                    ],
+                        const SizedBox(height: 6),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 120),
-              ],
+                  const SizedBox(height: 120),
+                ],
+              ),
             ),
 
-            // بانر علوي بأسلوبك (✔️ أو ⚠️)
             _DropBanner(
               message: controller.banner.value?.message ?? '',
               isError: controller.banner.value?.isError ?? false,
@@ -107,8 +128,6 @@ class EditEmailView extends GetView<EditEmailController> {
             height: 52,
             child: ElevatedButton(
               onPressed: enabled ? controller.save : controller.save,
-              // 👆 حسب اللقطات: الزر يطلق الفحص حتى لو غير مفعل (لتسهيل التجربة).
-              // إن أردتها صارمة: اجعل onPressed = enabled ? controller.save : null
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 disabledForegroundColor: Colors.white,
@@ -119,7 +138,7 @@ class EditEmailView extends GetView<EditEmailController> {
                 ),
                 elevation: 0,
               ),
-              child: Text('تحديث',
+              child: Text(ManagerStrings.update,
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           );
@@ -129,7 +148,6 @@ class EditEmailView extends GetView<EditEmailController> {
   }
 }
 
-/// حقل البريد مع شارة "جاري التحقق..." وأيقونات (❗️/✔️) مثل الصور
 class _EmailField extends StatelessWidget {
   const _EmailField({
     required this.controller,
@@ -145,7 +163,6 @@ class _EmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderColor = const Color(0xFFE9E9EF);
 
-    // أيقونة داخل الحقل (يمين = الشمال في الـ RTL)
     Widget? trailingIcon;
     if (state == EmailState.invalidFormat || state == EmailState.alreadyUsed) {
       trailingIcon = Padding(
@@ -159,9 +176,8 @@ class _EmailField extends StatelessWidget {
       );
     }
 
-    // الشارة الصغيرة "جاري التحقق..."
     final checkingChip = PositionedDirectional(
-      end: 10, // 🔹 على الشمال بدل اليمين
+      end: 10,
       top: 13,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 200),
@@ -182,7 +198,7 @@ class _EmailField extends StatelessWidget {
               // border: Border.all(color: borderColor),
             ),
             child: Text(
-              'جاري التحقق...',
+              ManagerStrings.checking,
               style: getBoldTextStyle(
                   fontSize: 10, color: ManagerColors.gray_3),
             ),
@@ -200,7 +216,7 @@ class _EmailField extends StatelessWidget {
           style: getRegularTextStyle(fontSize: 16, color: ManagerColors.black),
           decoration: InputDecoration(
             counterText: '',
-            hintText: 'اكتب البريد الاكتروني',
+            hintText:ManagerStrings.enterNewEmail,
             hintStyle:
             getRegularTextStyle(fontSize: 16, color: ManagerColors.bongrey),
             contentPadding:

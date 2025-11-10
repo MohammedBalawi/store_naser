@@ -22,7 +22,7 @@ import 'package:app_mobile/features/otp_register/presentation/view/otp_register_
 import 'package:app_mobile/features/product_details/domain/di/di.dart';
 import 'package:app_mobile/features/product_details/presentation/view/add_rate_view.dart';
 import 'package:app_mobile/features/product_details/presentation/view/product_details_view.dart';
-import 'package:app_mobile/features/products/domain/di/di.dart';
+import 'package:app_mobile/features/products/domain/di/di.dart' hide initCategoryProducts;
 import 'package:app_mobile/features/products/presentation/view/products_view.dart';
 import 'package:app_mobile/features/reset_password/presentation/view/reset_password_view.dart';
 import 'package:app_mobile/features/reset_password/presentation/view/otp_reset_password.dart';
@@ -210,7 +210,7 @@ class RouteGenerator {
         initAddRate();
         return MaterialPageRoute(builder: (_) => const AddRateView());
       case Routes.products:
-        initProducts();
+        initCategoryProducts();
         return MaterialPageRoute(builder: (_) => const ProductsView( title: '',));
       case Routes.contactUs:
         return MaterialPageRoute(builder: (_) => const ContactUsView());

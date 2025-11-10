@@ -12,16 +12,16 @@ Widget scaffoldWithImageBackground({
     child: Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.5,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: isRegisterView ? arrowBackButton() : Container(),
       ),
-      backgroundColor: ManagerColors.background,
+      backgroundColor: ManagerColors.white,
       body: Container(
         margin: EdgeInsetsDirectional.only(
           top: ManagerHeight.h12,
         ),
-        child: child /* add child content here */,
+        child: child ,
       ),
     ),
   );

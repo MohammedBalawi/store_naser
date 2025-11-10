@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,12 +12,12 @@ class SkinTone {
 }
 
 class SkinToneController extends GetxController {
-  static const tones = <SkinTone>[
-    SkinTone('أبيض',  Color(0xFFF9E4C6)),
-    SkinTone('فاتح',  Color(0xFFF3C981)),
-    SkinTone('متوسط', Color(0xFFD9B061)),
-    SkinTone('غامق',  Color(0xFFB7793E)),
-    SkinTone('داكن',  Color(0xFF5E2B22)),
+  static  List<SkinTone> tones = <SkinTone>[
+    SkinTone(ManagerStrings.white,  Color(0xFFF9E4C6)),
+    SkinTone(ManagerStrings.light,  Color(0xFFF3C981)),
+    SkinTone(ManagerStrings.medium, Color(0xFFD9B061)),
+    SkinTone(ManagerStrings.dark,  Color(0xFFB7793E)),
+    SkinTone(ManagerStrings.black,  Color(0xFF5E2B22)),
   ];
 
   final currentIndex = 4.obs;
@@ -48,7 +49,7 @@ class SkinToneController extends GetxController {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'لقد تم تحديث لون بشرتك بنجاح.',
+              ManagerStrings.skinColorSuccessfully,
               textAlign: TextAlign.right,
               style: getMediumTextStyle(
                 fontSize: 12,

@@ -34,7 +34,7 @@ class CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = const Color(0xFFF1EFF0);
+    final bg = const Color(0xFF38424B);
     final titleColor = selected ? ManagerColors.primaryColor : Colors.black;
 
     final totalHeight = popAmount + cardHeight + gap + 26; // زيادة شوي للنص مع الخط
@@ -48,7 +48,6 @@ class CategoryTile extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // الكرت + الأيقونة الطالعة
             SizedBox(
               height: popAmount + cardHeight,
               child: Stack(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,7 +59,8 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   bool showAllComments = false;
   bool isWholesaler = false;
   Timer? _timer;
-  /// 2) داخل State الخاص بصفحة المنتج (أضِف المتغيّرات التالية)
+
+  // تدرجات/أحجام كما لديك
   final List<Shade> _shades = const [
     Shade(Color(0xFFD1A07E), 'بني 4'),
     Shade(Color(0xFFC48A63), 'بني 6'),
@@ -68,22 +70,14 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     Shade(Color(0xFFB16136), 'بني فاتح'),
     Shade(Color(0xFF6B2C1E), 'بني'),
     Shade(Color(0xFFD0834E), 'متوسط'),
-
-
-
-
-
-
   ];
-
-  int _shadeIdx = 3;                 // المختار افتراضياً (يظهر عليه إطار بنفسجي)
-  final List<String> _volumes = [ '50ml','90ml'];
+  int _shadeIdx = 3;
+  final List<String> _volumes = ['50ml','90ml'];
   int _volIdx = 0;
-
   final List<String> _sizes = ['56','54','52','50','60','58'];
   String _sizeSel = '50';
 
-  // سلايدر الصور (نستخدم نفس صورة المنتج لعرض مطابق للقطات)
+  // سلايدر الصور
   final _page = PageController();
   int _pageIndex = 0;
   final bannerImages = [
@@ -92,8 +86,31 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     ManagerImages.f_1,
     ManagerImages.f_2,
   ];
-  // تبويب وصف/مواصفات
-  int _tab = 0; // 0 وصف - 1 مواصفات
+
+  // تبويب
+  int _tab = 0;
+
+  // ====== جديد: التحكم في العنوان حسب التمرير ======
+  final _scroll = ScrollController();
+  final _nameKey = GlobalKey();   // نضعه على عنصر الاسم المرجعي
+  double _triggerOffset = 280;    // تُحسب لاحقًا بدقة بعد البناء
+  bool _showTitle = false;
+
+  void _onScroll() {
+    final v = _scroll.offset >= _triggerOffset;
+    if (v != _showTitle && mounted) setState(() => _showTitle = v);
+  }
+
+  void _calcTrigger() {
+    final ctx = _nameKey.currentContext;
+    final ro = ctx?.findRenderObject() as RenderBox?;
+    if (ro == null) return;
+    final pos = ro.localToGlobal(Offset.zero); // موضع الاسم على الشاشة
+    // حوّل الموضع إلى Offset داخل Scroll (طرح ارتفاع AppBar وهوامش بسيطة)
+    _triggerOffset = (_scroll.offset + pos.dy) - kToolbarHeight - 8;
+    _onScroll();
+  }
+  // ================================================
 
   Future<void> loadData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -112,7 +129,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     color = prefs.getString('product_color') ?? '';
     size = prefs.getString('product_size') ?? '';
     sentence = prefs.getInt('product_sentence') ?? 0;
-    isWholesaler = await Get.find<HomeController>().checkIfWholesale();
+    // isWholesaler = await Get.find<HomeController>().checkIfWholesale();
 
     setState(() => isLoading = false);
   }
@@ -122,14 +139,16 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     final res = await supabase
         .from('products')
         .select(
-        'name,image,price,price_expiry,rate,selling_price,available_quantity,sku,type,discount_ratio,color,size,sentence')
+      'name,image,price,price_expiry,rate,selling_price,available_quantity,sku,type,discount_ratio,color,size,sentence',
+    )
         .eq('id', id)
         .maybeSingle();
 
     if (res != null && mounted) {
       priceExpiry = res['price_expiry']?.toString() ?? '';
-      DateTime? expiry =
-      res['price_expiry'] != null ? DateTime.tryParse(res['price_expiry']) : null;
+      DateTime? expiry = res['price_expiry'] != null
+          ? DateTime.tryParse(res['price_expiry'])
+          : null;
       final isExpired = expiry != null ? DateTime.now().isAfter(expiry) : false;
 
       setState(() {
@@ -161,40 +180,77 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   @override
   void initState() {
     super.initState();
-    loadData().then((_) => fetchProductDataFromSupabase());
+    _scroll.addListener(_onScroll);
+    loadData().then((_) async {
+      await fetchProductDataFromSupabase();
+      WidgetsBinding.instance.addPostFrameCallback((_) => _calcTrigger());
+    });
   }
 
   @override
   void dispose() {
     _page.dispose();
     _timer?.cancel();
+    _scroll.removeListener(_onScroll);
+    _scroll.dispose();
     super.dispose();
   }
+
   HomeController controller = HomeController();
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: ManagerColors.primaryColor)),
+        body: Center(
+          child: CircularProgressIndicator(color: ManagerColors.primaryColor),
+        ),
       );
     }
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: ManagerColors.white,
       appBar: AppBar(
-        backgroundColor: ManagerColors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.transparent,
         centerTitle: true,
+        systemOverlayStyle:
+        SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.white),
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.arrow_back_ios_new, color: ManagerColors.black, size: ManagerIconSize.s18),
+          icon: SvgPicture.asset(
+            isArabic ? ManagerImages.arrows : ManagerImages.arrow_left,
+          ),
         ),
+        title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: _showTitle ? 1 : 0,
+          child: Text(
+            sku,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: getBoldTextStyle(color: Colors.black, fontSize: 18),
+          ),
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 56,
       ),
+
       body: ListView(
+        controller: _scroll, // مهم لالتقاط التمرير
         padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
         children: [
-          SizedBox(height: ManagerHeight.h6),
+          SizedBox(height: ManagerHeight.h16),
 
-          /// سلايدر الصور + نقاط
+          // سلايدر الصور
           SizedBox(
             height: 340,
             child: Stack(
@@ -202,29 +258,20 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               children: [
                 PageView.builder(
                   controller: _page,
-                  itemCount: 3, // لقطاتك تظهر 3 نقط – نكرر نفس الصورة
+                  itemCount: 3,
                   onPageChanged: (i) => setState(() => _pageIndex = i),
                   itemBuilder: (_, i) => ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                     child: ImageService.networkImage(path: image),
                   ),
                 ),
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(Icons.chevron_left, size: 28, color: Colors.black54),
-                        Icon(Icons.chevron_right, size: 28, color: Colors.black54),
-                      ],
-                    ),
-                  ),
-                ),
-
               ],
             ),
           ),
+
           SizedBox(height: ManagerHeight.h20),
+
+          // مؤشرات الصفحات
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(4, (i) {
@@ -233,114 +280,127 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOut,
                 margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: isActive ? 18 : 8,   // أعرض عند النشط
-                height: 8,                  // نفس الارتفاع للجميع
+                width: isActive ? 18 : 8,
+                height: 8,
                 decoration: BoxDecoration(
-                  color: isActive ? ManagerColors.bongrey : ManagerColors.gray_light,
-                  borderRadius: BorderRadius.circular(8), // كبسولة للنشط، دائرة لغيره
+                  color: isActive
+                      ? ManagerColors.bongrey
+                      : ManagerColors.gray_light,
+                  borderRadius: BorderRadius.circular(8),
                 ),
               );
             }),
           ),
 
-
-
           SizedBox(height: ManagerHeight.h10),
 
-          /// صف المفضلة والمشاركة + شارة المراجعات الصغيرة + شارة البراند
+          // شريط علوي: الاسم + التقييم + مشاركة/مفضلة
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Text(
-                  'Cetaphil',
-                  style: getBoldTextStyle(fontSize: 12, color: ManagerColors.primaryColor),
+                  name,
+                  style: getBoldTextStyle(
+                      fontSize: 12, color: ManagerColors.primaryColor),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 35),
               const Spacer(),
-
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: ManagerColors.textFieldFillColor,
                   borderRadius: BorderRadius.circular(2),
+                  border: Border.all(color: const Color(0xFFEEEEEEEE), width: 1),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.star, size: 16, color: Colors.amber),
+                    SvgPicture.asset(ManagerImages.star),
                     const SizedBox(width: 4),
                     Text('4.8',
-                        style: getRegularTextStyle(fontSize: 12, color: ManagerColors.grey)),
-
+                        style: getRegularTextStyle(
+                            fontSize: 13, color: ManagerColors.grey)),
                     Text(' 100 مراجعة',
-                        style: getRegularTextStyle(fontSize: 12, color: ManagerColors.grey)),
+                        style: getRegularTextStyle(
+                            fontSize: 13, color: ManagerColors.grey)),
                   ],
                 ),
               ),
               const Spacer(),
-
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.share_outlined, color: ManagerColors.color),
+                icon: SvgPicture.asset(
+                  ManagerImages.shares,
+                  height: 18,
+                  color: ManagerColors.color,
+                ),
               ),
-
               IconButton(
                 onPressed: () {},
-                icon: SvgPicture.asset(ManagerImages.favorite,),
+                icon: SvgPicture.asset(ManagerImages.favorite),
               ),
-              // شعار العلامة (نص بديل لو ما عندك لوجو)
             ],
           ),
 
           SizedBox(height: ManagerHeight.h6),
 
-          /// العنوان
+          // ====== عنصر الاسم المرجعي لظهور العنوان عند تجاوزه ======
           Text(
-            name,
+            sku,
+            key: _nameKey, // مفتاح الحساب
             textAlign: TextAlign.start,
-            style: getMediumTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.black),
+            style: getMediumTextStyle(
+                fontSize: ManagerFontSize.s16, color: ManagerColors.black),
           ),
+          // ================================================
 
           SizedBox(height: ManagerHeight.h12),
 
-          /// بطاقات Tabby / Tamara
           _BnplCard(
-            bg: const Color(0xFFE6FFF2),
-            border: const Color(0xFFB8F0D1),
+            bg: const Color(0xFFEAF9F2),
+            border: const Color(0xFF5BFEAF),
             logoText: 'tabby',
             text: 'حدد تابى عند الدفع لمعرفة المزيد',
+            icon: ManagerImages.tabby,
+            height: 35,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           _BnplCard(
-            bg: const Color(0xFFFFF1D9),
-            border: const Color(0xFFEFD1A7),
+            bg: const Color(0xFFFAF3E9),
+            border: const Color(0xFFF1CB82),
             logoText: 'tamara',
             text: 'اختر تمارا عند الدفع لتعرف على المزيد',
+            icon: ManagerImages.tamara,
+            height: 45,
           ),
 
           SizedBox(height: ManagerHeight.h10),
+
+          // اختيار اللون
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ---------- اختيار اللون ----------
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // العنوان مع القيمة المختارة يمينًا
                   RichText(
                     text: TextSpan(
-                      style: getBoldTextStyle(fontSize: 16, color: ManagerColors.black),
+                      style: getBoldTextStyle(
+                          fontSize: 16, color: ManagerColors.black),
                       children: [
                         const TextSpan(text: 'اللون : '),
                         TextSpan(
                           text: _shades[_shadeIdx].label,
-                          style: getBoldTextStyle(fontSize: 18, color: ManagerColors.black),
+                          style: getBoldTextStyle(
+                              fontSize: 18, color: ManagerColors.black),
                         ),
                       ],
                     ),
@@ -348,50 +408,40 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 ],
               ),
               const SizedBox(height: 10),
-
-              // صف الدوائر (ألوان)
               Row(
                 children: List.generate(_shades.length, (i) {
-                  // مثال: اجعل العنصر الثاني غير متاح (مطابق لرمز X في صورك)
                   final shade = i == 1
-                      ? Shade(_shades[i].color, _shades[i].label, available: false)
+                      ? Shade(_shades[i].color, _shades[i].label,
+                      available: false)
                       : _shades[i];
-
                   return Padding(
                     padding: const EdgeInsetsDirectional.only(start: 12),
                     child: _shadeDot(
                       shade: shade,
                       selected: _shadeIdx == i,
-                      onTap: shade.available ? () => setState(() => _shadeIdx = i) : null,
+                      onTap: shade.available
+                          ? () => setState(() => _shadeIdx = i)
+                          : null,
                     ),
                   );
-                })
-                  // ..add( // دائرة أخيرة بإطار بنفسجي ظاهر كما في اللقطة
-                  //   Padding(
-                  //     padding: const EdgeInsetsDirectional.only(start: 12),
-                  //     child: _shadeDot(
-                  //       shade: _shades[_shadeIdx],
-                  //       selected: true,
-                  //       onTap: null,
-                  //     ),
-                  //   ),
-                  // ),
+                }),
               ),
-
               const SizedBox(height: 18),
 
-              // ---------- اختيار الحجم ml (أزرار يمين العنوان) ----------
+              // اختيار الحجم ml
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: getBoldTextStyle(fontSize: 16, color: ManagerColors.black),
+                      style: getBoldTextStyle(
+                          fontSize: 16, color: ManagerColors.black),
                       children: [
                         const TextSpan(text: 'الحجم : '),
                         TextSpan(
                           text: _volumes[_volIdx],
-                          style: getBoldTextStyle(fontSize: 18, color: ManagerColors.black),
+                          style: getBoldTextStyle(
+                              fontSize: 18, color: ManagerColors.black),
                         ),
                       ],
                     ),
@@ -410,12 +460,16 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                       borderRadius: BorderRadius.circular(12),
                       onTap: () => setState(() => _volIdx = i),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 10),
                         decoration: BoxDecoration(
-                          color: sel ? const Color(0xFFF3F0F7) : Colors.white,
+                          color: sel
+                              ? const Color(0xFFF3F0F7)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: sel ? Colors.transparent : Colors.black12,
+                            color:
+                            sel ? Colors.transparent : Colors.black12,
                             width: 1,
                           ),
                         ),
@@ -423,7 +477,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                           _volumes[i],
                           style: getBoldTextStyle(
                             fontSize: 16,
-                            color: sel ? ManagerColors.color : ManagerColors.black,
+                            color: sel
+                                ? ManagerColors.color
+                                : ManagerColors.black,
                           ),
                         ),
                       ),
@@ -434,18 +490,20 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
               const SizedBox(height: 18),
 
-              // ---------- شبكة أرقام/مقاسات ----------
+              // المقاسات
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: getBoldTextStyle(fontSize: 16, color: ManagerColors.black),
+                      style: getBoldTextStyle(
+                          fontSize: 16, color: ManagerColors.black),
                       children: [
                         const TextSpan(text: 'المقاس : '),
                         TextSpan(
                           text: _sizeSel,
-                          style: getBoldTextStyle(fontSize: 18, color: ManagerColors.black),
+                          style: getBoldTextStyle(
+                              fontSize: 18, color: ManagerColors.black),
                         ),
                       ],
                     ),
@@ -464,22 +522,27 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                       borderRadius: BorderRadius.circular(10),
                       onTap: () => setState(() => _sizeSel = s),
                       child: Container(
-                        width: 74, height: 44,
+                        width: 74,
+                        height: 44,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: sel ? const Color(0xFFF3F0F7) : Colors.white,
+                          color: sel
+                              ? const Color(0xFFF3F0F7)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: sel ? Colors.transparent : Colors.black12,
+                            color:
+                            sel ? Colors.transparent : Colors.black12,
                             width: 1,
                           ),
-                          boxShadow: sel ? [] : null,
                         ),
                         child: Text(
                           s,
                           style: getBoldTextStyle(
                             fontSize: 16,
-                            color: sel ? ManagerColors.color : ManagerColors.black,
+                            color: sel
+                                ? ManagerColors.color
+                                : ManagerColors.black,
                           ),
                         ),
                       ),
@@ -491,9 +554,10 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               const SizedBox(height: 16),
             ],
           ),
+
           const SizedBox(height: 10),
 
-          /// السعر + الخصم
+          // السعر
           _PriceBlock(
             price: price,
             sellingPrice: sellingPrice,
@@ -501,23 +565,26 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
             isWholesaler: isWholesaler,
             sentence: sentence,
           ),
-          SizedBox(height: ManagerHeight.h6),
 
-          Text('شامل ضريبة القيمة المضافة',style: getRegularTextStyle(fontSize: 14, color: ManagerColors.black),),
-
+          SizedBox(height: ManagerHeight.h10),
+          Text(
+            'شامل ضريبة القيمة المضافة',
+            style: getRegularTextStyle(
+                fontSize: 14, color: ManagerColors.black),
+          ),
           SizedBox(height: ManagerHeight.h12),
 
-          /// زر أضف إلى حقيبتي
+          // زر السلة
           mainButton(
             onPressed: () => _addToCart(),
             buttonName: 'أضف إلى حقيبتي',
             color: ManagerColors.color,
-            image: ManagerImages.shopping_bag
+            image: ManagerImages.shopping_bag,
           ),
 
           const SizedBox(height: 46),
 
-          /// تبويب: الوصف | المواصفات
+          // تبويب وصف/مواصفات
           _TabsHeader(
             tab: _tab,
             onChanged: (t) => setState(() => _tab = t),
@@ -526,7 +593,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
           if (_tab == 0)
             _DescriptionSection()
           else
-            _SpecsSection(sku: sku, type: type, color: name,),
+            _SpecsSection(sku: sku, type: type, color: name),
 
           const SizedBox(height: 8),
           Center(
@@ -537,10 +604,17 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(top: 3),
-                    child: Icon(Icons.keyboard_arrow_down_outlined,color: ManagerColors.color,size: 20,),
+                    child: Icon(
+                      Icons.keyboard_arrow_down_outlined,
+                      color: ManagerColors.color,
+                      size: 20,
+                    ),
                   ),
-                  Text('عرض المزيد',
-                      style: getRegularTextStyle(fontSize: 14, color: ManagerColors.color)),
+                  Text(
+                    'عرض المزيد',
+                    style: getRegularTextStyle(
+                        fontSize: 14, color: ManagerColors.color),
+                  ),
                 ],
               ),
             ),
@@ -548,7 +622,6 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
           const SizedBox(height: 16),
 
-          /// قسم المراجعات
           _ReviewsSection(productId: id, onSeeAll: () {}),
           const SizedBox(height: 16),
 
@@ -556,31 +629,24 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
             average: 5.0,
             count: 3242,
             onRateTap: () {
-
-                    CacheData.productId = id;
-                    CacheData.image = image;
-                    print(
-                        ' Saved productId to CacheData: ${CacheData.productId}');
-                    print(
-                        ' Saved productId to CacheData: ${CacheData.image}');
-
-                    Get.offNamed(Routes.addRate);
-
-
-
-
+              CacheData.productId = id;
+              CacheData.image = image;
+              Get.offNamed(Routes.addRate);
             },
           ),
           const SizedBox(height: 16),
-          _NoReviewsHint(productId: id, onSeeAll: () {/* افتح صفحة كل المراجعات */}),
+          _NoReviewsHint(productId: id, onSeeAll: () {}),
           const SizedBox(height: 16),
 
-          /// تمت مشاهدته مؤخرًا
           Center(
-            child: Text('تمت مشاهدته مؤخرًا',
-                style: getBoldTextStyle(fontSize: 20, color: ManagerColors.black)),
+            child: Text(
+              'تمت مشاهدته مؤخرًا',
+              style: getBoldTextStyle(
+                  fontSize: 20, color: ManagerColors.black),
+            ),
           ),
           const SizedBox(height: 16),
+
           Column(
             children: controller.categories.map((cat) {
               return Column(
@@ -595,21 +661,17 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                   SingleChildScrollView(
                     child: BrandBanners(
                       images: bannerImages,
-                      aspectRatio: 3.2,   // عدّلها لو صورك أطول/أقصر
+                      aspectRatio: 3.2,
                       radius: 16,
                       spacing: 12,
-                      onTap: (i) {
-                        // افتح صفحة/فلتر حسب البانر
-                        // print('Clicked banner #$i');
-                      },
+                      onTap: (i) {},
                     ),
                   ),
-
                 ],
               );
             }).toList(),
           ),
-          // _RecentlyViewedGrid(mainAxisExtent: 320),
+
           const SizedBox(height: 24),
         ],
       ),
@@ -632,7 +694,10 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
 
     if (existing != null) {
       final currentQty = (existing['quantity'] ?? 1) as int;
-      await supabase.from('cart_items').update({'quantity': currentQty + 1}).eq('id', existing['id']);
+      await supabase
+          .from('cart_items')
+          .update({'quantity': currentQty + 1})
+          .eq('id', existing['id']);
     } else {
       await supabase.from('cart_items').insert({
         'user_id': userId,
@@ -642,21 +707,27 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
       });
     }
     Get.snackbar('تم', 'تمت الإضافة إلى السلة');
-    await addNotification(title: 'السلة', description: 'تمت إضافة منتج إلى سلة التسوق');
+    await addNotification(
+      title: 'السلة',
+      description: 'تمت إضافة منتج إلى سلة التسوق',
+    );
   }
 }
 
-/// بطاقة BNPL (Tabby/Tamara)
+
 class _BnplCard extends StatelessWidget {
   const _BnplCard({
     required this.bg,
     required this.border,
     required this.logoText,
     required this.text,
+    required this.icon,
+    required this.height,
   });
 
   final Color bg, border;
-  final String logoText, text;
+  final double height;
+  final String logoText, text,icon;
 
   @override
   Widget build(BuildContext context) {
@@ -664,14 +735,14 @@ class _BnplCard extends StatelessWidget {
       height: 48,
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: border),
       ),
       child: Row(
         children: [
           const SizedBox(width: 6),
 
-          Image.asset(ManagerImages.tabby),
+          Image.asset(icon,height: height,),
           const SizedBox(width: 8),
           Expanded(
             child: Text(text,
@@ -679,8 +750,7 @@ class _BnplCard extends StatelessWidget {
                 style: getRegularTextStyle(fontSize: 13, color: ManagerColors.black)),
           ),
           const SizedBox(width: 8),
-          Icon(Icons.arrow_forward_ios_outlined, size: 17, color: Colors.black),
-
+SvgPicture.asset(ManagerImages.arrow_left,height: 15,),
 
           const SizedBox(width: 6),
         ],
@@ -689,7 +759,6 @@ class _BnplCard extends StatelessWidget {
   }
 }
 
-/// بلوك السعر + الشارة الوردية للخصم
 class _PriceBlock extends StatelessWidget {
   const _PriceBlock({
     required this.price,
@@ -713,34 +782,56 @@ class _PriceBlock extends StatelessWidget {
           const SizedBox(width: 8),
           Text('جملة', style: getBoldTextStyle(fontSize: 16, color: ManagerColors.primaryColor)),
         ] else if (hasDiscount) ...[
-          Text('$price',
-              style: getRegularTextStyle(fontSize: 16, color: ManagerColors.grey)
-                  .copyWith(decoration: TextDecoration.lineThrough)),
-          const SizedBox(width: 8),
-          Text('$sellingPrice', style: getBoldTextStyle(fontSize: 20, color: ManagerColors.red)),
-          const SizedBox(width: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFCFE0),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '${discountRatio > 0 ? '$discountRatio%' : 'خصم'}',
-              style: getBoldTextStyle(fontSize: 12, color: ManagerColors.red),
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('$price',
+                      style: getRegularTextStyle(fontSize: 16, color: ManagerColors.grey)
+                          .copyWith(decoration: TextDecoration.lineThrough)),
+                  SizedBox(width: 5,),
+                  Image.asset(ManagerImages.ra,height: 15, color: ManagerColors.grey),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Row(
+
+                  children: [
+                    Text('$sellingPrice', style: getBoldTextStyle(fontSize: 20, color: ManagerColors.like)),
+
+                    Image.asset(ManagerImages.ra,height: 15, color: ManagerColors.like),
+
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAE5EE),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '${discountRatio > 0 ? '$discountRatio%' : 'خصم'}',
+                        style: getBoldTextStyle(fontSize: 16, color: ManagerColors.like),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            ],
           ),
         ] else ...[
-          Text('$price', style: getBoldTextStyle(fontSize: 20, color: ManagerColors.red)),
+          Text('$price', style: getBoldTextStyle(fontSize: 20, color: ManagerColors.black)),
+          const SizedBox(width: 6),
+          Image.asset(ManagerImages.ra,height: 15, color: ManagerColors.black),
         ],
-        const SizedBox(width: 6),
-        SvgPicture.asset(ManagerImages.shekelIcon),
+
       ],
     );
   }
 }
 
-/// تبويب علوي بسيط مع مؤشر بنفسجي أسفل العنصر المختار
 class _TabsHeader extends StatelessWidget {
   const _TabsHeader({required this.tab, required this.onChanged});
   final int tab;
@@ -756,7 +847,7 @@ class _TabsHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(title,
-                style: getBoldTextStyle(
+                style: getMediumTextStyle(
                   fontSize: 16,
                   color: selected ? ManagerColors.color : ManagerColors.black,
                 )),
@@ -782,7 +873,6 @@ class _TabsHeader extends StatelessWidget {
   }
 }
 
-/// قسم الوصف (نص ثابت نموذجًا مثل اللقطة)
 class _DescriptionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -806,30 +896,71 @@ class _DescriptionSection extends StatelessWidget {
   }
 }
 
-/// قسم المواصفات (حقول من المنتج)
 class _SpecsSection extends StatelessWidget {
-  const _SpecsSection({required this.sku, required this.type, required this.color});
+  const _SpecsSection({
+    required this.sku,
+    required this.type,
+    required this.color,
+  });
+
   final String sku, type, color;
 
   @override
   Widget build(BuildContext context) {
-    Text _row(String k, String v) => Text('$k:                              $v',
-        style: getMediumTextStyle(fontSize: 14, color: ManagerColors.black));
+    const double labelWidth = 90; // عرض عمود العناوين (عدّل إذا حبيت)
+    const double gap = 86;        // المسافة بين العمودين
+
+    Widget specRow(String title, String value) {
+      final String v = (value.isEmpty) ? '-' : value;
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // العنوان: ثابت العرض ومحاذاته يمين
+            SizedBox(
+              width: labelWidth,
+              child: Text(
+                title,
+                textAlign: TextAlign.right,
+                style: getMediumTextStyle(
+                  fontSize: 14,
+                  color: ManagerColors.black,
+                ),
+              ),
+            ),
+            const SizedBox(width: gap),
+
+            // القيمة: تتمدّد لليسار وتلف لو طويلة
+            Expanded(
+              child: Text(
+                v,
+                textAlign: TextAlign.right,
+                style: getMediumTextStyle(
+                  fontSize: 14,
+                  color: ManagerColors.gray_taxt,
+                ),
+                softWrap: true,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _row('الرعاية',type ),
-        SizedBox(height: 15,),
-        _row('صياغة',color.isEmpty ? '-' : color),
-        SizedBox(height: 15,),
-        _row('الباركود',sku),
-
+        specRow('الرعاية', type),
+        const SizedBox(height: 15),
+        specRow('صياغة', color),
+        const SizedBox(height: 15),
+        specRow('الباركود', sku),
       ],
     );
   }
 }
 
-/// قسم المراجعات (بطاقات كما في الصور)
 class _ReviewsSection extends StatelessWidget {
   const _ReviewsSection({required this.productId, required this.onSeeAll});
   final int productId;
@@ -895,12 +1026,12 @@ class _ReviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: List.generate(
               r,
-                  (_) => const Icon(Icons.star, size: 16, color: Colors.amber),
+                  (_) => SvgPicture.asset(ManagerImages.star)
             ),
           ),
           const SizedBox(height: 6),
@@ -919,7 +1050,6 @@ class _ReviewCard extends StatelessWidget {
   }
 }
 
-/// Grid «تمت مشاهدته مؤخرًا»
 class _RecentlyViewedGrid extends StatelessWidget {
   const _RecentlyViewedGrid({required this.mainAxisExtent});
   final double mainAxisExtent;
@@ -1010,19 +1140,18 @@ class _RecentlyViewedGrid extends StatelessWidget {
   }
 }
 
-// 1) نموذج بيانات للّون
 class Shade {
   final Color color;
   final String label;
   final bool available;
   const Shade(this.color, this.label, {this.available = true});
 }
-// 3) ويدجت صغيرة لعنصر لون دائري (تُستخدم في صف الألوان)
 Widget _shadeDot({
   required Shade shade,
   required bool selected,
   required VoidCallback? onTap,
 }) {
+
   final ring = Container(
     width: 28, height: 28,
     decoration: BoxDecoration(

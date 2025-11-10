@@ -49,7 +49,13 @@ Widget mainButton({
           : Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              image != null ? SvgPicture.asset(image!) : SizedBox(width: 1,),
+              Row(
+                children: [
+                  SizedBox(width: 20,),
+                  image != null ? SvgPicture.asset(image!) : SizedBox(width: 1,),
+                ],
+              ),
+
 
               child ??
                   Text(
@@ -68,6 +74,9 @@ Widget mainButton({
                   ),
               // if(image != null)
                 SizedBox(width: 1,),
+              SizedBox(width: 1,),
+              SizedBox(width: 1,),
+
             ],
           ),
     ),

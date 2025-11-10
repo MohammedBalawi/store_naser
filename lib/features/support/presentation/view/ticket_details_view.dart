@@ -1,5 +1,6 @@
 // lib/features/support/presentation/view/ticket_details_view.dart
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,6 @@ import '../../domain/models/support_models.dart';
 class TicketDetailsView extends StatelessWidget {
   const TicketDetailsView({super.key, required this.ticket});
 
-  /// البارميتر القادم من الشاشة السابقة
   final SupportTicket ticket;
 
   @override
@@ -45,6 +45,7 @@ class TicketDetailsView extends StatelessWidget {
         child: Text(text, style: getBoldTextStyle(fontSize: 12, color: Colors.white)),
       ),
     );
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: ManagerColors.background,
@@ -57,8 +58,8 @@ class TicketDetailsView extends StatelessWidget {
           children: [
             GestureDetector(
                 onTap: () => Get.back(),
-                child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('تذكرة',
+                child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text( ManagerStrings.ticket,
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             SizedBox(width: 30,),
           ],
@@ -84,9 +85,9 @@ class TicketDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  sectionRow('اسم العميل', 'التاريخ : ${_fmt(t.date)}', leading: SvgPicture.asset(ManagerImages.tech_person)),
+                  sectionRow(ManagerStrings.clientName, '${ManagerStrings.date} : ${_fmt(t.date)}', leading: SvgPicture.asset(ManagerImages.tech_person)),
                   SizedBox(height: 10,),
-                  sectionRow('رقم الطلب', t.id, leading: SvgPicture.asset(ManagerImages.tech_reqest)),
+                  sectionRow(ManagerStrings.orderNo, t.id, leading: SvgPicture.asset(ManagerImages.tech_reqest)),
                   SizedBox(height: 10,),
 
                   Row(
@@ -95,10 +96,10 @@ class TicketDetailsView extends StatelessWidget {
                       Row(children: [
                         SvgPicture.asset(ManagerImages.tech_switch),
                         const SizedBox(width: 6),
-                        Text('حالة الطلب', style: getBoldTextStyle(fontSize: 14, color: Colors.black),),
+                        Text(ManagerStrings.orderStatus, style: getBoldTextStyle(fontSize: 14, color: Colors.black),),
                       ]),
                       badge(
-                        t.status == TicketStatus.reviewing ? 'قيد المراجعة' : '     تم الرد       ',
+                        t.status == TicketStatus.reviewing ? ManagerStrings.underReview : ManagerStrings.responded,
                         t.status == TicketStatus.reviewing ? ManagerColors.yolo : ManagerColors.grees_coll,
                       ),
                     ],
@@ -115,9 +116,9 @@ class TicketDetailsView extends StatelessWidget {
                       Row(children: [
                         SvgPicture.asset(ManagerImages.tect_file),
                         const SizedBox(width: 6),
-                        Text('نوع المشكلة', style: getBoldTextStyle(fontSize: 14, color: Colors.black)),
+                        Text(ManagerStrings.typeProblem, style: getBoldTextStyle(fontSize: 14, color: Colors.black)),
                       ]),
-                      Text('العنوان ( نوع المشكلة )', style: getRegularTextStyle(fontSize: 14, color: Colors.black)),
+                      Text('${ManagerStrings.title} (${ManagerStrings.typeProblem})', style: getRegularTextStyle(fontSize: 14, color: Colors.black)),
 
                     ],
                   ),
@@ -137,9 +138,9 @@ class TicketDetailsView extends StatelessWidget {
 
                           SvgPicture.asset(ManagerImages.tech_person_cell),
                           const SizedBox(width: 6),
-                          Text('خدمة العملاء', style: getBoldTextStyle(fontSize: 14, color: Colors.black)),
+                          Text(ManagerStrings.customerService, style: getBoldTextStyle(fontSize: 14, color: Colors.black)),
                         ]),
-                        Text('التاريخ : ${_fmt(t.replyDate!)}', style: getRegularTextStyle(fontSize: 14, color: Colors.black)),
+                        Text('${ManagerStrings.date} : ${_fmt(t.replyDate!)}', style: getRegularTextStyle(fontSize: 14, color: Colors.black)),
                       ],
                     ),
                     const SizedBox(height: 10),

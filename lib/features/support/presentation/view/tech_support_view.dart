@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/features/support/presentation/view/ticket_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,50 +16,51 @@ class TechSupportView extends GetView<TicketsController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
-      appBar:
-
-      AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        title: Text('الدعم الفني',
-            style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
-        actions: [
+      appBar: AppBar(
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      leadingWidth: 0,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic ?ManagerImages.arrows: ManagerImages.arrow_left)),
+          Text(ManagerStrings.supportTicket,
+              style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
           GestureDetector(
               onTap:(){
                 Get.toNamed(Routes.openTicket);
               },child: SvgPicture.asset(ManagerImages.icon_add)),
-          SizedBox(width: 10,),
-
         ],
-        leading:   GestureDetector(
-            onTap: () => Get.back(),
-            child: SvgPicture.asset(ManagerImages.arrows)),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
-        ),
       ),
+      bottom: const PreferredSize(
+        preferredSize: Size.fromHeight(1),
+        child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+      ),
+    ),
+
+
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
         if (controller.tickets.isEmpty) {
-          // الحالة الفارغة
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(ManagerImages.ticket, width: 60, height: 60, colorFilter: const ColorFilter.mode(ManagerColors.color, BlendMode.srcIn)),
               const SizedBox(height: 16),
-              Text('لا توجد تذكرة', style: getBoldTextStyle(fontSize: 18, color: ManagerColors.black)),
+              Text( ManagerStrings.noTicket, style: getBoldTextStyle(fontSize: 18, color: ManagerColors.black)),
               const SizedBox(height: 20),
-              _PrimaryButton(label: 'فتح تذكرة', onPressed: () => Get.toNamed('/support/open-ticket')),
+              _PrimaryButton(label: ManagerStrings.openTicket, onPressed: () => Get.toNamed('/support/open-ticket')),
             ],
           );
         }
-        // قائمة تذاكر
         return ListView.separated(
           padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
           itemCount: controller.tickets.length,
@@ -74,7 +76,7 @@ class _TicketCard extends StatelessWidget {
   const _TicketCard({required this.t});
   final SupportTicket t;
 
-  String _statusText(TicketStatus s) => s == TicketStatus.reviewing ? 'قيد المراجعة' : '     تم الرد       ';
+  String _statusText(TicketStatus s) => s == TicketStatus.reviewing ? ManagerStrings.underReview: ManagerStrings.responded;
   Color _statusColor(TicketStatus s) => s == TicketStatus.reviewing ?ManagerColors.yolo : ManagerColors.grees_coll;
 
   @override
@@ -105,15 +107,15 @@ class _TicketCard extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0,left: 12,right:12,bottom: 12 ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-            text('اسم العميل',
-      Text('التاريخ : ${_fmt(t.date)}', textAlign: TextAlign.left, style: getRegularTextStyle(fontSize: 14, color: ManagerColors.black)),
+            text(ManagerStrings.clientName,
+      Text('${ManagerStrings.date} : ${_fmt(t.date)}', textAlign: TextAlign.left, style: getRegularTextStyle(fontSize: 14, color: ManagerColors.black)),
                 icon: SvgPicture.asset(ManagerImages.tech_person)),
             SizedBox(height: 10,),
                 Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 5,indent: 5,),
 
                 SizedBox(height: 10,),
 
-            text('رقم الطلب',
+            text(ManagerStrings.orderNo,
       Text(t.id, textAlign: TextAlign.left, style: getRegularTextStyle(fontSize: 14, color: ManagerColors.black))
       , icon:SvgPicture.asset(ManagerImages.tech_reqest)),
                 SizedBox(height: 10,),
@@ -122,7 +124,7 @@ class _TicketCard extends StatelessWidget {
 
                 SizedBox(height: 10,),
 
-            text('نوع المشكلة',
+            text(ManagerStrings.typeProblem,
                 Text(t.problemTitle, textAlign: TextAlign.left, style: getRegularTextStyle(fontSize: 14, color: ManagerColors.black))
 
                 , icon:SvgPicture.asset(ManagerImages.tect_file)),
@@ -131,7 +133,7 @@ class _TicketCard extends StatelessWidget {
                 Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 5,indent: 5,),
 
                 SizedBox(height: 10,),
-                text('حالة الطلب', Align(
+                text(ManagerStrings.orderStatus, Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -145,7 +147,7 @@ class _TicketCard extends StatelessWidget {
 
             const SizedBox(height: 14),
             _PrimaryButton(
-              label: 'عرض',
+              label: ManagerStrings.view,
               onPressed: () =>
                   Navigator.push(
                     context,

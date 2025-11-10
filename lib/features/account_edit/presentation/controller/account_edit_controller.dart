@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -54,10 +55,8 @@ class AccountEditController extends GetxController {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 24), // 5 من اليمين و 5 من الشمال
           child: Container(
-            // 👇 تحكم كامل بالعرض
-            width: w - 40, // = 5 يمين + 5 شمال
+            width: w - 40,
             constraints: const BoxConstraints(
-              // ممكن تضيف حد أقصى إذا بدك ما يكبر كتير على التابلت
               maxWidth: 520,
               minWidth: 280,
             ),
@@ -67,7 +66,7 @@ class AccountEditController extends GetxController {
               children: [
 
                 Text(
-                  'هل أنت متأكد أنك تريد منا \nحذف حسابك؟',
+                ManagerStrings.supDelete,
                   textAlign: TextAlign.center,
                   style: getBoldTextStyle(fontSize: 18, color: Colors.black),
                 ),
@@ -88,7 +87,7 @@ class AccountEditController extends GetxController {
                           elevation: 0,
                         ),
                         child: Text(
-                          'إلغاء',
+                            ManagerStrings.no,
                           style: getBoldTextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
@@ -106,7 +105,7 @@ class AccountEditController extends GetxController {
                           elevation: 0,
                         ),
                         child: Text(
-                          'حذف',
+                          ManagerStrings.yes,
                           style: getBoldTextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),

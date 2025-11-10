@@ -1,5 +1,6 @@
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -40,18 +41,56 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
   Widget build(BuildContext context) {
     return GetBuilder<CategoryProductsController>(
       builder: (c) {
+        final bool isArabic = Get.locale?.languageCode == 'ar';
+
         return Scaffold(
-          backgroundColor: ManagerColors.background,
-          appBar: mainAppBar(
-            title: c.categoryName.isEmpty ? ManagerStrings.products : c.categoryName,
-            actions: [
-              IconButton(
-                icon: SvgPicture.asset(ManagerImages.filter),
-                onPressed: () => openFilterSheet(context, c),
-                tooltip: 'فلتر',
-              ),
-            ],
+          extendBodyBehindAppBar: false,
+          backgroundColor: ManagerColors.white,
+          appBar:
+          AppBar(
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            shadowColor: Colors.transparent,
+            notificationPredicate: (notification) => false,
+
+            centerTitle: true,
+            systemOverlayStyle: SystemUiOverlayStyle.dark
+                .copyWith(statusBarColor: Colors.white),
+
+            flexibleSpace: const SizedBox.expand(
+              child: ColoredBox(color: Colors.white),
+            ),
+
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(onTap: () => Get.back(),
+                    child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+                Text(
+                  c.categoryName.isEmpty ? ManagerStrings.products : c.categoryName,
+                  style: getBoldTextStyle(fontSize: 20, color: ManagerColors.black),
+                ),
+                IconButton(
+                  icon: SvgPicture.asset(ManagerImages.filter),
+                  onPressed: () => openFilterSheet(context, c, onApplied: (_) {
+                  }),
+                  tooltip: 'فلتر',
+                ),
+              ],
+            ),
+
+
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(1),
+              child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+            ),
+            automaticallyImplyLeading: false,
+            leadingWidth: 0,
           ),
+
+
 
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +101,6 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
                 onSelect: c.selectSubTab,
               ),
 
-              // ===== سطر ماركات أفقي بكروت داكنة والصورة طالعة فوق =====
               if (c.brands.isNotEmpty)
                 SizedBox(
                   height: 138,
@@ -79,10 +117,6 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
                   ),
                 ),
 
-              // ===== شريط بحث بسيط =====
-
-
-              // ===== الشبكة / حالة عدم وجود منتجات =====
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
@@ -98,7 +132,13 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
     );
   }
 
-  void openFilterSheet(BuildContext context, CategoryProductsController c) {
+
+  void openFilterSheet(
+      BuildContext context,
+      CategoryProductsController c, {
+        void Function(ProductSort?)? onApplied,
+      })
+  {
     showModalBottomSheet(
       context: context,
       isScrollControlled: false,
@@ -108,124 +148,129 @@ class _CategoryProductsViewState extends State<CategoryProductsView> {
       ),
       builder: (_) {
         var localSort = c.sort;
-        return SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // الهيدر (مطابق للصورة)
-                SizedBox(
-                  height: 48,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // العنوان في الوسط
-                      Text(
-                        'الفلاتر',
-                        style: getBoldTextStyle(
-                          fontSize: ManagerFontSize.s16,
-                          color: ManagerColors.black,
-                        ),
-                      ),
-                      // مسح يسار
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextButton(
-                          onPressed: () => setState(() => c.setSort(null)),
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(44, 44),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Text(
-                            'مسح',
-                            style: getRegularTextStyle(
-                              color: ManagerColors.color,
-                              fontSize: ManagerFontSize.s12,
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final bool isArabic = Get.locale?.languageCode == 'ar';
+
+            return SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 48,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Text(
+                            ManagerStrings.filter
+                            ,
+                            style: getBoldTextStyle(
+                              fontSize: ManagerFontSize.s16,
+                              color: ManagerColors.black,
                             ),
                           ),
-                        ),
-                      ),
-                      // إغلاق يمين
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.close_rounded, size: 24),
-                          splashRadius: 22,
-                          color: ManagerColors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                          Align(
+                            alignment:isArabic? Alignment.centerLeft:Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => setModalState(() => localSort = null),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(44, 44),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                ManagerStrings.reset,
+                                style: getRegularTextStyle(
+                                  color: ManagerColors.color,
+                                  fontSize: ManagerFontSize.s12,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Align(
+                            alignment:isArabic? Alignment.centerRight:Alignment.centerLeft,
 
-                const SizedBox(height: 8),
-                Divider(height: 1,color: ManagerColors.gray_divedr,),
-
-                const SizedBox(height: 8),
-
-                // خيارات الفرز (Radio على اليمين تمامًا)
-                SortOptionTile(
-                  title: 'الأكثر شعبية',
-                  groupValue: c.sort,
-                  value: ProductSort.popular,
-                  onChanged: (v) => setState(() => localSort = v),
-                ),
-                SortOptionTile(
-                  title: 'الجديد أولاً',
-                  groupValue: c.sort,
-                  value: ProductSort.newest,
-                  onChanged: (v) => setState(() => localSort = v),
-                ),
-                SortOptionTile(
-                  title: 'العروض أولاً',
-                  groupValue: c.sort,
-                  value: ProductSort.offersFirst,
-                  onChanged: (v) => setState(() => localSort = v),
-                ),
-                SortOptionTile(
-                  title: 'السعر الأعلى إلى الأدنى',
-                  groupValue: c.sort,
-                  value: ProductSort.priceHighLow,
-                  onChanged: (v) => setState(() => localSort = v),
-                ),
-                SortOptionTile(
-                  title: 'السعر الأدنى إلى الأعلى',
-                  groupValue: c.sort,
-                  value: ProductSort.priceLowHigh,
-                  onChanged: (v) => setState(() => localSort = v),
-                ),
-
-                const SizedBox(height: 16),
-
-                // زر التطبيق (بنفسجي كبير بعرض كامل)
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ManagerColors.color,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'تطبيق',
-                      style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s16,
-                        color: Colors.white,
+                            child: IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(Icons.close_rounded, size: 24),
+                              splashRadius: 22,
+                              color: ManagerColors.black,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Divider(height: 1, color: ManagerColors.gray_divedr),
+                    const SizedBox(height: 8),
+
+                    SortOptionTile(
+                      title: ManagerStrings.popularity,
+                      groupValue: localSort,
+                      value: ProductSort.popular,
+                      onChanged: (v) => setModalState(() => localSort = v),
+                    ),
+                    SortOptionTile(
+                      title: ManagerStrings.newFirst,
+                      groupValue: localSort,
+                      value: ProductSort.newest,
+                      onChanged: (v) => setModalState(() => localSort = v),
+                    ),
+                    SortOptionTile(
+                      title: ManagerStrings.newFirst,
+                      groupValue: localSort,
+                      value: ProductSort.offersFirst,
+                      onChanged: (v) => setModalState(() => localSort = v),
+                    ),
+                    SortOptionTile(
+                      title: ManagerStrings.highPriceToLow,
+                      groupValue: localSort,
+                      value: ProductSort.priceHighLow,
+                      onChanged: (v) => setModalState(() => localSort = v),
+                    ),
+                    SortOptionTile(
+                      title: ManagerStrings.lowPriceToHigh,
+                      groupValue: localSort,
+                      value: ProductSort.priceLowHigh,
+                      onChanged: (v) => setModalState(() => localSort = v),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          c.setSort(localSort);
+                          Navigator.pop(context);
+                          onApplied?.call(localSort);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ManagerColors.color,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          ManagerStrings.apply,
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -283,8 +328,6 @@ class _SubTabsBar extends StatelessWidget {
   }
 }
 
-/// شريط الماركات الأفقي — بدون Overflow
-// شريط الماركات — خالٍ من الـ overflow
 class _BrandsStrip extends StatelessWidget {
   const _BrandsStrip({
     required this.brands,
@@ -311,11 +354,10 @@ class _BrandsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // الارتفاع الكلي للحاوية: طلوع الصورة + الكرت + مسافة + الشعار
     final listHeight = popAmount + cardHeight + gap + logoHeight;
 
     return SizedBox(
-      height: listHeight, // مهم جداً
+      height: listHeight,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         scrollDirection: Axis.horizontal,
@@ -361,7 +403,7 @@ class _BrandTile extends StatelessWidget {
     this.gap = 10,
   });
 
-  final String productImage; // استخدم asset أو network حسب مصدرك
+  final String productImage;
   final String? brandLogo;
   final String brandName;
   final VoidCallback onTap;
@@ -375,7 +417,6 @@ class _BrandTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // نفس الارتفاع الكلي للحاوية
     final totalHeight = popAmount + cardHeight + gap + logoHeight;
 
     return InkWell(
@@ -388,7 +429,6 @@ class _BrandTile extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              // الكرت الداكن
               Positioned(
                 top: popAmount,
                 left: 0,
@@ -405,16 +445,12 @@ class _BrandTile extends StatelessWidget {
                 ),
               ),
 
-              // صورة المنتج طالعة لفوق
               Positioned(
                 top: 0,
                 left: 0,
                 right: 0,
-                height: cardHeight, // تكفي، لأن الحاوية نفسها فيها مساحة الطلوع
+                height: cardHeight,
                 child: Center(
-                  // لو من الأصول:
-                  // Image.asset(productImage, height: cardHeight, fit: BoxFit.contain),
-                  // ولو من الشبكة:
                   child: Image.asset(productImage, height: 44,width: 26.95,),
                 ),
               ),
@@ -427,14 +463,13 @@ class _BrandTile extends StatelessWidget {
                 child:
                 Center(
                   child: brandLogo != null && brandLogo!.isNotEmpty
-                  // Image.asset(brandLogo!, height: logoHeight, fit: BoxFit.contain)
                       ? Image.asset(brandLogo!, height: logoHeight, fit: BoxFit.contain)
                       : FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       brandName,
                       style: getBoldTextStyle(fontSize: 12, color: Colors.black87)
-                          .copyWith(height: 1.0), // يمنع تمدد الارتفاع
+                          .copyWith(height: 1.0),
                       maxLines: 1,
                     ),
                   ),
@@ -462,7 +497,8 @@ class _ProductsGridOrEmpty extends StatelessWidget {
           children: [
             SvgPicture.asset(ManagerImages.product, ),
             const SizedBox(height: 8),
-            Text('لا يوجد منتجات متاحة', style: getBoldTextStyle(fontSize: 14, color: Colors.black54)),
+            Text(
+                ManagerStrings.noProducts, style: getBoldTextStyle(fontSize: 14, color: Colors.black54)),
           ],
         ),
       );

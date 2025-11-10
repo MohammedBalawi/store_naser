@@ -1,5 +1,7 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../../../core/resources/manager_colors.dart';
@@ -13,139 +15,218 @@ class BirthdateView extends GetView<BirthdateController> {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: ManagerColors.background,
-      appBar: AppBar(
+      appBar:
+      AppBar(
         elevation: 0,
-        centerTitle: true,
+        scrolledUnderElevation: 0, // يمنع تأثير الـ tint
         backgroundColor: Colors.white,
-        title: Text('تاريخ الميلاد',
-            style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+        surfaceTintColor: Colors.white, // لا تضيف طبقة لونية
+        shadowColor: Colors.transparent,
+        notificationPredicate: (notification) => false,
+
         leading: GestureDetector(
-            onTap: () => Get.back(),
-            child: SvgPicture.asset(ManagerImages.arrows)),
+          onTap: () => Get.back(),
+          child: Padding(
+            padding: isArabic? EdgeInsets.all(2.0):EdgeInsets.all(15.0), // 👈 تحكم بالمسافة حول الأيقونة
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: SvgPicture.asset(
+                isArabic
+                    ? ManagerImages.arrows       // ← أيقونة للعربية
+                    : ManagerImages.arrow_left,  // ← أيقونة للإنجليزية
+                fit: BoxFit.contain, // 👈 يضمن التناسب داخل المساحة
+              ),
+            ),
+          ),
+        ),
+
+        // ✅ خلي النظام ما يضيف سهم تلقائي
+        automaticallyImplyLeading: false,
+        leadingWidth: 52, // مساحة كافية لعرض الأيقونة
+
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.white,
+        ),
+
+        flexibleSpace: const SizedBox.expand(
+          child: ColoredBox(color: Colors.white),
+        ),
+
+        title: Text(ManagerStrings.birthDate,
+            style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+
+
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
         ),
       ),
 
-      body: ListView(
+
+      body: Padding(
         padding: const EdgeInsets.all(14),
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: const [
-                BoxShadow(
-                    color: Color(0x14000000),
-                    blurRadius: 10,
-                    offset: Offset(0, 4))
-              ],
-            ),
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-            child: Obx(() {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    decoration: BoxDecoration(
-                      color:  ManagerColors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: controller.hasError.value
-                            ? const Color(0xFFE9E9EF)
-                            : const Color(0xFFE9E9EF),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: const [
+                  BoxShadow(
+                      color: Color(0x14000000),
+                      blurRadius: 10,
+                      offset: Offset(0, 4))
+                ],
+              ),
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+              child: Obx(() {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
+                      decoration: BoxDecoration(
+                        color:  ManagerColors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: controller.hasError.value
+                              ? const Color(0xFFE9E9EF)
+                              : const Color(0xFFE9E9EF),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(isArabic ?
+                              controller.display:
+                              controller.displayEn,
+                              style: getRegularTextStyle(
+                                  color: Colors.black, fontSize: 16)),
+
+                        ],
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(controller.display,
-                            style: getRegularTextStyle(
-                                color: Colors.black, fontSize: 16)),
+                    const SizedBox(height: 16),
+                    if (controller.hasError.value) ...[
+                      Row(
+                        children: [
+                          SvgPicture.asset(ManagerImages.warning),
+                          SizedBox(width: 6),
 
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  if (controller.hasError.value) ...[
-                    Row(
-                      children: [
-                        SvgPicture.asset(ManagerImages.warning),
-                        SizedBox(width: 6),
-
-                        Expanded(
-                          child: Text(
-                            controller.errorText.value,
-                            textAlign: TextAlign.right,
-                            style: getRegularTextStyle(
-                              fontSize: 11,
-                              color: ManagerColors.red_worn,
+                          Expanded(
+                            child: Text(
+                              controller.errorText.value,
+                              textAlign:isArabic ? TextAlign.right:TextAlign.left,
+                              style: getRegularTextStyle(
+                                fontSize: 11,
+                                color: ManagerColors.red_worn,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                  ],
-                  const SizedBox(height: 32),
+                    ],
+                    const SizedBox(height: 32),
 
 
-                  // Text('اختر التاريخ', style: getBoldTextStyle(color: Colors.black54, fontSize: 12)),
-                  // const SizedBox(height: 8),
+                    // Text('اختر التاريخ', style: getBoldTextStyle(color: Colors.black54, fontSize: 12)),
+                    // const SizedBox(height: 8),
 
-                  SizedBox(
-                    height: 180,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _Wheel(
-                          width: w / 3 - 40,
-                          items: List.generate(
-                            controller.maxYear - controller.minYear + 1,
-                            (i) => (controller.minYear + i).toString(),
-                          ),
-                          initialIndex:
-                              controller.year.value - controller.minYear,
-                          onSelectedItemChanged: (i) =>
-                              controller.onYearChanged(controller.minYear + i),
-                        ),
-                        _Wheel(
-                          width: w / 3 - 20,
-                          items: controller.months,
-                          initialIndex: controller.month.value - 1,
-                          onSelectedItemChanged: (i) =>
-                              controller.onMonthChanged(i + 1),
-                        ),
-                        Obx(() {
-                          final days = List.generate(
-                              DateTime(controller.year.value,
-                                      controller.month.value + 1, 0)
-                                  .day,
-                              (i) => (i + 1).toString().padLeft(2, '0'));
-                          final init = controller.day.value - 1;
-                          return _Wheel(
-                            width: w / 3 - 20,
-                            items: days,
-                            initialIndex: init.clamp(0, days.length - 1),
+                    SizedBox(
+                      height: 180,
+                      child:isArabic ?
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _Wheel(
+                            width: w / 3 - 40,
+                            items: List.generate(
+                              controller.maxYear - controller.minYear + 1,
+                              (i) => (controller.minYear + i).toString(),
+                            ),
+                            initialIndex:
+                                controller.year.value - controller.minYear,
                             onSelectedItemChanged: (i) =>
-                                controller.onDayChanged(i + 1),
-                          );
-                        }),
-                      ],
+                                controller.onYearChanged(controller.minYear + i),
+                          ),
+                          _Wheel(
+                            width: w / 3 - 20,
+                            items: controller.months,
+                            initialIndex: controller.month.value - 1,
+                            onSelectedItemChanged: (i) =>
+                                controller.onMonthChanged(i + 1),
+                          ),
+                          Obx(() {
+                            final days = List.generate(
+                                DateTime(controller.year.value,
+                                        controller.month.value + 1, 0)
+                                    .day,
+                                (i) => (i + 1).toString().padLeft(2, '0'));
+                            final init = controller.day.value - 1;
+                            return _Wheel(
+                              width: w / 3 - 20,
+                              items: days,
+                              initialIndex: init.clamp(0, days.length - 1),
+                              onSelectedItemChanged: (i) =>
+                                  controller.onDayChanged(i + 1),
+                            );
+                          }),
+                        ],
+                      ): Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Obx(() {
+                            final days = List.generate(
+                                DateTime(controller.year.value,
+                                    controller.month.value + 1, 0)
+                                    .day,
+                                    (i) => (i + 1).toString().padLeft(2, '0'));
+                            final init = controller.day.value - 1;
+                            return _Wheel(
+                              width: w / 3 - 20,
+                              items: days,
+                              initialIndex: init.clamp(0, days.length - 1),
+                              onSelectedItemChanged: (i) =>
+                                  controller.onDayChanged(i + 1),
+                            );
+                          }),
+                          _Wheel(
+                            width: w / 3 - 20,
+                            items: controller.months,
+                            initialIndex: controller.month.value - 1,
+                            onSelectedItemChanged: (i) =>
+                                controller.onMonthChanged(i + 1),
+                          ),
+
+                          _Wheel(
+                            width: w / 3 - 40,
+                            items: List.generate(
+                              controller.maxYear - controller.minYear + 1,
+                                  (i) => (controller.minYear + i).toString(),
+                            ),
+                            initialIndex:
+                            controller.year.value - controller.minYear,
+                            onSelectedItemChanged: (i) =>
+                                controller.onYearChanged(controller.minYear + i),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }),
-          ),
-        ],
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
 
       bottomNavigationBar: Padding(
@@ -169,7 +250,7 @@ class BirthdateView extends GetView<BirthdateController> {
                     borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
-              child: Text('حفظ',
+              child: Text(ManagerStrings.save,
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           );

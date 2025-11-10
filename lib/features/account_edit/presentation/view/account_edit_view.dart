@@ -1,4 +1,6 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
@@ -12,112 +14,126 @@ class AccountEditView extends GetView<AccountEditController> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: ManagerColors.background,
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
-              Text('تعديل الحسابء', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
-              const SizedBox(width: 42),
-            ],
-          ),
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(1),
-            child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
-          ),
-          automaticallyImplyLeading: false,
-          leadingWidth: 0,
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
+    return Scaffold(
+      backgroundColor: ManagerColors.background,
+      appBar:AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
+        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        // أهم سطر: إلغِ استماع الـ AppBar لإشعارات السكـرول
+        notificationPredicate: (notification) => false,
+
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark
+            .copyWith(statusBarColor: Colors.white),
+
+        flexibleSpace: const SizedBox.expand(
+          child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
         ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+
+        title:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _SectionCard(
-              title: 'معلومات الحساب',
-              items: [
-                _Item(
-                  icon: ManagerImages.outline_edit,
-                  label: 'تعديل الاسم',
-                  onTap: controller.onEditName,
-                ),
-                _Item(
-                  icon: ManagerImages.lock,
-                  label: 'تغيير كلمة المرور',
-                  onTap: controller.onChangePassword,
-                ),
-                _Item(
-                  icon: ManagerImages.phone,
-                  label: 'رقم الهاتف',
-                  onTap: controller.onChangePhone,
-                ),
-                _Item(
-                  icon: ManagerImages.mail_outline,
-                  label: 'تغيير البريد الإلكتروني',
-                  onTap: controller.onChangeEmail,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            _SectionCard(
-              title: 'معلومات شخصية',
-              items: [
-                _Item(icon: ManagerImages.gender, label: 'الجنس', onTap: controller.onGender),
-                _Item(icon: ManagerImages.cake, label: 'تاريخ الميلاد', onTap: controller.onBirthday),
-                _Item(icon: ManagerImages.height, label: 'طولك', onTap: controller.onHeight),
-                _Item(icon: ManagerImages.weight, label: 'وزنك', onTap: controller.onWeight),
-                _Item(icon: ManagerImages.colors, label: 'لون البشرة', onTap: controller.onSkinTone),
-              ],
-            ),
-
-            const SizedBox(height: 18),
-
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  InkWell(
-                    onTap: () => controller.onDeleteAccount(Get.context!),
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SvgPicture.asset(ManagerImages.fluent_delete),
-                        Row(children: [
-                          const SizedBox(width: 4),
-                          Text('حذف الحساب',
-                              style: getBoldTextStyle(
-                                  fontSize: 16, color: ManagerColors.like)),
-                        ]),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'يمكنك إلغاء طلب الحذف عن طريق إعادة تنشيط حسابك\n خلال 30 يوماً',
-                    style: getRegularTextStyle(
-                        fontSize: 12, color: ManagerColors.bongrey),
-                  ),
-                  const SizedBox(height: 30),
-
-                ],
-              ),
-            ),
-            const SizedBox(height: 30)
-
+            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left )),
+            Text(ManagerStrings.editAccount, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            const SizedBox(width: 42),
           ],
         ),
+
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 0,
+      ),
+
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        children: [
+          _SectionCard(
+            title:ManagerStrings.accountInfotmation,
+            items: [
+              _Item(
+                icon: ManagerImages.outline_edit,
+                label: ManagerStrings.editName,
+                onTap: controller.onEditName,
+              ),
+              _Item(
+                icon: ManagerImages.lock,
+                label: ManagerStrings.changePasswords,
+                onTap: controller.onChangePassword,
+              ),
+              _Item(
+                icon: ManagerImages.phone,
+                label: ManagerStrings.phoneNumber,
+                onTap: controller.onChangePhone,
+              ),
+              _Item(
+                icon: ManagerImages.mail_outline,
+                label: ManagerStrings.changeEmail,
+                onTap: controller.onChangeEmail,
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          _SectionCard(
+            title: ManagerStrings.personalInformation,
+            items: [
+              _Item(icon: ManagerImages.gender, label: ManagerStrings.gender, onTap: controller.onGender),
+              _Item(icon: ManagerImages.cake, label: ManagerStrings.birthDate, onTap: controller.onBirthday),
+              _Item(icon: ManagerImages.height, label: ManagerStrings.yourHeight, onTap: controller.onHeight),
+              _Item(icon: ManagerImages.weight, label: ManagerStrings.yourWeight, onTap: controller.onWeight),
+              _Item(icon: ManagerImages.colors, label: ManagerStrings.skinColor, onTap: controller.onSkinTone),
+            ],
+          ),
+
+          const SizedBox(height: 18),
+
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                InkWell(
+                  onTap: () => controller.onDeleteAccount(Get.context!),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SvgPicture.asset(ManagerImages.fluent_delete),
+                      Row(children: [
+                        const SizedBox(width: 4),
+                        Text(ManagerStrings.deleteAccounts,
+                            style: getBoldTextStyle(
+                                fontSize: 16, color: ManagerColors.like)),
+                      ]),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  ManagerStrings.deleteAccountsSup,
+                  style: getRegularTextStyle(
+                      fontSize: 12, color: ManagerColors.bongrey),
+                ),
+                const SizedBox(height: 30),
+
+              ],
+            ),
+          ),
+          const SizedBox(height: 30)
+
+        ],
       ),
     );
   }
@@ -195,6 +211,8 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -209,7 +227,7 @@ class _Tile extends StatelessWidget {
               Text(label,
                   style: getRegularTextStyle(fontSize: 18, color: Colors.black)),
             ]),
-            SvgPicture.asset(ManagerImages.arrow_left),
+            SvgPicture.asset(isArabic? ManagerImages.arrow_left:ManagerImages.arrow_en),
           ],
         ),
       ),

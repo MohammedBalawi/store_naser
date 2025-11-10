@@ -68,7 +68,6 @@ class HomeView extends StatelessWidget {
 
                     HomeBannerSlider(banners: controller.banners),
 
-                    // القوائم حسب التصنيفات
                     Column(
                       children: controller.categories.map((cat) {
                         return Column(
@@ -104,7 +103,6 @@ class HomeView extends StatelessWidget {
   }
 }
 
-/// ===== Header (سيرش كبير + سلايدر عروض مع نقاط Overlay ومن غير Overflow)
 class _HeaderArea extends StatelessWidget {
   const _HeaderArea({
     required this.items,
@@ -127,7 +125,6 @@ class _HeaderArea extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // سلايدر العروض خلف السيرش
           Positioned.fill(
             child: _FavoritesCarouselNoOverflow(
               items: items,
@@ -135,7 +132,6 @@ class _HeaderArea extends StatelessWidget {
             ),
           ),
 
-          // تدرّج سفلي ناعم
           Positioned(
             left: 0,
             right: 0,
@@ -157,7 +153,6 @@ class _HeaderArea extends StatelessWidget {
             ),
           ),
 
-          // سيرش كبير RTL داخل SafeArea
           SafeArea(
             bottom: false,
             child: Padding(
@@ -185,31 +180,35 @@ class _BigSearch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return GestureDetector(
       onTap: onTap,
       child: AbsorbPointer(
         child: SizedBox(
           height: height,
-          child: Directionality( // يخلي الأيقونة يمين مثل اللقطة
-            textDirection: TextDirection.rtl,
-            child: textField(
-              fillColor: ManagerColors.white,
-              hintText: ManagerStrings.searchProductName,
-              controller: TextEditingController(),
-              onChange: (_) {},
-              validator: (_) => null,
-              textInputType: TextInputType.text,
-              radius: ManagerRadius.r10,
-              // elevation: 6, // إن كان مدعومًا في ويدجت textField عندك
-              prefixIcon: SizedBox(
-                width: 28,
-                height: 28,
-                child: Center(
-                  child: SvgPicture.asset(
-                    ManagerImages.sarch,
-                    width: 22,
-                    height: 22,
-                  ),
+          child:  textField(
+            fillColor: ManagerColors.white,
+            hintText: ManagerStrings.searchProductName,
+            controller: TextEditingController(),
+            onChange: (_) {},
+            validator: (_) => null,
+            textInputType: TextInputType.text,
+            radius: ManagerRadius.r10,
+            prefixIcon: SizedBox(
+              width: 28,
+              height: 28,
+              child: Center(
+                child: isArabic ?
+                SvgPicture.asset(
+                  ManagerImages.sarch,
+                  width: 22,
+                  height: 22,
+                ):
+                SvgPicture.asset(
+                  ManagerImages.sarch_en,
+                  width: 22,
+                  height: 22,
                 ),
               ),
             ),
@@ -220,7 +219,6 @@ class _BigSearch extends StatelessWidget {
   }
 }
 
-/* =================== Favorites Carousel (بدون Overflow) =================== */
 
 class _FavoritesCarouselNoOverflow extends StatefulWidget {
   final List<ProductModel> items;
@@ -272,13 +270,9 @@ class _FavoritesCarouselNoOverflowState extends State<_FavoritesCarouselNoOverfl
     final items = widget.items;
     if (items.isEmpty) return const SizedBox.shrink();
 
-    // ملاحظة مهمة:
-    // بدّلنا الـ Column بـ Stack عشان النقاط تكون Overlay
-    // وما نزود الارتفاع ونسبب overflow داخل Positioned.fill.
     return Stack(
       fit: StackFit.expand,
       children: [
-        // السلايد نفسه
         SizedBox(
           height: widget.height,
           width: double.infinity,
@@ -295,7 +289,6 @@ class _FavoritesCarouselNoOverflowState extends State<_FavoritesCarouselNoOverfl
           ),
         ),
 
-        // النقاط فوق (أسفل الزاوية الوسطى)
         Positioned(
           bottom: 8,
           left: 0,
@@ -339,7 +332,6 @@ class _BannerSlide extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // صورة العرض كبيرة ومتمددة للأسفل
             Positioned(
               left: -16,
               bottom: -26,
@@ -356,7 +348,6 @@ class _BannerSlide extends StatelessWidget {
               ),
             ),
 
-            // النصوص بمحاذاة البداية
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(18, 100, 2, 10),

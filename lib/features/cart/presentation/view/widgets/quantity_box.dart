@@ -39,23 +39,21 @@ class QuantityBox extends StatelessWidget {
           if (quantity > 1)
             _tap(
               onTap: onDecrement,
-              child: const Icon(Icons.remove, size: 18, color: Colors.black),
+              child: const Icon(Icons.remove, size: 20, color: Colors.black),
             )
           else
             _tap(
-              onTap: onDelete, // أو onDecrement لو بدك حذف مباشر بدون تأكيد
-              child:SvgPicture.asset(ManagerImages.delete_num,color: ManagerColors.like,),),
+              onTap: onDelete,
+              child:SvgPicture.asset(ManagerImages.delete_num,color: ManagerColors.like,height: 18,),),
 
-          // العدد
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
+            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w10),
             child: Text(
               '$quantity',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.black),
             ),
           ),
 
-          // − أو سلة
 
           _tap(
             onTap: onIncrement,

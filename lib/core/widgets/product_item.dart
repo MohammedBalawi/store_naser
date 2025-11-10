@@ -6,6 +6,7 @@ import 'package:app_mobile/core/cache/app_cache.dart';
 import 'package:app_mobile/core/model/product_model.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/routes/routes.dart';
 import 'package:app_mobile/core/service/image_service.dart';
@@ -29,6 +30,8 @@ Widget productItem({
   return FutureBuilder(
     future: _checkAndExpirePrice(model),
     builder: (context, snapshot) {
+      final bool isArabic = Get.locale?.languageCode == 'ar';
+
       return GestureDetector(
         onTap: () async {
           final prefs = await SharedPreferences.getInstance();
@@ -48,13 +51,12 @@ Widget productItem({
           Get.toNamed(Routes.productDetails);
         },
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
+          margin: EdgeInsets.only(left: ManagerWidth.w12),
           width: ManagerWidth.w167,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-                color: const Color(0xFFEEEEEEEE), width: 1),
+            border: Border.all(color: const Color(0xFFEEEEEEEE), width: 1),
             boxShadow: [
               BoxShadow(
                 color: const Color(0x0C000000),
@@ -66,48 +68,47 @@ Widget productItem({
           child: Column(
             children: [
               SizedBox(
-                height: ManagerHeight.h150,
+                height: ManagerHeight.h170,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(ManagerRadius.r10),
+                  borderRadius: BorderRadius.circular(ManagerRadius.r8),
                   child: Stack(
                     clipBehavior: Clip.hardEdge,
                     children: [
-                      // صندوق للصورة بحد من كل الجهات والصورة بالمنتصف
                       Positioned.fill(
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 6, 10, 12),
-                          child: DecoratedBox(
+                          padding: const EdgeInsets.fromLTRB(10, 6, 5, 1),
+                          child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Center(
-                              child: Padding(
+                              child: Container(
+                                width: 120,
+                                height: 140,
                                 padding: const EdgeInsets.all(8),
                                 child: Image(
                                   image: ImageService.networkImageContainer(
                                       path: model.image ?? ''),
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit
+                                      .contain,
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-
-                      // شارة زاوية مثبتة على حافة الكرت (أعلى يمين)
-                      const PositionedDirectional(
+                       PositionedDirectional(
                         top: 0,
                         end: 110,
                         child: CornerRibbonSimple(
                           size: 57,
-                          label: 'جديد',
+                          label: ManagerStrings.news,
                         ),
                       ),
 
-                      // ❤️ المفضلة — مثبتة أعلى يسار الكرت (مش مرتبطة بالصورة)
                       PositionedDirectional(
-                        end: ManagerWidth.w10,
+                        end: ManagerWidth.w5,
                         top: ManagerHeight.h12,
                         child: Container(
                           width: ManagerWidth.w36,
@@ -177,7 +178,7 @@ Widget productItem({
                       ),
 
                       PositionedDirectional(
-                        bottom: 0,
+                        bottom: 1,
                         end: 12,
                         child: _MiniCartButton(
                           width: ManagerWidth.w90,
@@ -191,9 +192,15 @@ Widget productItem({
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(
-                          right: 10,
-                    top: ManagerWidth.w25,),
+                padding:isArabic ?
+                EdgeInsets.only(
+                  right: 10,
+                  top: ManagerWidth.w5,
+                ):
+                EdgeInsets.only(
+                  left: 10,
+                  top: ManagerWidth.w5,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -201,7 +208,7 @@ Widget productItem({
                       children: [
                         Container(
                           padding: const EdgeInsets.only(
-                              top: 3, left: 5, right: 5, bottom: 5),
+                              top: 1, left: 10, right: 10, bottom: 1),
                           decoration: BoxDecoration(
                             color: Color(0xFFFAFAFA),
                             borderRadius: BorderRadius.circular(4),
@@ -256,7 +263,7 @@ Widget productItem({
                             ],
                           ),
                         ),
-                        SizedBox(width: ManagerWidth.w7),
+                        SizedBox(width: ManagerWidth.w5),
                         Row(
                           children: [
                             FutureBuilder(
@@ -275,7 +282,7 @@ Widget productItem({
                                 return Text(
                                   '(${list.length})',
                                   style: getRegularTextStyle(
-                                      fontSize: ManagerFontSize.s10,
+                                      fontSize: ManagerFontSize.s12,
                                       color: ManagerColors.gray_1),
                                 );
                               },
@@ -290,7 +297,7 @@ Widget productItem({
                       maxLines: 1,
                       textAlign: TextAlign.right,
                       style: getBoldTextStyle(
-                          fontSize: ManagerFontSize.s12,
+                          fontSize: ManagerFontSize.s14,
                           color: ManagerColors.black),
                     ),
                     const SizedBox(height: 5),
@@ -299,60 +306,80 @@ Widget productItem({
                       maxLines: 2,
                       textAlign: TextAlign.right,
                       style: getRegularTextStyle(
-                          fontSize: ManagerFontSize.s12,
+                          fontSize: ManagerFontSize.s14,
                           color: ManagerColors.black),
                     ),
-                    if ((model.sellingPrice ?? 0) > 0)
-                      const SizedBox(height: 12)
-                    else
-                      const SizedBox(height: 12),
                     Column(
                       children: [
                         if ((model.sellingPrice ?? 0) > 0) ...[
-                          Row(
-                            children: [
-                              Text(
-                                '${model.price} ',
-                                style: getRegularTextStyle(
-                                  fontSize: ManagerFontSize.s12,
-                                  color: ManagerColors.grey,
-                                ).copyWith(decoration: TextDecoration.lineThrough),
-                              ),
-                              SizedBox(width: 5,),
-                              Image.asset(ManagerImages.ra,height: 12,color: ManagerColors.grey,)
-
-                            ],
-                          ),
-                          SvgPicture.asset(ManagerImages.ra),
-                          SizedBox(width: ManagerWidth.w4),
-                          Row(
-                            children: [
-                              Text(
-                                '${model.sellingPrice}',
-                                style: getBoldTextStyle(
-                                  fontSize: ManagerFontSize.s14,
-                                  color: ManagerColors.like,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${model.price} ',
+                                      style: getRegularTextStyle(
+                                        fontSize: ManagerFontSize.s14,
+                                        color: ManagerColors.grey,
+                                      ).copyWith(
+                                          decoration:
+                                              TextDecoration.lineThrough),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Image.asset(
+                                      ManagerImages.ra,
+                                      height: 14,
+                                      color: ManagerColors.grey,
+                                    )
+                                  ],
                                 ),
-                              ),
-                              SizedBox(width: 5,),
-                              Image.asset(ManagerImages.ra,height: 12,color: ManagerColors.like,)
-                            ],
+                                SvgPicture.asset(ManagerImages.ra),
+                                SizedBox(width: ManagerWidth.w4),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${model.sellingPrice}',
+                                      style: getBoldTextStyle(
+                                        fontSize: ManagerFontSize.s16,
+                                        color: ManagerColors.like,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Image.asset(
+                                      ManagerImages.ra,
+                                      height: 14,
+                                      color: ManagerColors.like,
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ] else ...[
                           Padding(
-                            padding: const EdgeInsets.only(top: 12.0),
+                            padding: const EdgeInsets.only(top: 30.0),
                             child: Row(
                               children: [
                                 Text(
                                   '${model.price}',
                                   style: getBoldTextStyle(
-                                    fontSize: ManagerFontSize.s14,
+                                    fontSize: ManagerFontSize.s16,
                                     color: ManagerColors.black,
                                   ),
                                 ),
-                                SizedBox(width: 5,),
-                                Image.asset(ManagerImages.ra,height: 12,)
-
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Image.asset(
+                                  ManagerImages.ra,
+                                  height: 14,
+                                )
                               ],
                             ),
                           ),
@@ -589,8 +616,8 @@ class _MiniCartButtonState extends State<_MiniCartButton> {
             _notify();
           },
           child: Center(
-              child:
-                  SvgPicture.asset(ManagerImages.bag_plus, width: 22, height: 22)),
+              child: SvgPicture.asset(ManagerImages.bag_plus,
+                  width: 22, height: 22)),
         );
       case _MiniMode.numberOnly:
         return InkWell(
@@ -665,23 +692,32 @@ class CornerRibbonSimple extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return SizedBox(
       width: size,
       height: size,
       child: Stack(
         clipBehavior: Clip.hardEdge,
         children: [
+          isArabic?
           SvgPicture.asset(
             ManagerImages.vector, // مثلث ملون
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          ):
+          SvgPicture.asset(
+            ManagerImages.turboll, //
             width: size,
             height: size,
             fit: BoxFit.cover,
           ),
           Positioned(
             top: 10,
-            right: 5,
+            right:isArabic? 5:18,
             child: Transform.rotate(
-              angle: -16 / 2.9,
+              angle: isArabic ?-16 / 2.9: -16 / 2.3,
               child: Text(
                 label.isEmpty ? 'جديد' : label,
                 style: getBoldTextStyle(fontSize: 13, color: Colors.white),

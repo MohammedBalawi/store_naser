@@ -1,6 +1,8 @@
 // lib/features/account_edit/presentation/view/height_view.dart
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
@@ -14,126 +16,142 @@ class HeightView extends GetView<HeightController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
-      appBar: AppBar(
+      appBar:AppBar(
         elevation: 0,
-        centerTitle: true,
+        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leadingWidth: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('طولك', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
-            const SizedBox(width: 42),
-          ],
+        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
+        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        notificationPredicate: (notification) => false,
+
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark
+            .copyWith(statusBarColor: Colors.white),
+
+        flexibleSpace: const SizedBox.expand(
+          child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
         ),
+
+        title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic?ManagerImages.arrows:ManagerImages.arrow_left)),
+          Text(ManagerStrings.yourHeight, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+          const SizedBox(width: 42),
+        ],
+      ),
+
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
         ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 0,
       ),
 
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        children: [
-          Container(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-            padding: const EdgeInsets.fromLTRB(12, 14, 12, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('أدخل طولك', style: getBoldTextStyle(color: Colors.black, fontSize: 14)),
-                const SizedBox(height: 10),
-
-      Container(
-        height: 280,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
           children: [
-            // المستطيل البنفسجي (هايلايت)
-            Positioned.fill(
-              top: 110,
-              bottom: 110,
-              left: 20,
-              right: 20,
-              child: Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 84, // حسب لقطة الشاشة 84x60
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: ManagerColors.primaryColor,
-                    borderRadius: BorderRadius.circular(10),
+            Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.fromLTRB(12, 14, 12, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(ManagerStrings.addHeight, style: getBoldTextStyle(color: Colors.black, fontSize: 14)),
+                  const SizedBox(height: 10),
+
+        Container(
+          height: 280,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned.fill(
+                top: 110,
+                bottom: 110,
+                left: 20,
+                right: 20,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 84, // حسب لقطة الشاشة 84x60
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: ManagerColors.primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // الـ Picker (الأرقام فقط)
-            Obx(() {
-              final items = controller.values; // List<double>
-              final sel = controller.selected.value;
-              final initialIndex = items.indexOf(sel);
+              Obx(() {
+                final items = controller.values; // List<double>
+                final sel = controller.selected.value;
+                final initialIndex = items.indexOf(sel);
 
-              return CupertinoPicker(
-                scrollController: controller.scroll ??
-                    FixedExtentScrollController(
-                      initialItem: initialIndex < 0 ? 0 : initialIndex,
-                    ),
-                itemExtent: 46,
-                useMagnifier: true,
-                magnification: 1,
-                squeeze: 1,
-                onSelectedItemChanged: controller.onSelected,
-                selectionOverlay: const SizedBox.shrink(), // لأننا رسمنا الهايلايت
-                looping: false,
-                children: items.map((v) {
-                  final isSelected = v == sel;
-                  return Center(
-                    child: SizedBox(
-                      width: 84, // نفس عرض المستطيل ليثبت التمركز
-                      child: Text(
-                        v.toStringAsFixed(2),
-                        textAlign: TextAlign.center,
-                        style: isSelected
-                            ? getBoldTextStyle(color: Colors.white, fontSize: 22)
-                            : getRegularTextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
+                return CupertinoPicker(
+                  scrollController: controller.scroll ??
+                      FixedExtentScrollController(
+                        initialItem: initialIndex < 0 ? 0 : initialIndex,
+                      ),
+                  itemExtent: 46,
+                  useMagnifier: true,
+                  magnification: 1,
+                  squeeze: 1,
+                  onSelectedItemChanged: controller.onSelected,
+                  selectionOverlay: const SizedBox.shrink(), // لأننا رسمنا الهايلايت
+                  looping: false,
+                  children: items.map((v) {
+                    final isSelected = v == sel;
+                    return Center(
+                      child: SizedBox(
+                        width: 84, // نفس عرض المستطيل ليثبت التمركز
+                        child: Text(
+                          v.toStringAsFixed(2),
+                          textAlign: TextAlign.center,
+                          style: isSelected
+                              ? getBoldTextStyle(color: Colors.white, fontSize: 22)
+                              : getRegularTextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              );
-            }),
+                    );
+                  }).toList(),
+                );
+              }),
 
-            PositionedDirectional(
-              end: 78,
-              child: Text(
-                'سم',
-                style: getBoldTextStyle(
-                  color: ManagerColors.primaryColor,
-                  fontSize: 12,
+              PositionedDirectional(
+                end: 78,
+                child: Text(
+                  ManagerStrings.cm
+                  ,
+                  style: getBoldTextStyle(
+                    color: ManagerColors.primaryColor,
+                    fontSize: 12,
+                  ),
                 ),
+              ),
+            ],
+          ),
+        )
+
+
+        ],
               ),
             ),
           ],
         ),
-      )
-
-
-      ],
-            ),
-          ),
-        ],
       ),
 
       bottomNavigationBar: Padding(
@@ -157,7 +175,7 @@ class HeightView extends GetView<HeightController> {
                     borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
-              child: Text('حفظ',
+              child: Text(ManagerStrings.save,
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           );

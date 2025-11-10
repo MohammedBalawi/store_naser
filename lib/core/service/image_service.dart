@@ -18,6 +18,8 @@ class ImageService {
           )
         : CachedNetworkImage(
             imageUrl: path,
+      fit: BoxFit.fill,
+
             progressIndicatorBuilder: (
               context,
               url,
@@ -30,7 +32,7 @@ class ImageService {
             errorWidget: (context, url, error) => const Icon(
               Icons.error,
             ),
-            fit: BoxFit.fill,
+            // fit: BoxFit.fill,
           );
   }
 

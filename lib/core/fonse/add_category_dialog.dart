@@ -221,8 +221,8 @@ class AddCategoryDialog {
                                       .from('product-images')
                                       .getPublicUrl(filePath);
 
-                                  await Get.find<HomeController>()
-                                      .addCategory(nameController.text.trim(), imageUrl);
+                                  // await Get.find<HomeController>()
+                                  //     .addCategory(nameController.text.trim(), imageUrl);
 
                                   Get.back();
                                   await addNotification(

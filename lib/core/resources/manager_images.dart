@@ -6,7 +6,7 @@ class ManagerImages {
   static const String notificationSeen = '$imagesPath/notification_seen.svg';
   static const String notificationUnSeen =
       '$imagesPath/notification_unseen.svg';
-  static const String logo = '$imagesPath/kira.jpeg';
+  static const String logo = '$imagesPath/icon_app.jpeg';
   static const String logo_refresh = '$imagesPath/kira-removebg-preview.png';
   static const String outBoardingImage1 = '$imagesPath/on_boarding1.svg';
   static const String outBoardingImage2 = '$imagesPath/on_boarding2.svg';
@@ -26,7 +26,7 @@ class ManagerImages {
   static const String cartIcon = '$imagesPath/cartIcon.svg';
   static const String drawerIcon = '$imagesPath/drawerIcon.svg';
   static const String shekelIcon = '$imagesPath/shekelIcon.svg';
-  static const String star = '$imagesPath/iconoir_star-solid.svg';
+  static const String star = '$imagesPath/star.svg';
   static const String emptyStar = '$imagesPath/empty_star.svg';
   static const String filledStar = '$imagesPath/filled_star.svg';
   static const String drawerCardIcon = '$imagesPath/drawer_card_icon.svg';
@@ -72,6 +72,7 @@ class ManagerImages {
   static const String location = '$imagesPath/location.svg';
   static const String edit_profile = '$imagesPath/edit_profile.svg';
   static const String arrow_left = '$imagesPath/arrow_left.svg';
+  static const String arrow_en = '$imagesPath/arrow_en.svg';
   static const String us = '$imagesPath/us.svg';
 
   static const String weight = '$imagesPath/weight.svg';
@@ -133,7 +134,21 @@ class ManagerImages {
   static const String weui_location = '$imagesPath/weui_location-outlined.svg';
   static const String location_mark = '$imagesPath/Your Location.png';
 
+  static const String shares_icon = '$imagesPath/shares_icon.svg';
+  static const String crame = '$imagesPath/crame.png';
+  static const String star_solid = '$imagesPath/iconoir_star-solid.svg';
+  static const String empty_star = '$imagesPath/empty_star.svg';
+  static const String cansel_icon = '$imagesPath/cansel_icon.svg';
+  static const String add_image = '$imagesPath/add_image.svg';
 
+  static const String like_3 = '$imagesPath/like 3.png';
+  static const String like_1 = '$imagesPath/like 1.png';
+
+  static const String sarch_en = '$imagesPath/sarch_en.svg';
+  static const String turboll = '$imagesPath/turboll.svg';
+
+  static const String arrows_visa_ar = '$imagesPath/Arrows_visa_ar.svg';
+  static const String arrows_visa_en = '$imagesPath/Arrows_visa_en.svg';
 
 
 
@@ -187,7 +202,10 @@ class ManagerImages {
   static const String skin = '$imagesPath/skin-care.png';
   static const String make = '$imagesPath/make.png';
   static const String news = '$imagesPath/new.png';
-  static const String tabby = '$imagesPath/Tabby logo png.png';
+  static const String tamara = '$imagesPath/tamara-logo png.png';
+
+
+  static const String tabby = '$imagesPath/Tabby logo png.psd';
   static const String shopping_bag = '$imagesPath/shopping-bag 1223234 (traced).svg';
   static const String statrs = '$imagesPath/statrs.svg';
   static const String email = '$imagesPath/alternate_email.svg';
@@ -203,7 +221,7 @@ class ManagerImages {
   static const String logos_mastercard = '$imagesPath/logos_mastercard.svg';
   static const String logos_visa = '$imagesPath/logos_visa (1).svg';
 
-  static const String cash_to_pay = '$imagesPath/cash_to_pay.svg';
+  static const String cash_to_pay = '$imagesPath/cash_to_pay.png';
   static const String tabbym = '$imagesPath/tabby.svg';
   static const String stc_pay = '$imagesPath/stc_pay.svg';
   static const String close_eye = '$imagesPath/close eye (traced).svg';
@@ -215,6 +233,7 @@ class ManagerImages {
 
   static const String notfctaion = '$imagesPath/notfctaion.svg';
   static const String loge = '$imagesPath/loge.png';
+  static const String image_app = '$imagesPath/image_app.png';
   static const String add_parson = '$imagesPath/add_parson.svg';
   static const String login_2 = '$imagesPath/login_2.svg';
 

@@ -1,8 +1,9 @@
 import 'package:app_mobile/features/cart/presentation/view/widgets/ShareCartSheet.dart';
-import 'package:app_mobile/features/cart/presentation/view/widgets/delete_confirm_dialog.dart';
+import 'package:app_mobile/features/cart/presentation/view/widgets/delete_confirm_dialog.dart' hide showDeleteConfirmDialog;
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/features/cart/presentation/view/widgets/cart_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
@@ -69,8 +70,9 @@ class _CartViewState extends State<CartView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: mainAppBar(
-        title: ManagerStrings.mY_BAG,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(ManagerStrings.mY_BAG,style: getBoldTextStyle(fontSize: 20, color: ManagerColors.black),),
         actions: [
           IconButton(
             onPressed: () {
@@ -80,13 +82,22 @@ class _CartViewState extends State<CartView> {
                 isScrollControlled: false,
                 backgroundColor: Colors.transparent,
                 builder: (_) => ShareCartSheet(
-                  shareText: 'سلة مشترياتي — الإجمالي: ${totals.$1.toStringAsFixed(2)} ر.س',
+                  shareText: '${ManagerStrings.shopping}${totals.$1.toStringAsFixed(2)} ر.س',
                 ),
               );
             },
-            icon: Icon(Icons.share_outlined, color: ManagerColors.primaryColor),
+            icon:Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: SvgPicture.asset(ManagerImages.shares_icon),
+            ),
           ),
         ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 0,
       ),
       backgroundColor: ManagerColors.scaffoldBackgroundColor,
 
@@ -103,89 +114,78 @@ class _CartViewState extends State<CartView> {
           );
         }
 
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(children: [
-                Text("${ManagerStrings.quantity} ",
-                    style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.grey)),
-                SizedBox(width: ManagerWidth.w4),
-                Text("${controller.lastProductss.length} ",
-                    style: getBoldTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.black)),
-                Text(ManagerStrings.productss,
-                    style: getRegularTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.black)),
-              ]),
-              const SizedBox(height: 16),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
 
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: kBarHeight + 16),
-                  itemCount: controller.lastProductss.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.lastProductss[index];
-                    final quantity = _cartQty[item.id] ?? 0;
+            // const SizedBox(height: 16),
 
-                    String? discountText;
-                    final price = (item.price ?? 0).toDouble();
-                    final old = (item.sellingPrice ?? price).toDouble();
-                    if (old > price && old > 0) {
-                      final p = (((old - price) / old) * 100).round();
-                      discountText = '$p%';
-                    }
+            Expanded(
+              child: ListView.builder(
+                padding:EdgeInsets.zero,
+                itemCount: controller.lastProductss.length,
+                itemBuilder: (context, index) {
+                  final item = controller.lastProductss[index];
+                  final quantity = _cartQty[item.id] ?? 0;
 
-                    return cartItem(
-                      context: context,
-                      model: item,
-                      quantity: quantity,
-                      discountText: discountText,
-                      showNewRibbon: (item.type ?? '').isNotEmpty,
-                      onIncrement: () async {
-                        final supabase = Supabase.getIt<SupabaseClient>();
-                        final user = supabase.auth.currentUser; if (user == null) return;
-                        final currentQty = _cartQty[item.id] ?? 0;
-                        if (currentQty <= 0) {
-                          await supabase.from('cart_items').insert({'user_id': user.id, 'product_id': item.id, 'quantity': 1});
-                        } else {
-                          await supabase.from('cart_items').update({'quantity': currentQty + 1})
-                              .eq('user_id', user.id).eq('product_id', item.id);
-                        }
-                        await _refreshCart();
-                      },
-                      onDecrement: () async {
-                        final supabase = Supabase.getIt<SupabaseClient>();
-                        final user = supabase.auth.currentUser; if (user == null) return;
-                        if (quantity <= 1) {
-                          await supabase.from('cart_items').delete()
-                              .eq('user_id', user.id).eq('product_id', item.id);
-                        } else {
-                          await supabase.from('cart_items').update({'quantity': quantity - 1})
-                              .eq('user_id', user.id).eq('product_id', item.id);
-                        }
-                        await _refreshCart();
-                      },
-                      onConfirmDelete: () async {
-                        final supabase = Supabase.getIt<SupabaseClient>();
-                        final user = supabase.auth.currentUser; if (user == null) return;
-                        final ok = await showDeleteConfirmDialog(context) ?? false;
-                        if (!ok) return;
+                  String? discountText;
+                  final price = (item.price ?? 0).toDouble();
+                  final old = (item.sellingPrice ?? price).toDouble();
+                  if (old > price && old > 0) {
+                    final p = (((old - price) / old) * 100).round();
+                    discountText = '$p%';
+                  }
+
+                  return cartItem(
+                    context: context,
+                    model: item,
+                    quantity: quantity,
+                    discountText: discountText,
+                    showNewRibbon: (item.type ?? '').isNotEmpty,
+                    onIncrement: () async {
+                      final supabase = Supabase.getIt<SupabaseClient>();
+                      final user = supabase.auth.currentUser; if (user == null) return;
+                      final currentQty = _cartQty[item.id] ?? 0;
+                      if (currentQty <= 0) {
+                        await supabase.from('cart_items').insert({'user_id': user.id, 'product_id': item.id, 'quantity': 1});
+                      } else {
+                        await supabase.from('cart_items').update({'quantity': currentQty + 1})
+                            .eq('user_id', user.id).eq('product_id', item.id);
+                      }
+                      await _refreshCart();
+                    },
+                    onDecrement: () async {
+                      final supabase = Supabase.getIt<SupabaseClient>();
+                      final user = supabase.auth.currentUser; if (user == null) return;
+                      if (quantity <= 1) {
                         await supabase.from('cart_items').delete()
                             .eq('user_id', user.id).eq('product_id', item.id);
-                        await _refreshCart();
-                      }, isFavorite: isFav,
-                      onToggleFavorite: () {
-                        setState(() => isFav = !isFav);
-                        // أو controller.toggleFavorite(productId);
-                      },
-                      // showNewRibbon: true,
-                      // discountText: '20%', // إن وُجد
-                    );
-                  },
-                ),
+                      } else {
+                        await supabase.from('cart_items').update({'quantity': quantity - 1})
+                            .eq('user_id', user.id).eq('product_id', item.id);
+                      }
+                      await _refreshCart();
+                    },
+                    onConfirmDelete: () async {
+                      final supabase = Supabase.getIt<SupabaseClient>();
+                      final user = supabase.auth.currentUser; if (user == null) return;
+                      final ok = await showDeleteConfirmDialog(context) ?? false;
+                      if (!ok) return;
+                      await supabase.from('cart_items').delete()
+                          .eq('user_id', user.id).eq('product_id', item.id);
+                      await _refreshCart();
+                    }, isFavorite: isFav,
+                    onToggleFavorite: () {
+                      setState(() => isFav = !isFav);
+                      // أو controller.toggleFavorite(productId);
+                    },
+                    // showNewRibbon: true,
+                    // discountText: '20%', // إن وُجد
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }),
 
@@ -212,25 +212,25 @@ class _CartViewState extends State<CartView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "${total.toStringAsFixed(2)} ر.س (${controller.lastProductss.length} عناصر)",
+                      "${total.toStringAsFixed(2)} ${ManagerStrings.sAR} (${controller.lastProductss.length} ${ManagerStrings.items})",
                       style: getBoldTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.black),
                     ),
                     if (saved > 0)
                       const SizedBox(height: 4),
                     if (saved > 0)
                       Text(
-                        "لقد وفرت ${saved.toStringAsFixed(2)} ر.س",
-                        style: getBoldTextStyle(fontSize: ManagerFontSize.s14, color: Colors.pink),
+                        "${ManagerStrings.youSaved}${saved.toStringAsFixed(2)} ${ManagerStrings.sAR}",
+                        style: getBoldTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.like),
                       ),
                   ],
                 ),
                 SizedBox(
-                  width: ManagerWidth.w120,
+                  width: ManagerWidth.w140,
                   child: mainButton(
                     onPressed: () {
                       Get.to(() => const CheckoutAddressView());
                     },
-                    buttonName: "الدفع",
+                    buttonName: ManagerStrings.checkout,
                     shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ManagerRadius.r12)),
                   ),
                 ),
@@ -242,7 +242,6 @@ class _CartViewState extends State<CartView> {
     );
   }
 
-  /// يحسب (الإجمالي الحالي, إجمالي الأسعار القديمة)
   (double, double) _calcTotals() {
     double total = 0, oldTotal = 0;
     for (var item in controller.lastProductss) {

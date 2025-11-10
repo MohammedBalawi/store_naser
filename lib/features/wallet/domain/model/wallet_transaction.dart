@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-enum TxDirection { in_, out } // in_ = إضافة, out = خصم
+enum TxDirection { in_, out }
 
 class WalletTransaction extends Equatable {
   final String id;
   final DateTime createdAt;
   final TxDirection direction;
-  final double amount; // موجب للإضافة, سالب للخصم (نستخدم الاتجاه للّون/الأيقونة)
-  final String title;  // مثل: "خصم للطلب رقم #26579639" أو "SHAKE5" أو "ناصر"
-  final String? subtitle; // سطر ثانٍ اختياري (صلاحية/وقت إضافي)
+  final double amount;
+  final String title;
+  final String? subtitle;
   const WalletTransaction({
     required this.id,
     required this.createdAt,

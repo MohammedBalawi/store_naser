@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ class AboutView extends GetView<AboutController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
     return Scaffold(
       backgroundColor: ManagerColors.background,
       appBar: AppBar(
@@ -23,8 +25,8 @@ class AboutView extends GetView<AboutController> {
           children: [
             GestureDetector(
                 onTap: () => Get.back(),
-                child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('حول التطبيق',
+                child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left )),
+            Text(ManagerStrings.aboutTheApplication,
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             SizedBox(width: 30,),
           ],
@@ -48,15 +50,15 @@ class AboutView extends GetView<AboutController> {
             child: Padding(
               padding: const EdgeInsets.only(top:10.0,bottom: 10),
               child: Column(children: [
-                _RowTile(title: 'الموقع إلكتروني', rightIcon: ManagerImages.www, onTap: controller.toTechSupport),
+                _RowTile(title:ManagerStrings.website , rightIcon: ManagerImages.www, onTap: controller.toTechSupport),
                  Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 25,indent: 25,),
-                _RowTile(title: 'انستقرام', rightIcon: ManagerImages.instagram, onTap: controller.callCustomerService),
+                _RowTile(title: ManagerStrings.instagrams, rightIcon: ManagerImages.instagram, onTap: controller.callCustomerService),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'تيك توك', rightIcon: ManagerImages.tiktok),
+                _RowTile(title: ManagerStrings.tikTok, rightIcon: ManagerImages.tiktok),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'سنابشات', rightIcon: ManagerImages.social, onTap: controller.mailUs),
+                _RowTile(title: ManagerStrings.snapchat, rightIcon: ManagerImages.social, onTap: controller.mailUs),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'قناة التلجرام', rightIcon: ManagerImages.telegram_, onTap: controller.mailUs),
+                _RowTile(title: ManagerStrings.telegram, rightIcon: ManagerImages.telegram_, onTap: controller.mailUs),
               ]),
             ),
           ),
@@ -67,14 +69,18 @@ class AboutView extends GetView<AboutController> {
 }
 
 class _RowTile extends StatelessWidget {
-  const _RowTile({required this.title, required this.rightIcon, this.subtitle, this.onTap});
+  const _RowTile({required this.title, required this.rightIcon, this.subtitle, this.onTap, this.iconSize = 22,});
   final String title;
   final String rightIcon;
   final String? subtitle;
   final VoidCallback? onTap;
+  final double iconSize;
+
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return InkWell(
       onTap: onTap,
       child: SizedBox(
@@ -98,8 +104,18 @@ class _RowTile extends StatelessWidget {
               ),
           ):
           const SizedBox(width: 12),
+          isArabic
+              ? SvgPicture.asset(
+            ManagerImages.arrow_left,
+            width: iconSize,
+            height: iconSize,
+          )
+              : SvgPicture.asset(
+            ManagerImages.arrow_en,
+            width: iconSize,
+            height: iconSize,
+          ),
 
-          SvgPicture.asset(ManagerImages.arrow_left, width: 22, height: 22),
           const SizedBox(width: 22),
         ]),
       ),

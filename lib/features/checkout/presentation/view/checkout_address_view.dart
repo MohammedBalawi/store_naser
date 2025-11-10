@@ -1,4 +1,7 @@
+import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_font_size.dart';
@@ -16,8 +19,10 @@ class CheckoutAddressView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(CheckoutController());
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:ManagerColors.background,
       body: SafeArea(
         bottom: false,
         child: GetBuilder<CheckoutController>(
@@ -31,10 +36,10 @@ class CheckoutAddressView extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: Get.back,
-                        child: const Icon(Icons.arrow_forward_ios_outlined, textDirection: TextDirection.ltr),
+                        child:SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)
                       ),
                       const Spacer(),
-                      Text("طلب الدفع",
+                      Text(ManagerStrings.orderCheckout,
                           style: getBoldTextStyle(
                               fontSize: ManagerFontSize.s20, color: ManagerColors.black)),
                       const Spacer(),
@@ -43,26 +48,24 @@ class CheckoutAddressView extends StatelessWidget {
                   ),
                 ),
 
-                // stepper (الخطوة 1: عنوان الشحن)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: CheckoutStepper(step: 0), // يظهر اليسار كـ تم ✓ والوسط نشط
                 ),
+                const SizedBox(height: 14),
+                Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
 
-                const SizedBox(height: 12),
-
-                // زر إضافة عنوان جديد
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(top: 26,left: 15,right: 15,bottom: 20),
                   child: InkWell(
                     onTap: c.addNewAddress,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                       decoration: BoxDecoration(
                         color: ManagerColors.white,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -70,10 +73,11 @@ class CheckoutAddressView extends StatelessWidget {
                           Icon(Icons.add, color: ManagerColors.color),
                           SizedBox(width: 8),
 
-                          Text("إضافة عنوان جديد",
-                              style: TextStyle(
+                          Text(ManagerStrings.addNewAddress,
+                              style: getBoldTextStyle(
+                                fontSize: 12,
                                 color: ManagerColors.color,
-                                fontWeight: FontWeight.w700,
+
                               )),
                         ],
                       ),
@@ -109,20 +113,28 @@ class CheckoutAddressView extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.all(ManagerWidth.w16),
-          child: mainButton(
-            buttonName: "التالي",
-          color: ManagerColors.greens,
-            // backgroundColor: const Color(0xFF6CC000),
-            onPressed: () => Get.find<CheckoutController>().goNextFromAddress(),
-            shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            height: 56,
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 60),
+          child: SizedBox(
+            height: 52,
+            child: ElevatedButton(
+              onPressed:Get.find<CheckoutController>().goNextFromAddress,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                disabledForegroundColor: Colors.white,
+                backgroundColor: ManagerColors.greens,
+                disabledBackgroundColor: ManagerColors.gray_3,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+              ),
+              child: Text(
+                ManagerStrings.next,
+                style: getBoldTextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
           ),
-        ),
-      ),
+        )
+
     );
   }
 }
@@ -139,42 +151,45 @@ class _AddressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? ManagerColors.color : ManagerColors.white,
-            width: selected ? 1.6 : 1,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: selected ? ManagerColors.color : ManagerColors.white,
+              width: selected ? 1.6 : 1,
+            ),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.03), blurRadius: 6, offset: const Offset(0,1))],
           ),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(.03), blurRadius: 6, offset: const Offset(0,1))],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(name, style: getBoldTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.black)),
-            const SizedBox(height: 6),
-            Text(address, textAlign: TextAlign.right,
-                style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.grey)),
-            const SizedBox(height: 6),
-            Text(phone, style: getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.black)),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Divider(height: 1, color: Colors.grey.shade200),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                TextButton(onPressed: onEdit, child:  Text("تعديل", style: getBoldTextStyle(color: ManagerColors.color, fontSize: 12)) ),
-                const SizedBox(width: 8),
-                TextButton(onPressed: onDelete, child:  Text("حذف", style: getBoldTextStyle(color: ManagerColors.color,fontSize: 12 )) ),
-              ],
-            ),
-          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(name, style: getBoldTextStyle(fontSize: ManagerFontSize.s16, color: ManagerColors.black)),
+              const SizedBox(height: 6),
+              Text(address, textAlign: TextAlign.right,
+                  style: getMediumTextStyle(fontSize: ManagerFontSize.s12, color: ManagerColors.black)),
+              const SizedBox(height: 6),
+              Text(phone, style: getMediumTextStyle(fontSize: ManagerFontSize.s12, color: ManagerColors.black)),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Divider(height: 1, color: Colors.grey.shade200),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextButton(onPressed: onEdit, child:  Text("تعديل", style: getBoldTextStyle(color: ManagerColors.color, fontSize: 12)) ),
+                  const SizedBox(width: 8),
+                  TextButton(onPressed: onDelete, child:  Text("حذف", style: getBoldTextStyle(color: ManagerColors.color,fontSize: 12 )) ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

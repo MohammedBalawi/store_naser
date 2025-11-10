@@ -1,9 +1,14 @@
+import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 
 class ShareCartSheet extends StatelessWidget {
-  final String shareText; // نص المشاركة (مثلاً مجموع السلة/رابط)
+  final String shareText;
   const ShareCartSheet({super.key, required this.shareText});
 
   @override
@@ -19,37 +24,59 @@ class ShareCartSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Colors.black12, borderRadius: BorderRadius.circular(2),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                 Text(
+                   ManagerStrings.shareWith
+                  ,
+                  style: getBoldTextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.grey,
+                    size: 24,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
             ),
-            const Text('مشاركة مع', style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.w700),
-            ),
+
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _ShareIcon(label: 'البريد الإلكتروني', icon: Icons.alternate_email, onTap: (){
-                  Share.share(shareText, subject: 'سلة مشترياتي');
-                }),
-                _ShareIcon(label: 'واتساب', icon: Icons.e_mobiledata, onTap: (){
-                  Share.share(shareText);
-                }),
-                _ShareIcon(label: 'اكس', icon: Icons.share, onTap: (){
-                  Share.share(shareText);
-                }),
-                _ShareIcon(label: 'تيليجرام', icon: Icons.send, onTap: (){
-                  Share.share(shareText);
-                }),
-                _ShareIcon(label: 'نسخ', icon: Icons.copy, onTap: () async {
+                _ShareIcon(label: ManagerStrings.copy, icon: ManagerImages.copy, onTap: () async {
                   await Clipboard.setData(ClipboardData(text: shareText));
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('تم نسخ الرابط/النص')),
+                     SnackBar(content: Text(ManagerStrings.link)),
                   );
                 }),
+                _ShareIcon(label: ManagerStrings.telegrams, icon: ManagerImages.telegram, onTap: (){
+                  Share.share(shareText);
+                }),
+                _ShareIcon(label:ManagerStrings.twitter , icon: ManagerImages.twitter, onTap: (){
+                  Share.share(shareText);
+                }),
+                _ShareIcon(label: ManagerStrings.whatsapp, icon: ManagerImages.whatsapp, onTap: (){
+                  Share.share(shareText);
+                }),
+                _ShareIcon(label: ManagerStrings.e_mail, icon: ManagerImages.email, onTap: (){
+                  Share.share(shareText, subject: ManagerStrings.MyShoppingCart);
+                }),
+
+
+
+
+
               ],
             ),
           ],
@@ -61,35 +88,49 @@ class ShareCartSheet extends StatelessWidget {
 
 class _ShareIcon extends StatelessWidget {
   final String label;
-  final IconData icon;
+  final String icon;
   final VoidCallback onTap;
-  const _ShareIcon({required this.label, required this.icon, required this.onTap});
+
+  const _ShareIcon({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(20),
       child: Column(
         children: [
           Container(
-            width: 46, height: 46,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4ECFF), // بنفسجي فاتح مثل اللقطة
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF4ECFF),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: const Color(0xFF8A4DD7)),
+            child: Center(
+              child: SvgPicture.asset(
+                icon,
+                height: 22,
+              ),
+            ),
           ),
           const SizedBox(height: 6),
-          SizedBox(
-            width: 64,
-            child: Text(label, textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11),
-              maxLines: 2,
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: getRegularTextStyle(
+              fontSize: 12,
+              color: ManagerColors.black,
             ),
+            maxLines: 2,
           ),
         ],
       ),
     );
   }
 }
+

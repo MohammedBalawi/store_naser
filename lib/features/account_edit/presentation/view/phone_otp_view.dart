@@ -1,5 +1,7 @@
 // lib/features/account_edit/presentation/view/phone_otp_view.dart
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../core/resources/manager_colors.dart';
@@ -35,27 +37,52 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: ManagerColors.background,
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          title: Text('التحقق من الرقم', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+    return Scaffold(
+      backgroundColor: ManagerColors.background,
+      appBar:
+      AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
+        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        notificationPredicate: (notification) => false,
 
-          leading:  GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark
+            .copyWith(statusBarColor: Colors.white),
 
+        flexibleSpace: const SizedBox.expand(
+          child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
         ),
 
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(ManagerStrings.numberVerification, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            const SizedBox(width: 42),
+          ],
+        ),
+
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 0,
+      ),
+
+
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        child: Column(
           children: [
             const SizedBox(height: 8),
-            Text('أدخل الرمز المكون من 4 أرقام', style: getBoldTextStyle(color: Colors.black, fontSize: 24)),
+            Text(ManagerStrings.codes, style: getBoldTextStyle(color: Colors.black, fontSize: 24)),
             const SizedBox(height: 6),
-            Text('تم إرسال الرمز الخاص بك إلى ${controller.phoneDisplay}',
+            Text('${ManagerStrings.CodeWasSent}${controller.phoneDisplay}',
                 style: getRegularTextStyle(color: ManagerColors.gray_3, fontSize: 14)),
             const SizedBox(height: 18),
 
@@ -75,9 +102,9 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
               visible: controller.hasError.value,
               child: Row(
                 children: [
-                  const Icon(Icons.error, color: Color(0xFFD7374A)),
+                  SvgPicture.asset(ManagerStrings.warning),
                   const SizedBox(width: 6),
-                  Text('رمز غير صحيح',
+                  Text(ManagerStrings.invalidCode,
                       style: getBoldTextStyle(color: const Color(0xFFD7374A), fontSize: 14)),
                 ],
               ),
@@ -90,42 +117,42 @@ class PhoneOtpView extends GetView<PhoneOtpController> {
               child: controller.canResend.value
                   ? InkWell(
                 onTap: controller.resend,
-                child: Text('إعادة إرسال الرمز',
+                child: Text(ManagerStrings.resendCodes,
                     style: getBoldTextStyle(color: ManagerColors.primaryColor, fontSize: 14)),
               )
-                  : Text('إعادة إرسال الرمز ${controller.secondsLeft.value} ثانية',
+                  : Text('${ManagerStrings.resendCodes}${controller.secondsLeft.value} ثانية',
                   style: getRegularTextStyle(color: ManagerColors.gray_3, fontSize: 14)),
             )),
           ],
         ),
+      ),
 
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.only(top: 16,left: 16,right: 16,bottom: 60),
-          child: Obx(() {
-            final enabled = controller.ready;
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(top: 16,left: 16,right: 16,bottom: 60),
+        child: Obx(() {
+          final enabled = controller.ready;
 
-            const activeColor   = ManagerColors.color; // بنفسجي غامق
-            const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
+          const activeColor   = ManagerColors.color; // بنفسجي غامق
+          const inactiveColor = ManagerColors.color_off; // بنفسجي فاتح
 
-            return SizedBox(
-              height: 52,
-              child: ElevatedButton(
-                onPressed: enabled ? controller.submit : null,
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  disabledForegroundColor: Colors.white, // لا تخليه شفاف
-                  backgroundColor: activeColor,
-                  disabledBackgroundColor: inactiveColor,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  elevation: 0,
-                ),
-                child: Text('تحقق',
-                    style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
+          return SizedBox(
+            height: 52,
+            child: ElevatedButton(
+              onPressed: enabled ? controller.submit : null,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                disabledForegroundColor: Colors.white, // لا تخليه شفاف
+                backgroundColor: activeColor,
+                disabledBackgroundColor: inactiveColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
               ),
-            );
-          }),
-        ),
+              child: Text(ManagerStrings.verifys,
+                  style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
+            ),
+          );
+        }),
       ),
     );
   }

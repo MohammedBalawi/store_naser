@@ -24,6 +24,8 @@ class BirthdateController extends GetxController {
 
   String get display =>
       '${day.value.toString().padLeft(2,'0')} ${months[month.value-1]} ${year.value}';
+  String get displayEn =>
+      '${day.value.toString().padLeft(2,'0')}  ${months[month.value-1]}  ${year.value}';
 
   @override
   void onInit() {

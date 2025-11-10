@@ -1,63 +1,79 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:app_mobile/core/model/product_model.dart';
-import '../../../../core/model/product_category_model.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../core/storage/local/getx_storage.dart';
-import '../../../categories/domain/model/category_model.dart';
+
+// موديل الواجهة لديك
 import '../../domain/model/home_banner_model.dart';
 import '../../domain/model/home_main_category_model.dart';
-import '../view/widget/home_category_model.dart';
+
+// شبكة REST للأصناف
+import '../../../../core/network/api_client.dart';
+import '../../../../core/constants/endpoints.dart';
 
 class HomeController extends GetxController {
   final supabase = Supabase.instance.client;
-  var hasNewNotification = false.obs;
-  var categories = <HomeMainCategoryModel>[].obs;
 
+  // إشعارات
+  var hasNewNotification = false.obs;
+
+  // الأصناف لواجهة BrandTabs
+  var categories = <HomeMainCategoryModel>[].obs;
+  bool isLoadingCategories = false;
+  String? categoriesError;
+
+  // مستخدمين (للمشرف)
   var users = <Map<String, dynamic>>[];
+  bool loadingUsers = false;
+
+  // لافتات
   var banners = <HomeBannerModel>[];
 
+  // منتجات
   List<ProductModel> featuredProducts = [];
   List<ProductModel> bestSales = [];
   List<ProductModel> lastProducts = [];
   var products = <ProductModel>[].obs;
   List<ProductModel> topRatedProducts = [];
+  var productsWithDiscount = <ProductModel>[];
+
+  // سلة
   var isLoadingCart = false.obs;
   var lastProductss = <ProductModel>[].obs;
 
-  // List<ProductModel> allProducts = [];
-  List<ProductModel> productsWithDiscount = [];
-
+  // صلاحيات
   bool isWholesaler = false;
   bool isAdminn = false;
+
+  // حالة عامة
   bool isLoading = true;
-  bool loadingUsers = false;
-  bool isLoadingCategories = false;
+
+  // مستخدم حالي
+  Rxn<Map<String, dynamic>> currentUser = Rxn<Map<String, dynamic>>();
+
+  // Dio للـ API
+  final _dio = ApiClient.I.dio;
 
   @override
   void onInit() {
     super.onInit();
     initHome();
   }
-  Rxn<Map<String, dynamic>> currentUser = Rxn<Map<String, dynamic>>();
-
 
   Future<void> clearUserData() async {
     currentUser.value = null;
-    await Supabase.instance.client.auth.signOut();
-
-
+    await supabase.auth.signOut();
   }
-
 
   Future<void> initHome() async {
     isLoading = true;
     update();
+
     fetchCartProducts();
     await getCurrentUserType();
-
     if (isAdminn) {
       await fetchUsers();
     }
@@ -65,7 +81,9 @@ class HomeController extends GetxController {
     await fetchProducts();
     await fetchProductss();
     await fetchBanners();
-    await fetchCategories();
+
+    // الأصناف من REST API
+    await fetchCategoriesFromApi();
 
     isLoading = false;
     update();
@@ -73,7 +91,6 @@ class HomeController extends GetxController {
 
   Future<void> homeRequest() async {
     await getCurrentUserType();
-
     if (isAdminn) {
       await fetchUsers();
       await checkIfAdmin();
@@ -82,20 +99,16 @@ class HomeController extends GetxController {
     await fetchProducts();
     await fetchProductss();
     await fetchBanners();
-    await fetchCategories();
+    await fetchCategoriesFromApi();
 
     isLoading = false;
     update();
   }
 
-  void markNotificationArrived() {
-    hasNewNotification.value = true;
-  }
+  void markNotificationArrived() => hasNewNotification.value = true;
+  void markNotificationRead() => hasNewNotification.value = false;
 
-  void markNotificationRead() {
-    hasNewNotification.value = false;
-  }
-// admin & wholesaler
+  //============== Roles ==============//
   Future<void> getCurrentUserType() async {
     try {
       final user = supabase.auth.currentUser;
@@ -108,53 +121,21 @@ class HomeController extends GetxController {
 
         isWholesaler = response?['is_wholesaler'] ?? false;
         isAdminn = response?['role'] == 'admin';
-
-        print('User Role => Wholesaler: \$isWholesaler, Admin: \$isAdminn');
         update();
       }
     } catch (e) {
-      print('Error checking user role: \$e');
+      // ignore
     }
   }
 
   Future<bool> checkIfAdmin() async {
     try {
-      final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return false;
-
       final email = supabase.auth.currentUser?.userMetadata?['email'];
       if (email == null) return false;
-
-      final response = await supabase
-          .from('users')
-          .select('role')
-          .eq('email', email)
-          .maybeSingle();
-
+      final response =
+      await supabase.from('users').select('role').eq('email', email).maybeSingle();
       return response?['role'] == 'admin';
-    } catch (e) {
-      print('Error checking admin status: \$e');
-      return false;
-    }
-  }
-
-  Future<bool> checkIfWholesale() async {
-    try {
-      final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return false;
-
-      final email = supabase.auth.currentUser?.userMetadata?['email'];
-      if (email == null) return false;
-
-      final response = await supabase
-          .from('users')
-          .select('is_wholesaler')
-          .eq('email', email)
-          .maybeSingle();
-
-      return response?['is_wholesaler'] == true;
-    } catch (e) {
-      print('Error checking wholesaler status: \$e');
+    } catch (_) {
       return false;
     }
   }
@@ -163,38 +144,30 @@ class HomeController extends GetxController {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) return false;
-
       final response = await supabase
           .from('users')
           .select('is_wholesaler')
           .eq('id', userId)
           .maybeSingle();
-
       return response?['is_wholesaler'] == true;
-    } catch (e) {
-      print('Error checking wholesaler status: \$e');
+    } catch (_) {
       return false;
     }
   }
 
-// user
+  //============== Users (admin) ==============//
   Future<void> fetchUsers() async {
     loadingUsers = true;
     update();
-
     try {
-      final response = await supabase
-          .from('users')
-          .select()
-          .order('created_at', ascending: true);
-
+      final response =
+      await supabase.from('users').select().order('created_at', ascending: true);
       if (response is List) {
         users = List<Map<String, dynamic>>.from(response);
       } else {
         users.clear();
       }
-    } catch (e) {
-      print('Error fetching users: \$e');
+    } catch (_) {
       users.clear();
     } finally {
       loadingUsers = false;
@@ -216,236 +189,118 @@ class HomeController extends GetxController {
       Get.snackbar('نجاح', 'تم تحديث بيانات المستخدم');
       await fetchUsers();
       return true;
-    } catch (e) {
-      print('Error updating user: \$e');
+    } catch (_) {
       Get.snackbar('فشل', 'فشل في تحديث بيانات المستخدم');
       return false;
     }
   }
 
-// product
+  //============== Products ==============//
   Future<void> fetchProducts() async {
     try {
-      final response = await supabase
-          .from('products')
-          .select('*')
-          .order('created_at', ascending: false);
+      final response =
+      await supabase.from('products').select('*').order('created_at', ascending: false);
 
       final data = response as List;
-      final allProducts =
-          data.map((item) => ProductModel.fromJson(item)).toList();
+      final all = data.map((e) => ProductModel.fromJson(e)).toList();
 
-      lastProducts = allProducts;
-      featuredProducts = allProducts.take(5).toList();
-      bestSales = allProducts.skip(5).take(5).toList();
-      topRatedProducts = allProducts.where((e) => (e.rate ?? 0) >= 4).toList();
+      lastProducts = all;
+      featuredProducts = all.take(5).toList();
+      bestSales = all.skip(5).take(5).toList();
+      topRatedProducts = all.where((e) => (e.rate ?? 0) >= 4).toList();
 
-      final allFetchedProducts =
-          data.map((item) => ProductModel.fromJson(item)).toList();
-
-      // allProducts = allFetchedProducts;
-      lastProducts = allFetchedProducts;
-      topRatedProducts =
-          allFetchedProducts.where((e) => (e.rate ?? 0) >= 4).toList();
-      productsWithDiscount =
-          allFetchedProducts.where((e) => (e.sellingPrice ?? 0) > 0).toList();
-
+      productsWithDiscount = all.where((e) => (e.sellingPrice ?? 0) > 0).toList();
       update();
-    } catch (e) {
-      print('Error fetching products: \$e');
+    } catch (_) {
+      // ignore
     }
   }
 
   Future<void> fetchProductss() async {
     try {
       final response = await supabase.from('products').select();
-
       products.assignAll(
-        (response as List).map((json) => ProductModel.fromJson(json)).toList(),
+        (response as List).map((j) => ProductModel.fromJson(j)).toList(),
       );
       update();
-    } catch (e) {
-      print('Error fetching products: $e');
+    } catch (_) {
+      // ignore
     }
   }
 
   Future<void> addProduct(ProductModel product) async {
     try {
-      final inserted = await supabase
-          .from('products')
-          .insert(product.toJson())
-          .select()
-          .single();
-
-      final newProduct = ProductModel.fromJson(inserted);
-      products.add(newProduct);
+      final inserted =
+      await supabase.from('products').insert(product.toJson()).select().single();
+      products.add(ProductModel.fromJson(inserted));
       update();
-    } catch (e) {
-      print('Error adding product: $e');
+    } catch (_) {
+      // ignore
     }
   }
 
+  //============== Banners ==============//
   Future<void> fetchBanners() async {
     try {
       final response =
-          await supabase.from('ads').select('*').eq('is_active', true);
-
-      banners = (response as List)
-          .map((item) => HomeBannerModel.fromJson(item))
-          .toList();
-
+      await supabase.from('ads').select('*').eq('is_active', true);
+      banners = (response as List).map((e) => HomeBannerModel.fromJson(e)).toList();
       update();
-    } catch (e) {
-      print('Error fetching banners: \$e');
+    } catch (_) {
+      // ignore
     }
   }
 
-  //categories
-  Future<void> fetchCategories() async {
-    try {
-      final response = await supabase.from('product_main_category').select();
-
-      categories.assignAll(
-        (response as List)
-            .map((json) => HomeMainCategoryModel.fromJson(json))
-            .toList(),
-      );
-      update();
-    } catch (e) {
-      print('Error fetching categories: $e');
-    }
-  }
-
-  Future<void> fetchProductCategories() async {
-    try {
-      final response = await supabase.from('product_category').select();
-
-      categories.assignAll(
-        (response as List)
-            .map((json) => HomeMainCategoryModel.fromJson(json))
-            .toList(),
-      );
-      update();
-    } catch (e) {
-      print('Error fetching categories: \$e');
-    }
-  }
-
-  Future<void> fetchCategoriess() async {
+  //============== Categories from REST API ==============//
+  Future<void> fetchCategoriesFromApi() async {
     try {
       isLoadingCategories = true;
+      categoriesError = null;
       update();
 
-      final response = await supabase.from('product_main_category').select();
+      final res = await _dio.get(Endpoints.categories);
+      final body = res.data;
+
+      final list = (body is Map && body['data'] is List) ? body['data'] as List : <dynamic>[];
 
       categories.assignAll(
-        (response as List)
-            .map((json) => HomeMainCategoryModel.fromJson(json))
-            .toList()
-            .reversed
-            .toList(),
+        list.map<HomeMainCategoryModel>((e) {
+          final m = e as Map<String, dynamic>;
+          // دعم مفتاحي الصورة: image أو image_url
+          final img = (m['image'] ?? m['image_url'])?.toString();
+          return HomeMainCategoryModel(
+            id: m['id'] is int ? m['id'] : int.tryParse('${m['id']}') ?? 0,
+            name: m['name']?.toString() ?? '',
+            image: img,
+          );
+        }).toList(),
       );
     } catch (e) {
-      print('Error fetching categories: \$e');
-      Get.snackbar('Error', 'Failed to fetch categories');
-    } finally {
-      isLoadingCategories = false;
-      update();
-    }
-  }
-  Future<void> fetchcCategories() async {
-    try {
-      isLoadingCategories = true;
-      update();
-
-      final response = await supabase.from('product_category').select();
-
-      categories.assignAll(
-        (response as List)
-            .map((json) => HomeMainCategoryModel.fromJson(json))
-            .toList()
-            .reversed
-            .toList(),
-      );
-    } catch (e) {
-      print('Error fetching categories: $e');
-      Get.snackbar('Error', 'Failed to fetch categories');
+      categories.clear();
+      categoriesError = e.toString();
     } finally {
       isLoadingCategories = false;
       update();
     }
   }
 
-
-  Future<List<CategoryModel>> getProductCategoriesID(String mainCategoryId) async {
-    final data = await supabase
-        .from('product_category')
-        .select()
-        .eq('main_category_id', mainCategoryId);
-
-    return data
-        .map<CategoryModel>((e) => CategoryModel.fromJson(e))
-        .toList();
-  }
-
-  Future<List<CategoryModel>> getProductCategories() async {
-    final data = await supabase.from('product_category').select();
-    return data.map((e) => CategoryModel.fromJson(e)).toList();
-  }
-
-  Future<void> addCategory(String name, String image_url) async {
-    try {
-      await supabase.from('product_main_category').insert({
-        'name': name,
-        'image_url': image_url,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-      await fetchCategories();
-      update();
-    } catch (e, s) {
-      print('Error adding category: $e');
-      print('StackTrace: $s');
-    }
-  }
-  Future<void> addProductsCategory(String name, String image_url,
-      {required int mainCategoryId}
-      ) async {
-    try {
-      await supabase.from('product_category').insert({
-        'name': name,
-        'image_url': image_url,
-        'main_category_id':mainCategoryId,
-        'created_at': DateTime.now().toIso8601String(),
-
-      });
-      await fetchCategories();
-      update();
-    } catch (e, s) {
-      print('Error adding category: $e');
-      print('StackTrace: $s');
-    }
-  }
-
-  // cart
+  //============== Cart ==============//
   Future<void> fetchCartProducts() async {
     isLoadingCart.value = true;
-
     try {
-      final user = Supabase.instance.client.auth.currentUser;
-
+      final user = supabase.auth.currentUser;
       if (user == null) {
         lastProductss.clear();
         isLoadingCart.value = false;
         return;
       }
 
-      final cartItemsResponse = await Supabase.instance.client
+      final cartItemsResponse = await supabase
           .from('cart_items')
           .select('product_id, quantity')
           .eq('user_id', user.id);
 
       final cartItems = List<Map<String, dynamic>>.from(cartItemsResponse);
-
       if (cartItems.isEmpty) {
         lastProductss.clear();
         isLoadingCart.value = false;
@@ -453,30 +308,23 @@ class HomeController extends GetxController {
       }
 
       final productIds = cartItems.map((e) => e['product_id'] as int).toList();
+      final productsResponse =
+      await supabase.from('products').select().inFilter('id', productIds);
 
-      final productsResponse = await Supabase.instance.client
-          .from('products')
-          .select()
-          .inFilter('id', productIds);
-
-      final products = List<Map<String, dynamic>>.from(productsResponse);
-
-      final updatedProducts = products.map((product) {
-        final cartItem = cartItems.firstWhere(
-          (item) => item['product_id'] == product['id'],
+      final productsList = List<Map<String, dynamic>>.from(productsResponse);
+      final updated = productsList.map((p) {
+        final item = cartItems.firstWhere(
+              (it) => it['product_id'] == p['id'],
           orElse: () => {'quantity': 1},
         );
-        product['availableQuantity'] = cartItem['quantity'] ?? 1;
-        return product;
+        p['availableQuantity'] = item['quantity'] ?? 1;
+        return p;
       }).toList();
 
-      await GetxStorage().saveCartProducts(updatedProducts);
-
-      lastProductss.assignAll(
-        updatedProducts.map((e) => ProductModel.fromJson(e)).toList(),
-      );
-    } catch (e) {
-      print('Error loading cart: $e');
+      await GetxStorage().saveCartProducts(updated);
+      lastProductss.assignAll(updated.map((e) => ProductModel.fromJson(e)).toList());
+    } catch (_) {
+      // ignore
     } finally {
       isLoadingCart.value = false;
     }
@@ -487,16 +335,8 @@ class HomeController extends GetxController {
     await fetchCartProducts();
   }
 
-  void navigateToUserManagement() {
-    Get.toNamed('/userManagement');
-  }
-
-  void navigateToActivity() {
-    Get.back();
-    Get.toNamed(Routes.activity);
-  }
-  void navigateToNotification() {
-    Get.back();
-    Get.toNamed(Routes.notificationsAdmin);
-  }
+  //============== Nav ==============//
+  void navigateToUserManagement() => Get.toNamed('/userManagement');
+  void navigateToActivity() { Get.back(); Get.toNamed(Routes.activity); }
+  void navigateToNotification() { Get.back(); Get.toNamed(Routes.notificationsAdmin); }
 }

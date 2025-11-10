@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/resources/manager_images.dart';
+import '../../../../core/resources/manager_strings.dart';
 import '../controller/change_language_controller.dart';
 
 class ChangeLanguageCountryView extends StatelessWidget {
@@ -20,6 +21,8 @@ class ChangeLanguageCountryView extends StatelessWidget {
     return GetBuilder<CountryLanguageController>(
       init: CountryLanguageController(),
       builder: (c) {
+        final bool isArabic = Get.locale?.languageCode == 'ar';
+
         return Scaffold(
           backgroundColor: ManagerColors.background,
           appBar: AppBar(
@@ -31,8 +34,8 @@ class ChangeLanguageCountryView extends StatelessWidget {
               children: [
                 GestureDetector(
                     onTap: () => Get.back(),
-                    child: SvgPicture.asset(ManagerImages.arrows)),
-                Text('البلد واللغة',
+                    child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+                Text(ManagerStrings.countryAndLanguage,
                     style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
                 SizedBox(width: 30,),
               ],
@@ -55,7 +58,7 @@ class ChangeLanguageCountryView extends StatelessWidget {
                   children: [
                     // عنوان داخلي مثل الصور
                     Text(
-                      'البلد واللغة',
+        ManagerStrings.countryAndLanguage,
                       style: getBoldTextStyle(
                         fontSize: ManagerFontSize.s18,
                         color: ManagerColors.black,
@@ -118,22 +121,22 @@ class ChangeLanguageCountryView extends StatelessWidget {
                     onPressed: c.canSubmit
                         ? () {
                       c.submit();
-                      // بعد التنفيذ رجّع الزر غير مفعّل
                       c.selectedCountry = null;
                       c.update();
                     }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ManagerColors.color, // اللون الأساسي
+                      backgroundColor: ManagerColors.color,
                       disabledBackgroundColor:
-                      ManagerColors.color.withOpacity(0.35), // اللون المعطّل
+                      ManagerColors.color.withOpacity(0.35),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       elevation: 0,
                     ),
                     child: Text(
-                      'تم',
+                      ManagerStrings.done
+                      ,
                       style: getBoldTextStyle(
                         fontSize: ManagerFontSize.s16,
                         color: ManagerColors.white,

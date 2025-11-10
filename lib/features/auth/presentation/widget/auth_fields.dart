@@ -1,5 +1,6 @@
 // lib/features/auth/presentation/widget/auth_fields.dart
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -21,7 +22,7 @@ class EmailField extends GetView<LoginEmailController> {
             onChanged: controller.onEmailChanged,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
-              hintText: "البريد الإلكتروني",
+              hintText: ManagerStrings.email,
               hintStyle: getRegularTextStyle(fontSize: 16, color: Colors.grey),
               border: InputBorder.none,
             ),
@@ -55,7 +56,7 @@ class PasswordField extends GetView<LoginEmailController> {
                     onChanged: controller.onPassChanged,
                     onTapOutside: (_) => FocusScope.of(context).unfocus(),
                     decoration: InputDecoration(
-                      hintText: "كلمة المرور",
+                      hintText: ManagerStrings.password,
                       hintStyle: getRegularTextStyle(fontSize: 16, color: Colors.grey),
                       border: InputBorder.none,
                     ),
@@ -63,7 +64,7 @@ class PasswordField extends GetView<LoginEmailController> {
                   ),
                 ),
                 InkWell(
-                  onTap: controller.toggleObscure, // يقلب القيمة
+                  onTap: controller.toggleObscure,
                   child: controller.obscure.value
                       ? SvgPicture.asset(ManagerImages.close_eye, width: 22, height: 22)
                       : const Icon(Icons.visibility_outlined, size: 22),
@@ -102,7 +103,7 @@ Widget _errorOrEmpty(String? message) {
   if (message == null) return const SizedBox(height: 0);
   return Row(
     children: [
-      const Icon(Icons.error_outline, color: Colors.red, size: 18),
+    SvgPicture.asset(ManagerImages.warning),
       const SizedBox(width: 6),
       Text(message, style: getRegularTextStyle(fontSize: 12, color: ManagerColors.like)),
     ],

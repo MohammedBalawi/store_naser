@@ -10,11 +10,11 @@ class TicketsController extends GetxController {
   final isLoading = true.obs;
   final tickets = <SupportTicket>[].obs;
 
-  // فتح تذكرة
-  final orderId = ''.obs;                 // يظهر أعلى الفورم
-  final selectedProblem = ''.obs;         // ما هي مشكلتك؟
-  final details = ''.obs;                 // التفاصيل
-  Uint8List? attachedImage;               // مرفق (اختياري)
+  final orderId = ''.obs;
+
+  final selectedProblem = ''.obs;
+  final details = ''.obs;
+  Uint8List? attachedImage;
 
   bool get canSubmit =>
       selectedProblem.value.isNotEmpty && details.value.trim().isNotEmpty;

@@ -1,6 +1,8 @@
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_styles.dart';
 import '../../domain/entities/transaction.dart';
@@ -14,15 +16,20 @@ class TxItem extends StatelessWidget {
     final isIn = tx.type == TxType.in_;
     final amountColor = isIn ? ManagerColors.greens : ManagerColors.red_info;
     final arrow = isIn ? ManagerImages.plus : ManagerImages.maunas; // RTL: اليسار/اليمين كما بالصورة
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Container(
       // margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      padding: const EdgeInsets.only(
+      padding: isArabic? EdgeInsets.only(
         left: 0,
-        right: 10
-          ,
+        right: 10,
         top: 10,
         bottom: 20
+      ):EdgeInsets.only(
+          left: 10,
+          right: 0,
+          top: 10,
+          bottom: 20
       ),
       decoration: BoxDecoration(
         color: Colors.white,

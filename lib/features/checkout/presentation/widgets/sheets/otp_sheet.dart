@@ -409,7 +409,7 @@ Future<void> showOtpSheet(BuildContext context, {required String brand}) async {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _canContinue() ? green : const Color(0xFFD1D5DB),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           elevation: 0,
                         ),
                         onPressed: _canContinue()

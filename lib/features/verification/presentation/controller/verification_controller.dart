@@ -3,14 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/routes/routes.dart';
-// إذا بدك تنتقل بـ Widget مباشرة، فكّ التعليق واستورد MainView تبعك
-// import 'package:app_mobile/features/main/presentation/view/main_view.dart';
 
 class VerificationController extends GetxController {
-  // رقم الهاتف المعروض (يأتي من الشاشة السابقة)
   late final String phoneDisplay;
 
-  // 4 خانات فقط
   late final TextEditingController firstCodeTextController;
   late final TextEditingController secondCodeTextController;
   late final TextEditingController thirdCodeTextController;
@@ -21,14 +17,12 @@ class VerificationController extends GetxController {
   late final FocusNode thirdFocusNode;
   late final FocusNode fourthFocusNode;
 
-  // الحالة
   final code = ''.obs;
   final hasError = false.obs;
   final secondsLeft = 54.obs;
   final canResend = false.obs;
   Timer? _timer;
 
-  // الرمز الصحيح المطلوب
   final String expectedCode = '2222';
 
   String otp() =>

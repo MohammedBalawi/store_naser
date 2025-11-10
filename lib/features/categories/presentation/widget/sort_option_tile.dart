@@ -1,5 +1,7 @@
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_font_size.dart';
@@ -19,6 +21,7 @@ class SortOptionTile<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = groupValue == value;
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return InkWell(
       onTap: () => onChanged(value),
@@ -45,12 +48,10 @@ class SortOptionTile<T> extends StatelessWidget {
               splashRadius: 18,
             ),
 
-
-            // النص يمين مع وزن واضح مثل الصورة
             Expanded(
               child: Text(
                 title,
-                textAlign: TextAlign.right,
+                textAlign:isArabic? TextAlign.right:TextAlign.left,
                 style: getBoldTextStyle(
                   fontSize: ManagerFontSize.s12,
                   color: ManagerColors.black,

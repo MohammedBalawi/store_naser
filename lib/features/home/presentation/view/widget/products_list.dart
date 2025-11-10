@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../core/resources/manager_colors.dart';
@@ -11,16 +12,16 @@ import '../../model/products_list_item_model.dart';
 Widget productsList({
   required ProductsListItemModel model,
   bool enableRoute = true,
-  // شغّل هذا عشان يطلع الهيدر بنفس شكل الصورة
   bool minimalHeader = true,
-  String badgeText = 'جديد', // غيّرها لو بدك نفس النص اللي بالصورة
 }) {
   return Column(
     children: [
       Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: ManagerWidth.w16,
-          vertical: ManagerHeight.h16,
+        padding: EdgeInsets.only(
+          left: ManagerWidth.w18,
+          right: ManagerHeight.h26,
+          bottom: 16,
+          top: 16
         ),
         child: minimalHeader
             ? Row(
@@ -29,7 +30,7 @@ Widget productsList({
             Container(
               height: 34,
               padding: const EdgeInsets.symmetric(
-                horizontal: 12,
+                horizontal: 15,
                 vertical: 6,
               ),
               decoration: BoxDecoration(
@@ -37,7 +38,7 @@ Widget productsList({
                 borderRadius: BorderRadius.circular(0),
               ),
               child: Text(
-                badgeText,
+                ManagerStrings.news,
                 textDirection: TextDirection.rtl,
                 style: getBoldTextStyle(
                   fontSize: ManagerFontSize.s14,
@@ -55,10 +56,11 @@ Widget productsList({
                   ? () => Get.toNamed(model.route!)
                   : null,
               child: Text(
-                'عرض المزيد',
+                ManagerStrings.seeAll
+                ,
                 style: getRegularTextStyle(
                   fontSize: ManagerFontSize.s16,
-                  color: Colors.grey, // رمادي خفيف
+                  color: Colors.black, // رمادي خفيف
                 ),
               ),
             ),
@@ -68,7 +70,6 @@ Widget productsList({
             : Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // العنوان التقليدي
             Text(
               model.title,
               style: getBoldTextStyle(
@@ -96,10 +97,11 @@ Widget productsList({
         ),
       ),
 
-      // القائمة الأفقية
+
       SizedBox(
         height: ManagerHeight.h330,
         child: ListView.builder(
+          padding: EdgeInsets.only(right: 20),
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           itemCount: model.items.length,

@@ -104,7 +104,6 @@ class VerificationView extends GetView<VerificationController> {
 
           const SizedBox(height: 10),
 
-          // رسالة خطأ
           Obx(() => Visibility(
             visible: controller.hasError.value,
             child: Padding(
@@ -124,7 +123,6 @@ class VerificationView extends GetView<VerificationController> {
 
           const SizedBox(height: 12),
 
-          // إعادة إرسال
           Obx(() {
             return Align(
               alignment: Alignment.center,
@@ -147,7 +145,6 @@ class VerificationView extends GetView<VerificationController> {
 
           const SizedBox(height: 24),
 
-          // زر سجّل الآن
           Obx(() {
             final enabled = controller.ready;
 

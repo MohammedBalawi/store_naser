@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:get/get.dart';
 import '../../domain/entities/transaction.dart';
 
@@ -9,20 +10,17 @@ class WalletController extends GetxController {
   final balanceCredit = 0.0.obs;
   final balanceDebit  = 0.0.obs;
 
-  // المعاملات
   final transactions = <WalletTransaction>[].obs;
 
-  // حالة إشعار أعلى الشاشة
   final bannerState = VoucherBanner.none.obs;
   final bannerText  = ''.obs;
 
-  // نموذج رمز القسيمة
   final voucherCode = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _seedDemoData(); // بيانات مطابقة للصور لمعاينة الشاشة
+    _seedDemoData();
   }
 
   void changeTab(WalletTab tab) {
@@ -48,36 +46,33 @@ class WalletController extends GetxController {
     balanceTotal.value  = inSum - outSum;
   }
 
-  // إضافة رصيد بعد التحقق
   Future<void> redeemVoucher() async {
     bannerState.value = VoucherBanner.none;
     bannerText.value  = '';
     final code = voucherCode.value.trim();
 
-    // محاكاة تحقق — غيّرها لاحقًا باستدعاء API
     await 200.milliseconds.delay();
-    final isValid = code == 'NSA-FSZ4IYLW'; // نفس الكود في الصورة
+    final isValid = code == '';
 
     if (!isValid) {
       bannerState.value = VoucherBanner.invalid;
-      bannerText.value  = 'رمز القسيمة الذي أدخلته غير صالح';
+      bannerText.value  = ManagerStrings.userManagement;
       return;
     }
 
-    // نجاح: أضف معاملة +5.00 بنفس النصوص
     final now = DateTime(2025, 4, 1, 13, 46, 10);
     transactions.insert(0, WalletTransaction(
       id: 'tx_in_demo',
       createdAt: now,
       type: TxType.in_,
       amount: 5.0,
-      title: 'ناثر', // بالصورة “ناثر” أو اسم الجهة
-      note: 'صالحة حتى 04-04-2025 الساعة 19:35:15.',
+      title:ManagerStrings.supWallet,
+      note: '${ManagerStrings.expiredAt} 04-04-2025  19:35:15.',
     ));
     _recalc();
 
     bannerState.value = VoucherBanner.success;
-    bannerText.value  = 'لقد تمت إضافة رصيدك بنجاح';
+    bannerText.value  = ManagerStrings.yourBalance;
   }
 
   void dismissBanner() {
@@ -94,7 +89,7 @@ class WalletController extends GetxController {
         createdAt: base,
         type: TxType.out,
         amount: 5.0,
-        title: 'خصم الطلب رقم #26579639',
+        title: '${ManagerStrings.deductForOrderNumber} #26579639',//
         note: null,
       ),
       WalletTransaction(
@@ -103,7 +98,7 @@ class WalletController extends GetxController {
         type: TxType.in_,
         amount: 5.0,
         title: 'SHAKES',
-        note: 'صالحة حتى 04-04-2025 الساعة 19:35:15.',
+        note: '${ManagerStrings.expiredAt} 04-04-2025  19:35:15.',
       ),
     ]);
 

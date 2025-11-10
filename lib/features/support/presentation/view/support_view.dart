@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,8 @@ class SupportView extends GetView<SupportController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
       appBar: AppBar(
@@ -24,8 +27,8 @@ class SupportView extends GetView<SupportController> {
           children: [
             GestureDetector(
                 onTap: () => Get.back(),
-                child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('الدعم',
+                child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(ManagerStrings.support,
                 style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             SizedBox(width: 30,),
           ],
@@ -49,13 +52,13 @@ class SupportView extends GetView<SupportController> {
             child: Padding(
               padding: const EdgeInsets.only(top:10.0,bottom: 10),
               child: Column(children: [
-                _RowTile(title: 'الدعم الفني', rightIcon: ManagerImages.plusCirc, onTap: controller.toTechSupport),
+                _RowTile(title: ManagerStrings.supportTicket, rightIcon: ManagerImages.plusCirc, onTap: controller.toTechSupport),
                  Divider(height: 1, color: ManagerColors.gray_divedr, endIndent: 25,indent: 25,),
-                _RowTile(title: 'اتصل بخدمة العملاء', rightIcon: ManagerImages.chatCirc, onTap: controller.callCustomerService),
+                _RowTile(title:  ManagerStrings.contactCustomerService, rightIcon: ManagerImages.chatCirc, onTap: controller.callCustomerService),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'واتساب', subtitle: controller.hotline, rightIcon: ManagerImages.basil_whatsapp, onTap: controller.openWhatsApp),
+                _RowTile(title:  ManagerStrings.whatsapp, subtitle: controller.hotline, rightIcon: ManagerImages.basil_whatsapp, onTap: controller.openWhatsApp),
                 const Divider(height: 1, color: ManagerColors.gray_divedr,endIndent: 25,indent: 25,),
-                _RowTile(title: 'البريد الإلكتروني', rightIcon: ManagerImages.emailCirc, onTap: controller.mailUs),
+                _RowTile(title:  ManagerStrings.email, rightIcon: ManagerImages.emailCirc, onTap: controller.mailUs),
               ]),
             ),
           ),
@@ -80,10 +83,10 @@ class _RowTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // جهّز الرقم بصيغة صحيحة
     final displaySubtitle = subtitle == null
         ? null
         : subtitle!.toLatinDigits().formatIntlSpace(); // +966 588986285
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return InkWell(
       onTap: onTap,
@@ -123,8 +126,9 @@ class _RowTile extends StatelessWidget {
             else
               const SizedBox(width: 18),
 
-            // سهم النهاية (أقصى اليسار)
-            SvgPicture.asset(ManagerImages.arrow_left, width: 22, height: 22),
+            isArabic ?
+            SvgPicture.asset(ManagerImages.arrow_left, width: 22, height: 22):
+            SvgPicture.asset(ManagerImages.arrow_en, width: 22, height: 22),
             const SizedBox(width: 22),
           ],
         ),
@@ -134,14 +138,12 @@ class _RowTile extends StatelessWidget {
 }
 
 extension PhoneFmt on String {
-  /// يحافظ على +XXX مسافة ثم الباقي
   String formatIntlSpace() {
     final m = RegExp(r'^\+?(\d{1,3})(\d+)$').firstMatch(replaceAll(' ', ''));
     if (m == null) return this;
     return '+${m.group(1)!} ${m.group(2)!}';
   }
 
-  /// يحوّل الأرقام العربية إلى لاتينية إن لزم
   String toLatinDigits() {
     const arabic = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
     const latin  = ['0','1','2','3','4','5','6','7','8','9'];

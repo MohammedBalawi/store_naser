@@ -6,14 +6,20 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../constants/di/dependency_injection.dart';
 import '../../../../core/network/app_api.dart';
+import '../../../categories/presentation/controller/category_products_controller.dart';
 
-void initProducts() {
-  Get.put(ProductsController());
+void initCategoryProducts() {
+  if (!Get.isRegistered<CategoryProductsController>()) {
+    Get.put(CategoryProductsController());
+  }
 }
 
-void disposeProducts() {
-  Get.delete<ProductsController>();
+void disposeCategoryProducts() {
+  if (Get.isRegistered<CategoryProductsController>()) {
+    Get.delete<CategoryProductsController>();
+  }
 }
+
 
 initProductsRequest() async {
   if (!GetIt.I.isRegistered<ProductsDataSource>()) {

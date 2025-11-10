@@ -31,12 +31,12 @@ class BrandTabsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-    const Color pageBg = ManagerColors.background; // أخضر فاتح لكل الصفحة
+    const Color pageBg = ManagerColors.background;
 
     return GetBuilder<CategoriesController>(
       builder: (c) {
         return ColoredBox(
-          color: pageBg, // ← هنا الخلفية الخضراء للصفحة كلها
+          color: pageBg,
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
@@ -58,7 +58,8 @@ class BrandTabsCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsetsDirectional.only(start: 16, end: 16, top: 12, bottom: 2),
                   child: Text(
-                    'التصنيف',
+                    ManagerStrings.categories
+                    ,
                     style: getBoldTextStyle(fontSize: 18, color: Colors.black87),
                   ),
                 ),
@@ -122,7 +123,8 @@ class BrandTabsCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'العلامات التجارية',
+                    ManagerStrings.brands
+                    ,
                     style: getBoldTextStyle(fontSize: 18, color: Colors.black),
                   ),
                 ),
@@ -220,6 +222,8 @@ class _TopSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: Column(
@@ -241,8 +245,14 @@ class _TopSearchBar extends StatelessWidget {
                       prefixIcon: SizedBox(
                         width: 28, height: 28,
                         child: Center(
-                          child: SvgPicture.asset(
+                          child:
+                              isArabic ?
+                          SvgPicture.asset(
                             ManagerImages.sarch,
+                            width: 25, height: 25,
+                          ):
+                          SvgPicture.asset(
+                            ManagerImages.sarch_en,
                             width: 25, height: 25,
                           ),
                         ),

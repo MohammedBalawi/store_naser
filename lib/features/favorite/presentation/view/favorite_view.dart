@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -70,29 +71,43 @@ class _FavoriteViewState extends State<FavoriteView> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       appBar:AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-                onTap: () => Get.back(),
-                child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('المفضلة',
-                style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
-            SizedBox(width: 30,),
-          ],
-        ),
-        leadingWidth: 0,
-        automaticallyImplyLeading: false,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
-        ),
+      elevation: 0,
+      scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
+      shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+      notificationPredicate: (notification) => false,
+
+      centerTitle: true,
+      systemOverlayStyle: SystemUiOverlayStyle.dark
+          .copyWith(statusBarColor: Colors.white),
+
+      flexibleSpace: const SizedBox.expand(
+        child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
       ),
+
+      title:Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic?ManagerImages.arrows:ManagerImages.arrow_left)),
+          Text(ManagerStrings.favorite,
+              style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+          const SizedBox(width: 32),
+        ],
+      ),
+
+      bottom: const PreferredSize(
+        preferredSize: Size.fromHeight(1),
+        child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+      ),
+      automaticallyImplyLeading: false,
+      leadingWidth: 0,
+    ),
+
       backgroundColor: ManagerColors.background,
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: ManagerColors.primaryColor,))
@@ -164,15 +179,17 @@ class _FavoriteViewState extends State<FavoriteView> {
         color: ManagerColors.primaryColor,
         onRefresh:loadFavoritesFromSupabase ,
         child: Padding(
-          padding: EdgeInsets.all(ManagerHeight.h8),
+          padding: EdgeInsets.only(top: 25,
+          left: 13,right: 22),
           child: GridView.builder(
             itemCount: favoriteProducts.length,
             gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 7.0,
+              mainAxisSpacing: 18.0,
               childAspectRatio: 0.6,
+              mainAxisExtent: 330
             ),
             itemBuilder: (context, index) {
               return productItem(

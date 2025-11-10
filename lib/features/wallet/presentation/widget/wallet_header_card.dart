@@ -1,4 +1,7 @@
+import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_styles.dart';
@@ -12,6 +15,7 @@ class WalletHeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<WalletController>();
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Container(
       height: 144,
@@ -20,87 +24,89 @@ class WalletHeaderCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin:isArabic? Alignment.topLeft:Alignment.topRight,
+          end: isArabic ?Alignment.bottomRight :Alignment.bottomLeft,
           colors: [
             ManagerColors.color.withOpacity(0.85),
             ManagerColors.color, // البنفسجي الأغمق
           ],
         ),
       ),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // Tabs
-            Obx(() => Row(
-              children: [
-                _TabChip(
-                  label: 'المجموع',
-                  selected: c.currentTab.value == WalletTab.total,
-                  onTap: () => c.changeTab(WalletTab.total),
-                ),
-                _TabChip(
-                  label: 'رصيدي',
-                  selected: c.currentTab.value == WalletTab.credit,
-                  onTap: () => c.changeTab(WalletTab.credit),
-                ),
-                _TabChip(
-                  label: 'رصيد مكافئة',
-                  selected: c.currentTab.value == WalletTab.debit,
-                  onTap: () => c.changeTab(WalletTab.debit),
-                ),
-              ],
-            )),
-            const SizedBox(height: 12),
-            // Amount
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Obx(() {
-                  final amount = switch (c.currentTab.value) {
-                    WalletTab.total  => c.balanceTotal.value,
-                    WalletTab.credit => c.balanceCredit.value,
-                    WalletTab.debit  => c.balanceDebit.value,
-                  };
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(' ${amount.toStringAsFixed(0)} ر.س ',
-                          style: getBoldTextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                          )),
-                      const SizedBox(height: 6),
-                      Text('إجمالي الإيداع',
-                          style: getBoldTextStyle(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Tabs
+          Obx(() => Row(
+            children: [
+              _TabChip(
+                label: ManagerStrings.total,
+                selected: c.currentTab.value == WalletTab.total,
+                onTap: () => c.changeTab(WalletTab.total),
+              ),
+              _TabChip(
+                label: ManagerStrings.credit,
+                selected: c.currentTab.value == WalletTab.credit,
+                onTap: () => c.changeTab(WalletTab.credit),
+              ),
+              _TabChip(
+                label: ManagerStrings.allowance,
+                selected: c.currentTab.value == WalletTab.debit,
+                onTap: () => c.changeTab(WalletTab.debit),
+              ),
+            ],
+          )),
+          const SizedBox(height: 12),
+          // Amount
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Obx(() {
+                final amount = switch (c.currentTab.value) {
+                  WalletTab.total  => c.balanceTotal.value,
+                  WalletTab.credit => c.balanceCredit.value,
+                  WalletTab.debit  => c.balanceDebit.value,
+                };
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(' ${amount.toStringAsFixed(0)} ر.س ',
+                            style: getBoldTextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                            )),
+                        // SvgPicture.asset(ManagerImages.ra),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(ManagerStrings.totalCredit,
+                        style: getBoldTextStyle(
                             color: Colors.white.withOpacity(0.9),
                             fontSize: 14
-                          )),
-                    ],
-                  );
-                }),
-                const SizedBox(width: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: onAddBalance,
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: ManagerColors.color,
-                      backgroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child:  Text('إضافة رصيد',style: getRegularTextStyle(fontSize: 16, color: ManagerColors.color),),
+                        )),
+                  ],
+                );
+              }),
+              const SizedBox(width: 16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  onPressed: onAddBalance,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: ManagerColors.color,
+                    backgroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                  child:  Text(ManagerStrings.addCredit,style: getRegularTextStyle(fontSize: 16, color: ManagerColors.color),),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
 
-          ],
-        ),
+        ],
       ),
     );
   }

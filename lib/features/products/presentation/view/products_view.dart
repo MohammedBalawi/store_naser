@@ -1,11 +1,8 @@
-
-
 import 'dart:convert';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -30,8 +27,15 @@ class ProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find<HomeController>();
-    final CategoryProductsController c = Get.find<CategoryProductsController>();
+    final HomeController homeController =
+    Get.isRegistered<HomeController>()
+        ? Get.find<HomeController>()
+        : Get.put(HomeController(), permanent: true);
+
+    final CategoryProductsController c =
+    Get.isRegistered<CategoryProductsController>()
+        ? Get.find<CategoryProductsController>()
+        : Get.put(CategoryProductsController(), permanent: true);
 
     return FutureBuilder<bool>(
       future: homeController.checkIfAdmin(),
@@ -41,29 +45,42 @@ class ProductsView extends StatelessWidget {
         return Builder(
           builder: (context) {
             return Scaffold(
-              appBar: mainAppBar(
-                title: title.isEmpty ? ManagerStrings.outBoardingTitle1 : title,
-                actions: [
-                  IconButton(
-                    icon: SvgPicture.asset(ManagerImages.filter),
-                    onPressed: () =>_openFilterSheet(context, c, onApplied: (_) {
-                     // أعد البناء لاعتماد الفرز
-                    }),
-                    tooltip: 'فلتر',
-                  ),
-                ],
+              appBar:
+              AppBar(
+                elevation: 0,
+                centerTitle: true,
+                backgroundColor: Colors.white,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
+                    Text(title.isEmpty ? ManagerStrings.outBoardingTitle1 : title, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+                    IconButton(
+                      icon: SvgPicture.asset(ManagerImages.filter),
+                      onPressed: () => openFilterSheet(context, c, onApplied: (_) {
+                      }),
+                      tooltip: 'فلتر',
+                    ),
+                  ],
+                ),
+                bottom: const PreferredSize(
+                  preferredSize: Size.fromHeight(1),
+                  child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+                ),
+                automaticallyImplyLeading: false,
+                leadingWidth: 0,
               ),
-              backgroundColor: ManagerColors.white,
+
+              backgroundColor: ManagerColors.background,
               body: Obx(() {
                 final allProducts = homeController.products
                     .where((product) => product.type == title || title.isEmpty)
                     .toList();
-                // final allProducts = homeController.products;
 
                 if (allProducts.isEmpty) {
                   return Center(
                     child: snapshot.connectionState == ConnectionState.waiting
-                        ?  const CircularProgressIndicator(color: ManagerColors.primaryColor,)
+                        ? const CircularProgressIndicator(color: ManagerColors.primaryColor)
                         : isAdmin
                         ? ElevatedButton.icon(
                       onPressed: () {
@@ -74,7 +91,12 @@ class ProductsView extends StatelessWidget {
                         homeController.fetchProductss();
                       },
                       icon: const Icon(Icons.add, color: Colors.white),
-                      label:  Text(ManagerStrings.addProduct, style: getMediumTextStyle(color: ManagerColors.white, fontSize: ManagerFontSize.s14)),
+                      label: Text(
+                        ManagerStrings.addProduct,
+                        style: getMediumTextStyle(
+                            color: ManagerColors.white,
+                            fontSize: ManagerFontSize.s14),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ManagerColors.primaryColor,
                         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -83,20 +105,23 @@ class ProductsView extends StatelessWidget {
                         ),
                       ),
                     )
-                        :  Column(
+                        : Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(ManagerImages.nuull),
-                            SizedBox(height: 5,),
-                            Text(ManagerStrings.noProductsOrData, style: getMediumTextStyle(fontSize:ManagerFontSize.s14, color: ManagerColors.black)),
-                          ],
-                        ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(ManagerImages.nuull),
+                        const SizedBox(height: 5),
+                        Text(ManagerStrings.noProductsOrData,
+                            style: getMediumTextStyle(
+                                fontSize: ManagerFontSize.s14,
+                                color: ManagerColors.black)),
+                      ],
+                    ),
                   );
                 }
                 return SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(top: 25.0,right: 22,left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -106,18 +131,21 @@ class ProductsView extends StatelessWidget {
                           itemCount: allProducts.length,
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 10.0,
-                            mainAxisSpacing: 50.0,
-                            childAspectRatio: 0.7,
-                            mainAxisExtent: 320,
-                          ),
+                            crossAxisSpacing: 7.0,
+                            mainAxisSpacing: 18.0,
+                            childAspectRatio: 1,
+                            mainAxisExtent: 330,
 
+                          ),
                           itemBuilder: (context, index) {
                             final product = allProducts[index];
                             return InkWell(
                               onTap: () async {
                                 final prefs = await SharedPreferences.getInstance();
-                                await prefs.setString('selected_product', jsonEncode(product.toJson()));
+                                await prefs.setString(
+                                  'selected_product',
+                                  jsonEncode(product.toJson()),
+                                );
 
                                 Get.lazyPut(() => ProductDetailsController());
                                 Get.to(() => const ProductDetailsView());
@@ -127,9 +155,6 @@ class ProductsView extends StatelessWidget {
                                 enableCart: false,
                               ),
                             );
-
-
-
                           },
                         ),
                       ],
@@ -138,13 +163,14 @@ class ProductsView extends StatelessWidget {
                 );
               }),
             );
-          }
+          },
         );
       },
     );
   }
+
   List<dynamic> _applySort(List<dynamic> list, ProductSort? sort) {
-    final items = List.of(list); // لا تعدّل الأصل
+    final items = List.of(list);
 
     int _cmpNum(num? a, num? b) => (a ?? 0).compareTo(b ?? 0);
     int _cmpDate(String? a, String? b) {
@@ -167,10 +193,9 @@ class ProductsView extends StatelessWidget {
         items.sort((a, b) {
           final ma = a.toJson() as Map<String, dynamic>;
           final mb = b.toJson() as Map<String, dynamic>;
-          // محاولات متعددة للمقياس: orders > views > favorites
           final pa = (ma['orders'] ?? ma['purchases'] ?? ma['views'] ?? ma['favorites'] ?? 0) as num;
           final pb = (mb['orders'] ?? mb['purchases'] ?? mb['views'] ?? mb['favorites'] ?? 0) as num;
-          return _cmpNum(pb, pa); // تنازلي
+          return _cmpNum(pb, pa);
         });
         break;
 
@@ -180,7 +205,7 @@ class ProductsView extends StatelessWidget {
           final mb = b.toJson() as Map<String, dynamic>;
           final da = (ma['createdAt'] ?? ma['created_at'] ?? ma['date']) as String?;
           final db = (mb['createdAt'] ?? mb['created_at'] ?? mb['date']) as String?;
-          return _cmpDate(db, da); // الأحدث أولًا
+          return _cmpDate(db, da);
         });
         break;
 
@@ -190,8 +215,7 @@ class ProductsView extends StatelessWidget {
           final mb = b.toJson() as Map<String, dynamic>;
           final oa = _hasOffer(ma) ? 1 : 0;
           final ob = _hasOffer(mb) ? 1 : 0;
-          if (ob != oa) return ob.compareTo(oa); // العروض أولًا
-          // ثم الأرخص داخل كل مجموعة
+          if (ob != oa) return ob.compareTo(oa);
           return _cmpNum(_priceOf(ma), _priceOf(mb));
         });
         break;
@@ -213,17 +237,17 @@ class ProductsView extends StatelessWidget {
         break;
 
       case null:
-      // بدون فرز
         break;
     }
     return items;
   }
 
-  void _openFilterSheet(
+  void openFilterSheet(
       BuildContext context,
       CategoryProductsController c, {
         void Function(ProductSort?)? onApplied,
-      }) {
+      })
+  {
     showModalBottomSheet(
       context: context,
       isScrollControlled: false,
@@ -245,7 +269,6 @@ class ProductsView extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // الهيدر
                       SizedBox(
                         height: 48,
                         child: Stack(
@@ -292,7 +315,6 @@ class ProductsView extends StatelessWidget {
                       Divider(height: 1, color: ManagerColors.gray_divedr),
                       const SizedBox(height: 8),
 
-                      // الخيارات (نستخدم localSort ليتغير فورًا)
                       SortOptionTile(
                         title: 'الأكثر شعبية',
                         groupValue: localSort,
@@ -331,13 +353,15 @@ class ProductsView extends StatelessWidget {
                         height: 44,
                         child: ElevatedButton(
                           onPressed: () {
-                            c.setSort(localSort); // اعتماد الاختيار
+                            c.setSort(localSort);
                             Navigator.pop(context);
-                            onApplied?.call(localSort); // أعِد البناء في الصفحة
+                            onApplied?.call(localSort);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: ManagerColors.color,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             elevation: 0,
                           ),
                           child: Text(
@@ -359,8 +383,4 @@ class ProductsView extends StatelessWidget {
       },
     );
   }
-
 }
-
-
-

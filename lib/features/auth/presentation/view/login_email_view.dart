@@ -1,5 +1,6 @@
 // lib/features/auth/presentation/view/login_email_view.dart
 import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ class LoginEmailView extends GetView<LoginEmailController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -25,23 +28,20 @@ class LoginEmailView extends GetView<LoginEmailController> {
         centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
           children: [
             IconButton(
               onPressed: () => Get.back(),
-              icon:SvgPicture.asset(ManagerImages.arrows),
+              icon: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left),
             ),
             Text(
-              "تسجيل الدخول",
+              ManagerStrings.login,
               style: getBoldTextStyle(color: Colors.black, fontSize: 18),
             ),
-            SizedBox(width: 40,)
+            const SizedBox(width: 40),
           ],
         ),
         leadingWidth: 0,
         automaticallyImplyLeading: false,
-
-
         bottom: TabBar(
           controller: controller.tabController,
           indicatorColor: ManagerColors.primaryColor,
@@ -57,13 +57,12 @@ class LoginEmailView extends GetView<LoginEmailController> {
             color: Colors.grey,
           ),
           onTap: controller.onTabChanged,
-          tabs: const [
-            Tab(text: "رقم الهاتف"),
-            Tab(text: "البريد الإلكتروني"),
+          tabs:  [
+            Tab(text: ManagerStrings.phone),
+            Tab(text: ManagerStrings.email),
           ],
         ),
       ),
-
       body: SafeArea(
         child: TabBarView(
           controller: controller.tabController,
@@ -80,14 +79,14 @@ class LoginEmailView extends GetView<LoginEmailController> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
-                      onTap: () => Get.to(() => const ForgotPasswordView(),
+                      onTap: () => Get.to(
+                            () => const ForgotPasswordView(),
                         binding: BindingsBuilder(() {
                           Get.put(ForgotPasswordController());
                         }),
                       ),
-
                       child: Text(
-                        "نسيت كلمة المرور؟",
+                        ManagerStrings.forgetPassword,
                         style: getBoldTextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ),
@@ -98,13 +97,8 @@ class LoginEmailView extends GetView<LoginEmailController> {
           ],
         ),
       ),
-
       bottomNavigationBar: Obx(() {
-        final enabled = controller.canSubmit;
-
-        const activeColor = ManagerColors.primaryColor; // بنفسجي غامق (مفعّل)
-        const inactiveColor = ManagerColors.color_off;  // بنفسجي فاتح (غير مفعّل)
-
+        final enabled = controller.canSubmit && !controller.isLoading.value;
         return Padding(
           padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 46),
           child: SizedBox(
@@ -113,24 +107,28 @@ class LoginEmailView extends GetView<LoginEmailController> {
               onPressed: enabled ? controller.submit : null,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                disabledForegroundColor: Colors.white, // النص يبقى أبيض دائمًا
-                backgroundColor: activeColor,
-                disabledBackgroundColor: inactiveColor,
+                disabledForegroundColor: Colors.white,
+                backgroundColor: ManagerColors.primaryColor,
+                disabledBackgroundColor: ManagerColors.color_off,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                "تسجيل الدخول",
+              child: controller.isLoading.value
+                  ? const SizedBox(
+                height: 18,
+                width: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              )
+                  : Text(
+                ManagerStrings.login,
                 style: getBoldTextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ),
         );
       }),
-
-
     );
   }
 }

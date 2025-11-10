@@ -1,4 +1,6 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../../../core/resources/manager_colors.dart';
@@ -11,58 +13,91 @@ class GenderView extends GetView<GenderController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
-      appBar: AppBar(
+      appBar:
+      AppBar(
         elevation: 0,
-        centerTitle: true,
+        scrolledUnderElevation: 0,        // يمنع تأثير الـ tint
         backgroundColor: Colors.white,
-        title: Text('الجنس', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+        surfaceTintColor: Colors.white,   // لا تضيف طبقة لونية
+        shadowColor: Colors.transparent,  // حتى لو حاول يعمل ظل/تيـنت
+        notificationPredicate: (notification) => false,
 
-        leading:  GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark
+            .copyWith(statusBarColor: Colors.white),
 
+        flexibleSpace: const SizedBox.expand(
+          child: ColoredBox(color: Colors.white), // يلوّن خلف شريط الحالة بالكامل
+        ),
+
+        title:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(
+              ManagerStrings.gender,
+              style: getBoldTextStyle(color: Colors.black, fontSize: 20),
+            ),
+            const SizedBox(width: 32),
+          ],
+        ),
+
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
+        ),
+        automaticallyImplyLeading: false,
+        leadingWidth: 0,
       ),
 
-      body: ListView(
+
+
+    body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        children: [
-          Container(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text('حدد جنسك', style: getBoldTextStyle(color: ManagerColors.gray_3, fontSize: 14)),
-                ),
-                const SizedBox(height: 6),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: isArabic ?Alignment.centerRight:Alignment.centerLeft,
+                    child: Text(ManagerStrings.selectGender, style: getBoldTextStyle(color: ManagerColors.gray_3, fontSize: 14)),
+                  ),
+                  const SizedBox(height: 6),
 
-                Obx(() {
-                  final sel = controller.selected.value;
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _GenderChip(
-                        label: 'ذكر',
-                        icon: ManagerImages.male,
-                        selected: sel == Gender.male,
-                        onTap: () => controller.pick(Gender.male),
-                      ),
-                      _GenderChip(
-                        label: 'أنثى',
-                        icon: ManagerImages.fmale,
-                        selected: sel == Gender.female,
-                        onTap: () => controller.pick(Gender.female),
-                      ),
+                  Obx(() {
+                    final sel = controller.selected.value;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _GenderChip(
+                          label: ManagerStrings.male,
+                          icon: ManagerImages.male,
+                          selected: sel == Gender.male,
+                          onTap: () => controller.pick(Gender.male),
+                        ),
+                        _GenderChip(
+                          label: ManagerStrings.female,
+                          icon: ManagerImages.fmale,
+                          selected: sel == Gender.female,
+                          onTap: () => controller.pick(Gender.female),
+                        ),
 
-                    ],
-                  );
-                }),
-              ],
+                      ],
+                    );
+                  }),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       bottomNavigationBar: Padding(
@@ -86,7 +121,7 @@ class GenderView extends GetView<GenderController> {
                     borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
-              child: Text('حفظ',
+              child: Text(ManagerStrings.save,
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           );

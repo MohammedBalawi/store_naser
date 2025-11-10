@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,8 @@ class EditPasswordView extends GetView<PasswordController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: ManagerColors.background,
       appBar: AppBar(
@@ -22,8 +25,8 @@ class EditPasswordView extends GetView<PasswordController> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('تغيير كلمة المرور', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(ManagerStrings.changePassword, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             const SizedBox(width: 42),
           ],
         ),
@@ -39,58 +42,61 @@ class EditPasswordView extends GetView<PasswordController> {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            ListView(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              children: [
-                const SizedBox(height: 12),
 
-                // ====== بطاقة الحقول ======
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  child: Column(
-                    children: [
-                      // كلمة المرور الجديدة
-                      _PasswordField(
-                        controller: controller.newCtrl,
-                        hint: 'أدخل كلمة المرور الجديدة',
-                        obscureRx: controller.obscureNew,
-                        onChanged: controller.onChangedNew,
-                        isValidRx: controller.validLength,     // طول ≥ 8
-                        showIndicatorsRx: controller.showIndicators,
-                        showErrorWhenInvalidAndNotEmpty: true,
-                        isLengthRule: true, // لتمييز لون الأيقونة إن رغبت
-                      ),
-                      const SizedBox(height: 16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 12),
 
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          'سيتم تسجيل خروجك من جميع الجلسات باستثناء هذه الجلسة\nلحماية حسابك إذا حاول أي شخص الوصول إليه.',
-                          style: getBoldTextStyle(fontSize: 12, color: ManagerColors.gray),
+                  // ====== بطاقة الحقول ======
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Column(
+                      children: [
+                        // كلمة المرور الجديدة
+                        _PasswordField(
+                          controller: controller.newCtrl,
+                          hint: ManagerStrings.enterNewPassword,
+                          obscureRx: controller.obscureNew,
+                          onChanged: controller.onChangedNew,
+                          isValidRx: controller.validLength,     // طول ≥ 8
+                          showIndicatorsRx: controller.showIndicators,
+                          showErrorWhenInvalidAndNotEmpty: true,
+                          isLengthRule: true, // لتمييز لون الأيقونة إن رغبت
                         ),
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      // تأكيد كلمة المرور
-                      _PasswordField(
-                        controller: controller.confirmCtrl,
-                        hint: 'أدخل تأكيد كلمة المرور',
-                        obscureRx: controller.obscureConfirm,
-                        onChanged: controller.onChangedConfirm,
-                        isValidRx: controller.matchValid,       // تطابق
-                        showIndicatorsRx: controller.showIndicators,
-                        showErrorWhenInvalidAndNotEmpty: true,
-                      ),
-                      const SizedBox(height: 6),
-                    ],
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            ManagerStrings.supEmail,
+                            style: getBoldTextStyle(fontSize: 12, color: ManagerColors.gray),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // تأكيد كلمة المرور
+                        _PasswordField(
+                          controller: controller.confirmCtrl,
+                          hint:  ManagerStrings.enterCurrentPassword,
+                          obscureRx: controller.obscureConfirm,
+                          onChanged: controller.onChangedConfirm,
+                          isValidRx: controller.matchValid,       // تطابق
+                          showIndicatorsRx: controller.showIndicators,
+                          showErrorWhenInvalidAndNotEmpty: true,
+                        ),
+                        const SizedBox(height: 6),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 120),
-              ],
+                  const SizedBox(height: 120),
+                ],
+              ),
             ),
 
             // ====== بانر منزلق فوق الـ AppBar ======
@@ -130,7 +136,7 @@ class EditPasswordView extends GetView<PasswordController> {
                 width: 22, height: 22,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-                  : Text('تغيير كلمة المرور',
+                  : Text(ManagerStrings.changePassword,
                   style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           );
@@ -140,7 +146,6 @@ class EditPasswordView extends GetView<PasswordController> {
   }
 }
 
-// ===================== Widgets مساعدة =====================
 
 class _PasswordField extends StatelessWidget {
   const _PasswordField({
@@ -161,7 +166,7 @@ class _PasswordField extends StatelessWidget {
   final RxBool isValidRx;
   final RxBool showIndicatorsRx;
   final bool showErrorWhenInvalidAndNotEmpty;
-  final bool isLengthRule; // true للحقل الأول (شرط الطول)
+  final bool isLengthRule;
 
   bool _hasText() => controller.text.trim().isNotEmpty;
 
@@ -174,7 +179,6 @@ class _PasswordField extends StatelessWidget {
       final hasText   = _hasText();
       final showError = showErrorWhenInvalidAndNotEmpty && hasText && !isValid;
 
-      // نظهر الأيقونات فقط بعد الضغط على الزر
       final shouldShowIcons = showIndicatorsRx.value && hasText;
 
       return TextField(
@@ -226,7 +230,6 @@ class _PasswordField extends StatelessWidget {
                       ? SvgPicture.asset(ManagerImages.close_eye, width: 22, height: 22)
                       : const Icon(Icons.visibility_outlined, size: 22),
                 ),
-                // أيقونة الحالة (تظهر بعد الضغط على زر الحفظ فقط)
 
               ],
             );
@@ -237,7 +240,6 @@ class _PasswordField extends StatelessWidget {
   }
 }
 
-/// بانر ينزل من فوق الـ AppBar ثم يطلع (AnimatedSlide + AnimatedOpacity)
 class _DropBanner extends StatelessWidget {
   const _DropBanner({
     required this.message,
@@ -254,14 +256,13 @@ class _DropBanner extends StatelessWidget {
     final iconColor = isError ? Colors.red : ManagerColors.like;
 
     return IgnorePointer(
-      ignoring: true, // ما يستقبل لمس
+      ignoring: true,
       child: Stack(
         children: [
-          // Positioned حتى نتحكم بمكان الظهور بالضبط
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
-            top: visible ? kToolbarHeight - 40 : -10, // 🔹 يظهر أسفل الـ AppBar
+            top: visible ? kToolbarHeight - 40 : -10,
             left: 0,
             right: 0,
             child: AnimatedOpacity(

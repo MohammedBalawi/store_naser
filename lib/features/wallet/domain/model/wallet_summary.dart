@@ -1,7 +1,7 @@
 class WalletSummary {
-  final double total;     // المجموع
-  final double credit;    // ائتمان
-  final double allowance; // بدل
+  final double total;
+  final double credit;
+  final double allowance;
 
   const WalletSummary({
     required this.total,

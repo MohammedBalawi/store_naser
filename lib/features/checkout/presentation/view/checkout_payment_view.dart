@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'dart:math';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_font_size.dart';
+import '../../../../core/resources/manager_strings.dart';
 import '../../../../core/resources/manager_styles.dart';
 import '../../../../core/widgets/main_button.dart';
 
@@ -21,8 +22,10 @@ class CheckoutPaymentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ManagerColors.background,
       body: SafeArea(
         bottom: false,
         child: GetBuilder<CheckoutController>(
@@ -36,46 +39,45 @@ class CheckoutPaymentView extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: Get.back,
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, textDirection: TextDirection.ltr),
+                          child:SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)
                       ),
                       const Spacer(),
-                      Text("طلب الدفع", style: getBoldTextStyle(fontSize: ManagerFontSize.s20, color: ManagerColors.black)),
+                      Text(ManagerStrings.orderCheckout, style: getBoldTextStyle(fontSize: ManagerFontSize.s20, color: ManagerColors.black)),
                       const Spacer(),
                       const SizedBox(width: 24),
                     ],
                   ),
                 ),
 
-                // Stepper (الدفع نشط + عنوان الشحن مكتمل)
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: CheckoutStepper(step: 1),
                 ),
-
+                const SizedBox(height: 14),
+                Divider(height: 1, thickness: 1, color: Color(0xFFEDEDED)),
                 const SizedBox(height: 8),
-
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
-                    children: const [
+                    children:  [
                       _ProductCard(),
-                      SizedBox(height: 12),
-                      _SectionTitle("عنوان الشحن"),
+                      SizedBox(height: 14),
+                      _SectionTitle(ManagerStrings.shippingAddress),
                       _AddressBlock(),
-                      SizedBox(height: 12),
-                      _SectionTitle("موعد التسليم"),
+                      SizedBox(height: 14),
+                      _SectionTitle(ManagerStrings.deliveryTime),
                       _PlainBlock(text: "من 3 إلى 4 أيام"),
-                      SizedBox(height: 12),
-                      _SectionTitle("القسيمة والخصم"),
+                      SizedBox(height: 14),
+                      _SectionTitle(ManagerStrings.couponAndDiscount),
                       _LinkBlock(text: "هل لديك قسيمة أو قسيمة؟ قدّم الآن"),
-                      SizedBox(height: 12),
-                      _SectionTitle("طريقة الدفع"),
+                      SizedBox(height: 14),
+                      _SectionTitle(ManagerStrings.paymentWay),
                       SizedBox(height: 8),
                       _PaymentMethodsCard(),
-                      SizedBox(height: 12),
-                      _SectionTitle("ملخص الطلب"),
+                      SizedBox(height: 14),
+                      _SectionTitle(ManagerStrings.orderSummary),
                       _SummaryBlock(),
-                      SizedBox(height: 12),
+                      SizedBox(height: 14),
                       _Text(),
 
                     ],
@@ -98,7 +100,7 @@ class CheckoutPaymentView extends StatelessWidget {
             buttonName: "تقديم الطلب",
             height: 56,
             color: ManagerColors.greens,
-            shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             onPressed: () {
               final c = Get.find<CheckoutController>();
               if (c.selectedMethod == PaymentMethod.card) {
@@ -142,7 +144,7 @@ class _ProductCard extends StatelessWidget {
           // صورة المنتج
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(
+            child: Image.asset(
               c.productImage,
               width: 72,
               height: 72,
@@ -161,22 +163,23 @@ class _ProductCard extends StatelessWidget {
           // تفاصيل
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   c.productTitle,
                   textAlign: TextAlign.right,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style:  getRegularTextStyle(color: Colors.black,fontSize: 14),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  "ر.س ${c.productPrice.toStringAsFixed(2)}",
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+                  " ${c.productPrice.toStringAsFixed(2)} ر.س",
+                  style:  getBoldTextStyle(color: Colors.black,fontSize: 14),
                 ),
                 const SizedBox(height: 6),
-                Text("الكمية: ${c.productQty}"),
+                Text("الكمية: ${c.productQty}",
+                style: getMediumTextStyle(fontSize: 14, color: Colors.black),),
               ],
             ),
           ),
@@ -193,6 +196,8 @@ class _AddressBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<CheckoutController>();
     final a = c.addresses[c.selectedAddress];
+    final bool isArabic = Get.locale?.languageCode == 'ar';
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: _box(),
@@ -206,8 +211,8 @@ class _AddressBlock extends StatelessWidget {
           Text(a.phone, style: getMediumTextStyle(color: ManagerColors.black, fontSize: 12)),
           const SizedBox(height: 8),
           Align(
-            alignment: Alignment.centerRight,
-            child: Text("تعديل العنوان", style: getBoldTextStyle(color: ManagerColors.color, fontSize: 12)),
+            alignment:isArabic? Alignment.centerRight :Alignment.centerLeft,
+            child: Text(ManagerStrings.editTitle, style: getBoldTextStyle(color: ManagerColors.color, fontSize: 12)),
           ),
         ],
       ),
@@ -245,13 +250,13 @@ class _LinkBlock extends StatelessWidget {
       );
 }
 
-/// بوكس واحد يضم كل طرق الدفع (حسب التصميم)
 class _PaymentMethodsCard extends StatelessWidget {
   const _PaymentMethodsCard();
 
   @override
   Widget build(BuildContext context) {
     final c = Get.find<CheckoutController>();
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     TextStyle titleStyle = getBoldTextStyle(color: ManagerColors.black, fontSize: 10);
     TextStyle subStyle   = TextStyle(color: Colors.grey[600], fontSize: 12);
@@ -264,7 +269,6 @@ class _PaymentMethodsCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 12, 6),
             child: Row(
-              textDirection: TextDirection.rtl,
               children: [
                 BigRadio(
                   selected: c.selectedMethod == PaymentMethod.card,
@@ -276,8 +280,9 @@ class _PaymentMethodsCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    "بطاقة الائتمان / ماستر كارد",
-                    textAlign: TextAlign.right,
+                    ManagerStrings.creditMasterCard
+                    ,
+                    textAlign:isArabic? TextAlign.right:TextAlign.left,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: titleStyle,
@@ -301,24 +306,22 @@ class _PaymentMethodsCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 12, 12),
             child: Align(
-              alignment: Alignment.centerRight,
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: TextButton.icon(
-                  onPressed: () async {
-                    final added = await showAddCardSheet(context);
-                    if (added != null) {
-                      c.addCard(brand: added.brand, masked: added.masked, last4: added.last4);
-                    }
-                  },
-                  icon: Icon(Icons.add, color: ManagerColors.color),
-                  label: Text("إضافة بطاقة جديدة",
-                      style: getMediumTextStyle(color: ManagerColors.color, fontSize: 12)),
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFFEFE3FF),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
+              alignment:isArabic? Alignment.centerRight:Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () async {
+                  final added = await showAddCardSheet(context);
+                  if (added != null) {
+                    c.addCard(brand: added.brand, masked: added.masked, last4: added.last4);
+                  }
+                },
+                icon: Icon(Icons.add, color: ManagerColors.color),
+                label: Text(ManagerStrings.addNewCard
+                    ,
+                    style: getMediumTextStyle(color: ManagerColors.color, fontSize: 12)),
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFFEFE3FF),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ),
@@ -327,9 +330,9 @@ class _PaymentMethodsCard extends StatelessWidget {
           const Divider(height: 1, color: Color(0xFFEDEDED)),
 
           _MethodRow(
-            networkBadge: 'assets/images/cash_to_pay.svg',
-            title: "الدفع عند الاستلام",
-            subtitle: "رسوم الخدمة: ر.س 28",
+            networkBadge: 'cash_to_pay',
+            title: ManagerStrings.cashOnDelivery,
+            subtitle: "${ManagerStrings.serviceFee} ر.س 28",
             selected: c.selectedMethod == PaymentMethod.cod,
             onTap: () => c.pickPayment(PaymentMethod.cod),
           ),
@@ -337,8 +340,8 @@ class _PaymentMethodsCard extends StatelessWidget {
 
           _MethodRow(
             networkBadge: "tabby",
-            title: "تابي",
-            subtitle: "ادفع في 4 دفعات - بدون رسوم، لا فوائد.",
+            title: ManagerStrings.tabby,
+            subtitle: ManagerStrings.supTabby,
             selected: c.selectedMethod == PaymentMethod.tabby,
             onTap: () async {
               c.pickPayment(PaymentMethod.tabby);
@@ -349,8 +352,8 @@ class _PaymentMethodsCard extends StatelessWidget {
 
           _MethodRow(
             networkBadge: "tamara",
-            title: "تمارا",
-            subtitle: "قسّم فاتورتك إلى 4 دفعات - بدون رسوم، بدون فوائد",
+            title:ManagerStrings.tamara,
+            subtitle: ManagerStrings.supTamara,
             selected: c.selectedMethod == PaymentMethod.tamara,
             onTap: () async {
               c.pickPayment(PaymentMethod.tamara);
@@ -361,7 +364,7 @@ class _PaymentMethodsCard extends StatelessWidget {
 
           _MethodRow(
             networkBadge: "stcpay",
-            title: "اس تي سي باي",
+            title: ManagerStrings.stcPAY,
             subtitle: "",
             selected: c.selectedMethod == PaymentMethod.stcpay,
             onTap: () async {
@@ -383,30 +386,33 @@ class _SavedCardTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<CheckoutController>();
     final card = c.cards[c.selectedCardIndex];
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
-        textDirection: TextDirection.rtl,
         children: [
           BrandLogo(code: card.brand),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               card.masked, // ************0594
-              textAlign: TextAlign.right,
+              textAlign:isArabic? TextAlign.right:TextAlign.left,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              style:  getMediumTextStyle(fontSize: 14,color: Colors.black),
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.chevron_left, color: Colors.black54),
+          isArabic?
+          SvgPicture.asset(ManagerImages.arrows_visa_ar):
+          SvgPicture.asset(ManagerImages.arrows_visa_en),
+          // const Icon(Icons.chevron_left, color: Colors.black54),
         ],
       ),
     );
@@ -433,17 +439,15 @@ class _MethodRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = getBoldTextStyle(color: ManagerColors.black, fontSize: 12);
-    final subStyle   = TextStyle(color: ManagerColors.gray, fontSize: 12);
+    final subStyle   = getRegularTextStyle(color: ManagerColors.gray, fontSize: 10);
 
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
         child: Row(
-          textDirection: TextDirection.rtl,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // الدائرة يمين
             BigRadio(
               selected: selected,
               onTap: onTap,
@@ -453,7 +457,6 @@ class _MethodRow extends StatelessWidget {
             ),
             const SizedBox(width: 12),
 
-            // النصوص (تمتد)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,11 +499,9 @@ class PaymentMethodBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final asset = _badgeAssetFor(code);
     if (asset == null) {
-      // fallback لو ما في كود معروف
       return const Icon(Icons.payment, size: 22);
     }
 
-    // نحدد SVG أو صورة عادية تلقائياً
     if (asset.endsWith('.svg')) {
       return SvgPicture.asset(asset, height: height);
     } else {
@@ -508,15 +509,14 @@ class PaymentMethodBadge extends StatelessWidget {
     }
   }
 
-  // خرائط الأصول لكل طريقة
   String? _badgeAssetFor(String? c) {
     switch (c) {
-      case 'cod':
+      case 'cash_to_pay':
         return ManagerImages.cash_to_pay;
       case 'tabby':
-        return ManagerImages.tabbym;
+        return ManagerImages.tabby;
       case 'tamara':
-        return  ManagerImages.news; // (مثلاً: Group 1000006007.png)
+        return  ManagerImages.tamara; // (مثلاً: Group 1000006007.png)
       case 'stcpay':  // STC Pay
         return  ManagerImages.stc_pay;
       default:
@@ -533,7 +533,7 @@ class _Text extends StatelessWidget {
     final c = Get.find<CheckoutController>();
     Text _lbl(String t) => Text(t, style:  getMediumTextStyle(color: Colors.black, fontSize: 12));
     Text _val(String t) => Text(t, style:  getMediumTextStyle(color: Colors.black, fontSize: 12));
-    return Text("في حالة اختيار قسيمة سيتم إزالة خصم الكوبون",style:getMediumTextStyle(fontSize: 12, color: ManagerColors.gray_1));
+    return Text(ManagerStrings.ifQitafIsSelected,style:getMediumTextStyle(fontSize: 12, color: ManagerColors.gray_1));
   }
 }
 class _SummaryBlock extends StatelessWidget {
@@ -549,11 +549,11 @@ class _SummaryBlock extends StatelessWidget {
       decoration: _box(),
       child: Column(
         children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_lbl("المجموع الفرعي"), _val("ر.س ${c.itemsSubtotal.toStringAsFixed(2)}")]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_lbl(ManagerStrings.subTotal), _val("ر.س ${c.itemsSubtotal.toStringAsFixed(2)}")]),
           const SizedBox(height: 8),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_lbl("رسوم الشحن"), _val("ر.س ${c.shipping.toStringAsFixed(2)}")]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_lbl(ManagerStrings.shippingFee), _val("ر.س ${c.shipping.toStringAsFixed(2)}")]),
           const SizedBox(height: 8),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_lbl("الإجمالي مع الضريبة"), _val("ر.س ${c.grandTotal.toStringAsFixed(2)}")]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_lbl(ManagerStrings.totalWithTax), _val("ر.س ${c.grandTotal.toStringAsFixed(2)}")]),
           const SizedBox(height: 8),
 
         ],
@@ -566,8 +566,8 @@ class _SummaryBlock extends StatelessWidget {
 
 BoxDecoration _box() => BoxDecoration(
   color: Colors.white,
-  borderRadius: BorderRadius.circular(12),
-  border: const Border.fromBorderSide(BorderSide(color: Color(0xFFEDEDED))),
+  borderRadius: BorderRadius.circular(8),
+  // border: const Border.fromBorderSide(BorderSide(color: Color(0xFFEDEDED))),
   boxShadow: [BoxShadow(color: Colors.black.withOpacity(.03), blurRadius: 6, offset: const Offset(0, 1))],
 );
 

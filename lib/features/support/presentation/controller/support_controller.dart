@@ -10,7 +10,6 @@ class SupportController extends GetxController {
         Routes.supportTech
     );
   }
-      // شاشة الدعم الفني
   void callCustomerService() {
     // TODO: launchUrl('tel:$hotline');
   }

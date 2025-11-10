@@ -1,5 +1,8 @@
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_images.dart';
 import '../../../../core/resources/manager_styles.dart';
@@ -24,6 +27,7 @@ class ReelCard extends StatelessWidget {
     final ImageProvider img = reel.isNetwork
         ? NetworkImage(reel.cover)
         : AssetImage(reel.cover) as ImageProvider;
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,9 +50,36 @@ class ReelCard extends StatelessWidget {
                     child:  SvgPicture.asset(ManagerImages.play,height: 70,),
                   ),
                 ),
-
+                isArabic ?
                 Positioned(
                   right: 25,
+                  bottom: 80, // فوق العنوان بقليل
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _PillButton(
+                        label: ManagerStrings.share,
+                        icon: ManagerImages.shares,
+                        bg: ManagerColors.greens,
+                        fg: Colors.black87,
+                        onTap: onShare,
+                        f: ManagerColors.black,
+                      ),
+                      const SizedBox(height: 10),
+                      _PillButton(
+                        label: ManagerStrings.orderNow,
+                        icon: ManagerImages.carbon_product,
+                        bg: ManagerColors.popp_new,
+                        fg: ManagerColors.pop_color,
+                        onTap: onOrderNow,
+                        f: ManagerColors.white,
+
+                      ),
+                    ],
+                  ),
+                ):
+                Positioned(
+                  left: 25,
                   bottom: 80, // فوق العنوان بقليل
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,

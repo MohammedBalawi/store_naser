@@ -1,4 +1,5 @@
 // lib/features/account_edit/presentation/view/change_phone_view.dart
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +16,7 @@ class ChangePhoneView extends GetView<ChangePhoneController> {
   Widget build(BuildContext context) {
     // مفتاح للزر حتى نعلّق عليه المنيو بدقة
     final countryKey = GlobalKey();
+    final bool isArabic = Get.locale?.languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: ManagerColors.background,
@@ -25,8 +27,9 @@ class ChangePhoneView extends GetView<ChangePhoneController> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(ManagerImages.arrows)),
-            Text('رقم الهاتف', style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
+            GestureDetector(onTap: () => Get.back(), child: SvgPicture.asset(isArabic ?ManagerImages.arrows:ManagerImages.arrow_left)),
+            Text(
+                ManagerStrings.phoneNumber, style: getBoldTextStyle(color: Colors.black, fontSize: 20)),
             const SizedBox(width: 42),
           ],
         ),
@@ -38,72 +41,71 @@ class ChangePhoneView extends GetView<ChangePhoneController> {
         leadingWidth: 0,
       ),
 
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        children: [
-          Container(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // الرقم الحالي
-                Text('الرقم الحالي', style: getBoldTextStyle(color: Colors.black, fontSize: 14)),
-                const SizedBox(height: 6),
-                Obx(() => Text(controller.currentPhone.value,
-                    style: getBoldTextStyle(color: ManagerColors.gray_3, fontSize: 12))),
-                const SizedBox(height: 16),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      ManagerStrings.currentNumber, style: getBoldTextStyle(color: Colors.black, fontSize: 14)),
+                  const SizedBox(height: 6),
+                  Obx(() => Text(controller.currentPhone.value,
+                      style: getBoldTextStyle(color: ManagerColors.gray_3, fontSize: 12))),
+                  const SizedBox(height: 16),
 
-                // الرقم الجديد
-                Text('الرقم الجديد', style: getBoldTextStyle(color: Colors.black, fontSize: 12)),
-                const SizedBox(height: 8),
+                  Text(
+                      ManagerStrings.newNumber, style: getBoldTextStyle(color: Colors.black, fontSize: 12)),
+                  const SizedBox(height: 8),
 
-                Obx(() {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: controller.hasError.value ? Colors.red : const Color(0xFFE9E9EF),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: [
-                        // حقل الرقم
-                        Expanded(
-                          child: TextField(
-                            controller: controller.phoneCtrl,
-                            focusNode: controller.focusPhone,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: controller.phoneFormatters,
-                            decoration: InputDecoration(
-                              hintText: 'رقم الهاتف',
-                              hintStyle: getRegularTextStyle(fontSize: 16, color: ManagerColors.bongrey),
-                              border: InputBorder.none,
-                            ),
-                            style: getRegularTextStyle(fontSize: 16, color: ManagerColors.black),
-                            onChanged: controller.onPhoneChanged,
-                          ),
+                  Obx(() {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: controller.hasError.value ? Colors.red : const Color(0xFFE9E9EF),
                         ),
-                        const SizedBox(width: 12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: controller.phoneCtrl,
+                              focusNode: controller.focusPhone,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: controller.phoneFormatters,
+                              decoration: InputDecoration(
+                                hintText: ManagerStrings.phoneNumber,
+                                hintStyle: getRegularTextStyle(fontSize: 16, color: ManagerColors.bongrey),
+                                border: InputBorder.none,
+                              ),
+                              style: getRegularTextStyle(fontSize: 16, color: ManagerColors.black),
+                              onChanged: controller.onPhoneChanged,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
 
-                        // زر الدولة (العلم 23.997657775878906 × 18 والنص 16)
-                        _CountryButton(key: countryKey),
+                          _CountryButton(key: countryKey),
 
-                        // أيقونة خطأ عند الحاجة
-                        if (controller.hasError.value) ...[
-                          const SizedBox(width: 8),
-                          SvgPicture.asset(ManagerImages.warning),
+                          if (controller.hasError.value) ...[
+                            const SizedBox(width: 8),
+                            SvgPicture.asset(ManagerImages.warning),
+                          ],
                         ],
-                      ],
-                    ),
-                  );
-                }),
-              ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       bottomNavigationBar: Padding(
@@ -126,7 +128,7 @@ class ChangePhoneView extends GetView<ChangePhoneController> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
-              child: Text('تحديث', style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
+              child: Text(ManagerStrings.update, style: getBoldTextStyle(color: Colors.white, fontSize: 16)),
             ),
           );
         }),
